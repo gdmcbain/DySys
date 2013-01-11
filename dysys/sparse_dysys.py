@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 :author: G. D. McBain <gmcbain>
 :created: 2013-01-11
