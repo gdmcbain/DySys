@@ -22,3 +22,29 @@ class SparseDySys(LinearDySys):
         return spsolve(self.M / h + self.D, 
                        self.f(t) + self.M / h * x) 
 
+if __name__ == '__main__':
+
+    import itertools as it
+
+    import numpy as np
+    from scipy.sparse import eye
+
+    class Decay(SparseDySys):
+    
+        "tau x' + x = 0, which decays exponentially with timescale tau."
+
+        def __init__(self, tau=0.7):
+            self.tau = tau
+            D = eye(1, 1)
+            super(Decay, self).__init__(tau * D, D, lambda t: np.zeros(1))
+
+        def exact(self, t, ic):
+            return ic * np.exp(-t / self.tau)
+
+    system = Decay()
+    ic = 1.0
+
+    history = system.march(np.array([ic]), 0.1)
+
+    for t, x in it.takewhile(lambda event: event[1] > ic/9, history):
+        print '{0:.1f}  {1:.3f}  {2:.3f}'.format(t, x[0], system.exact(t, ic))
