@@ -54,10 +54,10 @@ class SparseNFDySys(DySys):
 
     def step(self, t, x, h):
         if self.f1 is None:
-            Jinv = None
+            return fsolve(lambda y: self.residual(h, x, y, t), x)
         else:
-            Jinv = LinearOperator([len(x)]*2,
-                                  lambda y: spsolve(self.jacobian(h, x, t), y))
-
-        return newton_krylov(lambda y: self.residual(h, x, y, t), x, 
-                             inner_M=Jinv)
+            return newton_krylov(
+                lambda y: self.residual(h, x, y, t), x, 
+                inner_M=LinearOperator(
+                    [len(x)]*2,
+                    lambda y: spsolve(self.jacobian(h, x, t), y)))
