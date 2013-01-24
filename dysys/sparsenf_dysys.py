@@ -6,6 +6,7 @@
 
 '''
 
+import numpy as np
 
 from scipy.optimize import fsolve, newton_krylov
 from scipy.sparse.linalg import LinearOperator, spsolve
@@ -46,18 +47,26 @@ class SparseNFDySys(DySys):
 
         self.M, self.D, self.f, self.f1 = M, D, f, f1
 
-    def residual(self, h, x, y, t):
-        return (self.M / h + self.D) * y - self.f(t, y) - self.M / h * x
+    def residual(self, h, xold, x, t):
+        return (self.M / h + self.D) * x - self.f(t, x) - self.M / h * xold
 
-    def jacobian(self, h, x, t):
+    def jacobian(self, t, x, h):
         return (self.M / h + self.D) - self.f1(t, x)
 
-    def step(self, t, x, h):
+    def step(self, t, xold, h, tol=1e-3):
         if self.f1 is None:
-            return fsolve(lambda y: self.residual(h, x, y, t), x)
+            return fsolve(lambda y: self.residual(h, xold, y, t), xold)
         else:
-            return newton_krylov(
-                lambda y: self.residual(h, x, y, t), x, 
-                inner_M=LinearOperator(
-                    [len(x)]*2,
-                    lambda y: spsolve(self.jacobian(h, x, t), y)))
+            # return newton_krylov(
+            #     lambda y: self.residual(h, x, y, t), x, 
+            #     inner_M=LinearOperator(
+            #         [len(x)]*2,
+            #         lambda y: spsolve(self.jacobian(t, x, h), y)))
+            x = np.copy(xold)
+            while True:         # Newton iteration
+                dx = spsolve(self.jacobian(t, x, h),
+                             self.residual(h, xold, x, t))
+                x -= dx
+                if np.linalg.norm(dx) < tol:
+                    break
+            return x
