@@ -18,11 +18,22 @@ class DySys(object):
 
     '''
 
-    def step(self, t, x, h):
+    def step(self, t, y, h):
         '''abstract method to be overridden by subclasses
 
         which should return the state at time t+h given that the
-        initial condition x at time t
+        initial condition y at time t
+
+        The basic idea is that: '...the nature of time-stepping is
+        inherently sequential or local; given the "state" y(t), the
+        method is a procedure for computing an approximation to y(t+h)
+        a time-step h>0 ahead.  The size of h is used to trade
+        accuracy for efficiency and vice versa, and is therefore the
+        principal _internal_ means of controlling the error'
+        (Söderlind 2002, S. 1)
+
+        Söderlind, G. (2002). Automatic control and adaptive
+        Time-Stepping. Numerical Algorithms 31(1-4):281-310
 
         '''
 
