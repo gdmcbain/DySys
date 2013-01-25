@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: latin-1 -*-
+
 
 '''
 A demonstration of using the backward Euler method of marching a
@@ -30,9 +32,9 @@ class DySys(object):
         a time-step h>0 ahead.  The size of h is used to trade
         accuracy for efficiency and vice versa, and is therefore the
         principal _internal_ means of controlling the error'
-        (SÃ¶derlind 2002, S. 1)
+        (Söderlind 2002, S. 1)
 
-        SÃ¶derlind, G. (2002). Automatic control and adaptive
+        Söderlind, G. (2002). Automatic control and adaptive
         Time-Stepping. Numerical Algorithms 31(1-4):281-310
 
         '''
