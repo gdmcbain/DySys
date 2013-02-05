@@ -9,7 +9,7 @@
 import numpy as np
 
 from scipy.optimize import fsolve, newton_krylov
-from scipy.sparse.linalg import LinearOperator, spsolve
+from scipy.sparse.linalg import spsolve
 
 from dysys import DySys
 
