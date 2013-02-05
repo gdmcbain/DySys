@@ -47,26 +47,48 @@ class SparseNFDySys(DySys):
 
         self.M, self.D, self.f, self.f1 = M, D, f, f1
 
-    def residual(self, h, xold, x, t):
-        return (self.M / h + self.D) * x - self.f(t, x) - self.M / h * xold
-
-    def jacobian(self, t, x, h):
-        return (self.M / h + self.D) - self.f1(t, x)
-
     def step(self, t, xold, h, tol=1e-3):
+
+        def residual(x):
+            return (self.M / h + self.D) * x - self.f(t, x) - self.M / h * xold
+
+        def jacobian(x):
+            return (self.M / h + self.D) - self.f1(t, x)
+
         if self.f1 is None:
-            return fsolve(lambda y: self.residual(h, xold, y, t), xold)
+            return fsolve(lambda x: residual(x), xold)
         else:
-            # return newton_krylov(
-            #     lambda y: self.residual(h, x, y, t), x, 
-            #     inner_M=LinearOperator(
-            #         [len(x)]*2,
-            #         lambda y: spsolve(self.jacobian(t, x, h), y)))
             x = np.copy(xold)
             while True:         # Newton iteration
-                dx = spsolve(self.jacobian(t, x, h),
-                             self.residual(h, xold, x, t))
+                dx = spsolve(jacobian(x), residual(x))
                 x -= dx
                 if np.linalg.norm(dx) < tol:
                     break
             return x
+
+    def equilibrium(sys, x0, tol=1e-3):
+        '''solve for a steady-state equilibrium
+
+        using Newton iteration if the Jacobian has been provided in
+        the f1 data member (e.g. during initialization), otherwise
+        scipy.optimize.fsolve
+
+        '''
+        
+        def residual(x):
+            return sys.D * x - sys.f(np.inf, x) # t -> np.inf
+
+        def jacobian(x):
+            return sys.D - sys.f1(np.inf, x)
+            
+        if sys.f1 is None:
+            x = fsolve(residual, x0)
+        else:
+            x = x0
+            while True:
+                dx = spsolve(jacobian(x), residual(x))
+                x -= dx
+                if np.linalg.norm(dx) < tol:
+                    break
+        return x
+
