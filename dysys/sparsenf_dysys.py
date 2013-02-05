@@ -56,7 +56,7 @@ class SparseNFDySys(DySys):
             return (self.M / h + self.D) - self.f1(t, x)
 
         if self.f1 is None:
-            return fsolve(lambda x: residual(x), xold)
+            x = fsolve(lambda x: residual(x), xold)
         else:
             x = np.copy(xold)
             while True:         # Newton iteration
@@ -64,7 +64,7 @@ class SparseNFDySys(DySys):
                 x -= dx
                 if np.linalg.norm(dx) < tol:
                     break
-            return x
+        return x
 
     def equilibrium(sys, x0, tol=1e-3):
         '''solve for a steady-state equilibrium
