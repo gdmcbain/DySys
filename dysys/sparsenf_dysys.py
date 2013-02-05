@@ -74,7 +74,12 @@ class SparseNFDySys(DySys):
         scipy.optimize.fsolve
 
         '''
-        
+
+        # This is very much like the step method with the time t and
+        # time-step h going to infinity; i.e. the equilibrium is
+        # construed as the state eventually reached after a history of
+        # forcing which tends asymptotically to a constant value.
+
         def residual(x):
             return sys.D * x - sys.f(np.inf, x) # t -> np.inf
 
