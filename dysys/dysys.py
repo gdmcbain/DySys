@@ -49,6 +49,12 @@ class DySys(object):
 
         '''
 
+        # TODO 2013-03-01 gmcbain: Maybe add an optional filter f to
+        # yield t, f(x) instead, since "Usually, only a small portion
+        # of data needs to be saved in order to concisely record the
+        # pertinent features of the dynamics." (PyDSTool Project
+        # overview)
+        
         t, x = 0.0, x0
         while True:
             yield t, x
