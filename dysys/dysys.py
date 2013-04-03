@@ -23,8 +23,8 @@ class DySys(object):
     def step(self, t, y, h):
         '''abstract method to be overridden by subclasses
 
-        which should return the state at time t+h given that the
-        initial condition y at time t
+        which should return the state at time t+h given the initial
+        condition y at time t
 
         The basic idea is that: '...the nature of time-stepping is
         inherently sequential or local; given the "state" y(t), the
