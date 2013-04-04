@@ -59,3 +59,29 @@ class DySys(object):
         while True:
             yield t, x
             t, x = t + h, self.step(t, x, h)
+
+    def march_punctuated(self, x0, h, events=None):
+        '''like march, but punctated by a sorted iterable of events
+
+        each of which is a pair of the time at which it is scheduled
+        and its mapping of the old state to the new
+
+        '''
+
+        if events is None:
+            events = []
+            
+        t, x = 0.0, x0
+        for event in events:
+            while True:
+                yield t, x
+                if t + h > event[0]:
+                    t, x = event[0], self.step(t, x, event[0] - t)
+                    yield t, x      # step to just before event
+                    x = event[1](x)
+                    break
+                else:
+                    t, x = t + h, self.step(t, x, h)
+        while True:             # events exhausted
+            yield t, x
+            t, x = t + h, self.step(t, x, h)
