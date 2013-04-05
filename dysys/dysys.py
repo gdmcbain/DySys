@@ -12,6 +12,15 @@ sparse-linear differential-algebraic system in time.
 
 import numpy as np
 
+def stepper(stepping_function):
+    'decorator to do nothing for steps of zero length'
+    def wrapper(*args):
+        try:
+            return stepping_function(*args)
+        except ZeroDivisionError: # assume step is zero
+            return args[1]
+    return wrapper
+
 class DySys(object):
     '''virtual base class for dynamical systems
 
@@ -20,6 +29,7 @@ class DySys(object):
 
     '''
 
+    @stepper
     def step(self, t, y, h):
         '''abstract method to be overridden by subclasses
 
@@ -41,7 +51,7 @@ class DySys(object):
 
         raise NotImplementedError
 
-    def march(self, x0, h):
+    def simple_march(self, x0, h):
         '''generate the sequence of pairs of times and states
 
         from the initial condition x0 at time 0.0 with constant
@@ -60,8 +70,8 @@ class DySys(object):
             yield t, x
             t, x = t + h, self.step(t, x, h)
 
-    def march_punctuated(self, x0, h, events=None):
-        '''like march, but punctated by a sorted iterable of events
+    def march(self, x0, h, events=None):
+        '''like simple_march, but punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
@@ -85,3 +95,7 @@ class DySys(object):
         while True:             # events exhausted
             yield t, x
             t, x = t + h, self.step(t, x, h)
+
+    march_punctuated = march    # backwards-compatibility alias
+    
+        

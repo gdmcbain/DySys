@@ -9,6 +9,7 @@
 from scipy.sparse.linalg import spsolve
 
 from linear_dysys import LinearDySys
+from dysys import stepper
 
 class SparseDySys(LinearDySys):
     '''a LinearDySys using sparse matrices and backward Euler
@@ -19,10 +20,11 @@ class SparseDySys(LinearDySys):
     
     '''
 
+    @stepper
     def step(self, t, x, h):
         '''estimate the next state using backward Euler'''
         return spsolve(self.M / h + self.D, 
-                       self.f(t) + self.M / h * x) 
+                           self.f(t) + self.M / h * x) 
 
 if __name__ == '__main__':
 
