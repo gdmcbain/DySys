@@ -29,7 +29,6 @@ class DySys(object):
 
     '''
 
-    @stepper
     def step(self, t, y, h):
         '''abstract method to be overridden by subclasses
 
@@ -50,6 +49,11 @@ class DySys(object):
         '''
 
         raise NotImplementedError
+
+    @stepper
+    def _step(self, t, y, h):
+        'wrap the step method as universally required'
+        return self.step(t, y, h)
 
     def simple_march(self, x0, h):
         '''generate the sequence of pairs of times and states
@@ -86,15 +90,15 @@ class DySys(object):
             while True:
                 yield t, x
                 if t + h > event[0]:
-                    t, x = event[0], self.step(t, x, event[0] - t)
+                    t, x = event[0], self._step(t, x, event[0] - t)
                     yield t, x      # step to just before event
                     x = event[1](x)
                     break
                 else:
-                    t, x = t + h, self.step(t, x, h)
+                    t, x = t + h, self._step(t, x, h)
         while True:             # events exhausted
             yield t, x
-            t, x = t + h, self.step(t, x, h)
+            t, x = t + h, self._step(t, x, h)
 
     march_punctuated = march    # backwards-compatibility alias
     

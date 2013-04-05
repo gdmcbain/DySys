@@ -20,7 +20,6 @@ class SparseDySys(LinearDySys):
     
     '''
 
-    @stepper
     def step(self, t, x, h):
         '''estimate the next state using backward Euler'''
         return spsolve(self.M / h + self.D, 
