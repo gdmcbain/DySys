@@ -49,6 +49,16 @@ class SparseNFDySys(DySys):
 
     def step(self, t, xold, h, tol=1e-3):
 
+        # KLUDGE gmcbain 2013-04-08: An unpythonic LBYL check is used
+        # here because a division by zero inside the residual and
+        # jacobian functions defined below seems to be handled
+        # internally, being converted to a warning.  Here is it
+        # checked and the exception raised to be caught by the
+        # dysys.dysys.stepper decorator of dysys.DySys._step.
+
+        if h == 0:
+            raise ZeroDivisionError
+
         def residual(x):
             return (self.M / h + self.D) * x - self.f(t, x) - self.M / h * xold
 
