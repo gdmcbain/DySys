@@ -18,7 +18,7 @@ def stepper(stepping_function):
         try:
             return stepping_function(*args)
         except ZeroDivisionError: # assume step is zero
-            return args[1]
+            return args[2]
     return wrapper
 
 class DySys(object):
