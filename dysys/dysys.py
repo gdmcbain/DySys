@@ -13,7 +13,13 @@ sparse-linear differential-algebraic system in time.
 import numpy as np
 
 def stepper(stepping_function):
-    'decorator to do nothing for steps of zero length'
+    '''decorator to do nothing for steps of zero length
+
+    i.e. instead of returning a new state, return the old one, which
+    is argument 2, following the DySys object and the time
+
+    '''
+
     def wrapper(*args):
         try:
             return stepping_function(*args)
