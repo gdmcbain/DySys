@@ -73,6 +73,30 @@ class SparseNFDySys(DySys):
         the f1 data member (e.g. during initialization), otherwise
         scipy.optimize.fsolve
 
+        The steady-state problem is 
+
+            D x = f (inf, x) , 
+
+        so the residual is
+ 
+            r (x) = D x - f (inf, x) 
+
+        with Jacobian 
+
+            r' (x) = D - f_x (inf, x) .  
+
+        To set up the Newton iteration, for a given x, try to make 
+
+            r (x - dx) = 0 , 
+
+        expand in a Taylor series to get 
+
+            r (x - dx) = r (x) - r' (x) dx + O (dx**2) 
+
+        and solve that to first order for dx, i.e. 
+
+            r' (x) dx = r (x) .
+
         '''
 
         # This is very much like the step method with the time t and
