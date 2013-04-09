@@ -61,7 +61,14 @@ class Newmark(DySys):
         return d + self.beta * h * h * self.a
 
     def march(self, d, v, h):
-        'evolve from displacement d and velocity v with time-step h'
+        '''evolve from displacement d and velocity v with time-step h
+
+        This involves setting the internal variables for velocity and
+        acceleration (v and a, respectively), and, for convenience,
+        the evolution matrix A, and then deferring to the march method
+        of the super-class, DySys.
+
+        '''
 
         self.v = v
         self.a = spsolve(self.M, self.f(0.) - self.C * v - self.K * d)
