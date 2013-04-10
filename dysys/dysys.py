@@ -137,4 +137,3 @@ class DySys(object):
 
         return zip(*list(it.takewhile(lambda event: predicate(event[1]),
                                       self.march(*args, **kwargs))))
-
