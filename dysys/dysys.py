@@ -88,6 +88,8 @@ class DySys(object):
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
 
+        See also: march_till, march_while
+
         '''
 
         if events is None:
