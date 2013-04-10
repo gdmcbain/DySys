@@ -122,3 +122,17 @@ class DySys(object):
 
         return zip(*list(it.takewhile(lambda event: event[0] < endtime,
                                       self.march(*args, **kwargs))))
+
+    def march_while(self, predicate, *args, **kwargs):
+        '''march until the state fails the predicate
+
+        :param predicate: boolean function of state
+
+        :rtype: pair of sequence of times and corresponding sequence
+        of states
+
+        '''
+
+        return zip(*list(it.takewhile(lambda event: predicate(event[1]),
+                                      self.march(*args, **kwargs))))
+

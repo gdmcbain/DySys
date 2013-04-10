@@ -47,7 +47,6 @@ if __name__ == '__main__':
     system = Decay()
     ic = 1.0
 
-    history = system.march(np.array([ic]), 0.1)
+    t, x = system.march_while(lambda state: state > ic / 9, np.array([ic]), 0.1)
 
-    for t, x in it.takewhile(lambda event: event[1] > ic/9, history):
-        print '{0:.1f}  {1:.3f}  {2:.3f}'.format(t, x[0], system.exact(t, ic))
+    print np.array((t, x, system.exact(np.array(t), ic))).T
