@@ -10,6 +10,8 @@ sparse-linear differential-algebraic system in time.
 :created: 2012-10-11
 '''
 
+import itertools as it
+
 import numpy as np
 
 def stepper(stepping_function):
@@ -108,4 +110,15 @@ class DySys(object):
 
     march_punctuated = march    # backwards-compatibility alias
     
-        
+    def march_till(self, endtime, *args, **kwargs):
+        '''march until the time passes endtime
+
+        :param endtime: float
+
+        :rtype: pair of sequence of times and corresponding sequence
+        of states
+
+        '''
+
+        return zip(*list(it.takewhile(lambda event: event[0] < endtime,
+                                      self.march(*args, **kwargs))))
