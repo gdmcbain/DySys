@@ -61,6 +61,21 @@ class DySys(object):
     @stepper
     def _step(self, t, y, h, substeps=1):
         'wrap the step method as universally required'
+
+        # TODO 2013-04-11 gmcbain: The option of substeps here does
+        # not do much except suppress output for the intermediate
+        # steps; however, the idea of introducing the feature was that
+        # this might be useful for developing "extrapolation method"
+        # (Brenan, Campbell, & Petzold 1996, S. 4.6, pp. 108--114).
+        # It might also be useful for the estimation of error and
+        # step-size control.
+
+        # Brenan, K. E., S. L. Campbell, & L. R. Petzold
+        # (1996). Numerical solution of initial-value problems in
+        # differential-algebraic equations, Volume 14 of Classics in
+        # Applied Mathematics. Philadelphia: Society for Industrial
+        # and Applied Mathematics
+
         h /= substeps
         for i in xrange(substeps):
             t, y = t + h, self.step(t, y, h)
