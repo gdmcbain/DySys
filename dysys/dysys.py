@@ -59,9 +59,12 @@ class DySys(object):
         raise NotImplementedError
 
     @stepper
-    def _step(self, t, y, h):
+    def _step(self, t, y, h, substeps=1):
         'wrap the step method as universally required'
-        return self.step(t, y, h)
+        h /= substeps
+        for i in xrange(substeps):
+            t, y = t + h, self.step(t, y, h)
+        return y
 
     def simple_march(self, x0, h):
         '''generate the sequence of pairs of times and states
@@ -82,11 +85,24 @@ class DySys(object):
             yield t, x
             t, x = t + h, self.step(t, x, h)
 
-    def march(self, x0, h, events=None):
+    def march(self, x0, h, events=None, substeps=1):
         '''like simple_march, but punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
+
+        :param x0: initial condition (typically an np.array)
+
+        :param h: time-step (float)
+
+        :param events: iterable of pairs of time and mapping on state,
+        state having the same type as x0 (default: empty list)
+
+        :param substeps: number of equal substeps to take to make up
+        each time-step (default: 1)
+
+        :rtype: yield indefinitely pairs of time and state at end of
+        time-steps
 
         See also: march_till, march_while
 
@@ -100,15 +116,15 @@ class DySys(object):
             while True:
                 yield t, x
                 if t + h > event[0]:
-                    t, x = event[0], self._step(t, x, event[0] - t)
+                    t, x = event[0], self._step(t, x, event[0] - t, substeps)
                     yield t, x      # step to just before event
                     x = event[1](x)
                     break
                 else:
-                    t, x = t + h, self._step(t, x, h)
+                    t, x = t + h, self._step(t, x, h, substeps)
         while True:             # events exhausted
             yield t, x
-            t, x = t + h, self._step(t, x, h)
+            t, x = t + h, self._step(t, x, h, substeps)
 
     march_punctuated = march    # backwards-compatibility alias
     
