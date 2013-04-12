@@ -141,7 +141,17 @@ class DySys(object):
             yield t, x
             t, x = t + h, self._step(t, x, h, substeps)
 
-    march_punctuated = march    # backwards-compatibility alias
+    def march_truncated(self, condition, *args, **kwargs):
+        '''truncate a march when condition fails
+
+        :param condition: a predicate on pairs of time and state
+
+        :rtype: pair of sequence of times and corresponding sequence
+        of states
+
+        '''
+
+        return zip(*list(it.takewhile(condition, self.march(*args, **kwargs))))
     
     def march_till(self, endtime, *args, **kwargs):
         '''march until the time passes endtime
@@ -153,8 +163,8 @@ class DySys(object):
 
         '''
 
-        return zip(*list(it.takewhile(lambda event: event[0] < endtime,
-                                      self.march(*args, **kwargs))))
+        return self.march_truncated(lambda event: event[0] < endtime,
+                                     *args, **kwargs)
 
     def march_while(self, predicate, *args, **kwargs):
         '''march until the state fails the predicate
@@ -166,5 +176,5 @@ class DySys(object):
 
         '''
 
-        return zip(*list(it.takewhile(lambda event: predicate(event[1]),
-                                      self.march(*args, **kwargs))))
+        return march_truncated(lambda event: predicate(event[1]),
+                               *args, **kwargs)
