@@ -76,7 +76,7 @@ class SparseNFDySys(DySys):
                     break
         return x
 
-    def equilibrium(sys, x0, tol=1e-3):
+    def equilibrium(self, x0, tol=1e-3):
         '''solve for a steady-state equilibrium
 
         using Newton iteration if the Jacobian has been provided in
@@ -115,12 +115,12 @@ class SparseNFDySys(DySys):
         # forcing which tends asymptotically to a constant value.
 
         def residual(x):
-            return sys.D * x - sys.f(np.inf, x) # t -> np.inf
+            return self.D * x - self.f(np.inf, x) # t -> np.inf
 
         def jacobian(x):
-            return sys.D - sys.f1(np.inf, x)
+            return self.D - self.f1(np.inf, x)
             
-        if sys.f1 is None:
+        if self.f1 is None:
             x = fsolve(residual, x0)
         else:
             x = x0
