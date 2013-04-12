@@ -149,6 +149,8 @@ class DySys(object):
         :rtype: pair of sequence of times and corresponding sequence
         of states
 
+        See also: march_till, march_while
+
         '''
 
         return zip(*list(it.takewhile(condition, self.march(*args, **kwargs))))
@@ -160,6 +162,8 @@ class DySys(object):
 
         :rtype: pair of sequence of times and corresponding sequence
         of states
+
+        See also: march, march_while, march_truncated
 
         '''
 
@@ -173,6 +177,8 @@ class DySys(object):
 
         :rtype: pair of sequence of times and corresponding sequence
         of states
+
+        See also: march, march_till, march_truncated
 
         '''
 
