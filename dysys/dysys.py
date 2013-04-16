@@ -110,8 +110,9 @@ class DySys(object):
 
         :param h: time-step (float)
 
-        :param events: iterable of pairs of time and mapping on state,
-        state having the same type as x0 (default: empty list)
+        :param events: iterable of pairs of time and mapping on time
+        and state, state having the same type as x0 (default: empty
+        list)
 
         :param substeps: number of equal substeps to take to make up
         each time-step (default: 1)
@@ -133,7 +134,7 @@ class DySys(object):
                 if t + h > event[0]:
                     t, x = event[0], self._step(t, x, event[0] - t, substeps)
                     yield t, x      # step to just before event
-                    x = event[1](x)
+                    x = event[1](t, x)
                     break
                 else:
                     t, x = t + h, self._step(t, x, h, substeps)
