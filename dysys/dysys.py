@@ -124,11 +124,8 @@ class DySys(object):
 
         '''
 
-        if events is None:
-            events = []
-            
         t, x = 0.0, x0
-        for event in events:
+        for event in [] if events is None else events:
             while True:
                 yield t, x
                 if t + h > event[0]:
@@ -183,5 +180,5 @@ class DySys(object):
 
         '''
 
-        return march_truncated(lambda event: predicate(event[1]),
-                               *args, **kwargs)
+        return self.march_truncated(lambda event: predicate(event[1]),
+                                    *args, **kwargs)
