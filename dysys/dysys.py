@@ -13,6 +13,7 @@ sparse-linear differential-algebraic system in time.
 import itertools as it
 
 import numpy as np
+import pandas as pd
 
 def stepper(stepping_function):
     '''decorator to do nothing for steps of zero length
@@ -143,15 +144,23 @@ class DySys(object):
         '''truncate a march when condition fails
 
         :param condition: a predicate on pairs of time and state
+        
+        :param Series: define this keyword as not False to get the
+        result as a pandas.Series
 
         :rtype: pair of sequence of times and corresponding sequence
-        of states
+        of states, unless Series is defined unfalse
 
         See also: march_till, march_while
 
         '''
 
-        return zip(*list(it.takewhile(condition, self.march(*args, **kwargs))))
+        if kwargs.pop('Series', False):
+            return pd.Series(dict(it.takewhile(condition, 
+                                               self.march(*args, **kwargs))))
+        else:
+            return zip(*list(it.takewhile(condition, 
+                                          self.march(*args, **kwargs))))
     
     def march_till(self, endtime, *args, **kwargs):
         '''march until the time passes endtime
@@ -159,7 +168,8 @@ class DySys(object):
         :param endtime: float
 
         :rtype: pair of sequence of times and corresponding sequence
-        of states
+        of states, unless the keyword argument Series is defined as
+        not False in which case it is a pandas.Series
 
         See also: march, march_while, march_truncated
 
@@ -174,7 +184,8 @@ class DySys(object):
         :param predicate: boolean function of state
 
         :rtype: pair of sequence of times and corresponding sequence
-        of states
+        of states, unless the keyword argument Series is defined as
+        not False in which case it is a pandas.Series
 
         See also: march, march_till, march_truncated
 
