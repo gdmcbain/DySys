@@ -155,13 +155,10 @@ class DySys(object):
 
         '''
 
-        if kwargs.pop('Series', False):
-            return pd.Series(dict(it.takewhile(condition, 
-                                               self.march(*args, **kwargs))))
-        else:
-            return zip(*list(it.takewhile(condition, 
-                                          self.march(*args, **kwargs))))
-    
+        series = kwargs.pop('Series', False)
+        filtre = lambda h: (pd.Series(dict(h)) if series else zip(*list(h)))
+        return filtre(it.takewhile(condition, self.march(*args, **kwargs)))
+
     def march_till(self, endtime, *args, **kwargs):
         '''march until the time passes endtime
 
