@@ -60,8 +60,8 @@ class Newmark(DySys):
         self.v += self.gamma * h * self.a
         return d + self.beta * h * h * self.a
 
-    def march(self, d, v, h):
-        '''evolve from displacement d and velocity v with time-step h
+    def march(self, x, h, *args, **kwargs):
+        '''evolve from displacement x[0] and velocity x[1] with time-step h
 
         This involves setting the internal variables for velocity and
         acceleration (v and a, respectively), and, for convenience,
@@ -70,10 +70,10 @@ class Newmark(DySys):
 
         '''
 
-        self.v = v
-        self.a = spsolve(self.M, self.f(0.) - self.C * v - self.K * d)
+        self.v = x[1]
+        self.a = spsolve(self.M, self.f(0.) - self.C * x[1] - self.K * x[0])
 
         self.A = self.M + self.gamma * h * self.C + self.beta * h * h * self.K
         
-        return super(Newmark, self).march(d, h)
+        return super(Newmark, self).march(x[0], h, *args, **kwargs)
 
