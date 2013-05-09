@@ -126,8 +126,14 @@ class DySys(object):
         '''
 
         t, x = 0.0, x0
+
+        # TRICKY gmcbain 2013-05-09: Append an event at infinite time
+        # so that the events iterable is never exhausted.  The
+        # associated function will never be called; np.asarray is
+        # chosen as it is near enough to an identity.
+
         for event in it.chain([] if events is None else events, 
-                              [(np.inf, lambda x: x)]):
+                              [(np.inf, np.asarray)]):
             while True:
                 yield t, x
                 if t + h > event[0]:
