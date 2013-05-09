@@ -126,7 +126,8 @@ class DySys(object):
         '''
 
         t, x = 0.0, x0
-        for event in [] if events is None else events:
+        for event in it.chain([] if events is None else events, 
+                              [(np.inf, lambda x: x)]):
             while True:
                 yield t, x
                 if t + h > event[0]:
@@ -136,9 +137,6 @@ class DySys(object):
                     break
                 else:
                     t, x = t + h, self._step(t, x, h, substeps)
-        while True:             # events exhausted
-            yield t, x
-            t, x = t + h, self._step(t, x, h, substeps)
 
     def march_truncated(self, condition, *args, **kwargs):
         '''truncate a march when condition fails
