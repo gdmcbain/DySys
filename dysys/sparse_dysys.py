@@ -6,6 +6,7 @@
 
 '''
 
+import numpy as np
 from scipy.sparse.linalg import spsolve
 
 from linear_dysys import LinearDySys
@@ -24,6 +25,10 @@ class SparseDySys(LinearDySys):
         '''estimate the next state using backward Euler'''
         return spsolve(self.M / h + self.D, 
                            self.f(t) + self.M / h * x) 
+
+    def equilibrium(self):
+        '''return the eventual steady-state solution'''
+        return spsolve(self.D, self.f(np.inf))
 
 if __name__ == '__main__':
 
