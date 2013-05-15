@@ -97,4 +97,3 @@ class LinearDySys(DySys):
         "don't try this except on systems returned by constrain"
         return (self.U * x +
                 (0 if self.xknown is None else self.K * self.xknown))
-        
