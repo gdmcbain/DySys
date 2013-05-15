@@ -63,9 +63,23 @@ class LinearDySys(DySys):
             return [identity(self.nodes), None]
 
     def constrain(self, known, xknown, vknown=None):
+        '''return a new DySys with constrained degrees of freedom
+
+        having the same class as self.
+
+        :param known: sequence of indices of known degrees of freedom
+
+        :param xknown: corresponding sequence of their values
+
+        :param vknown: corresponding sequence of their rates of change
+
+        The returned system is attributed the U and K matrices from
+        self.node_maps and therefore can use :method reconstitute:.
         
+        '''
+
         U, K = self.node_maps(known)
-        (M, D) = [U.T * A * U for A in [self.M, self.D]]
+        (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
         sys = self.__class__(M, D,
                              lambda t: U.T * (self.f(t) -
                                               self.D * K * xknown -
