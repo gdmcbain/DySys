@@ -62,7 +62,7 @@ class LinearDySys(DySys):
         else:
             return [identity(self.nodes), None]
 
-    def constrain(self, known, xknown, vknown=None):
+    def constrain(self, known, xknown=None, vknown=None):
         '''return a new DySys with constrained degrees of freedom
 
         having the same class as self.
@@ -70,6 +70,7 @@ class LinearDySys(DySys):
         :param known: sequence of indices of known degrees of freedom
 
         :param xknown: corresponding sequence of their values
+        (default: zeros)
 
         :param vknown: corresponding sequence of their rates of change
 
@@ -80,15 +81,18 @@ class LinearDySys(DySys):
 
         U, K = self.node_maps(known)
         (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
-        sys = self.__class__(M, D,
-                             lambda t: U.T * (self.f(t) -
-                                              self.D * K * xknown -
-                                              (0 if vknown is None else
-                                               self.M * K * vknown)))
+        sys = self.__class__(
+            M, 
+            D,
+            lambda t: U.T * (
+                self.f(t) -
+                (0 if xknown is None else self.D * K * xknown) -
+                (0 if vknown is None else self.M * K * vknown)))
         sys.U, sys.K, sys.xknown = U, K, xknown
         return sys
 
     def reconstitute(self, x):
         "don't try this except on systems returned by constrain"
-        return self.U * x + self.K * self.xknown
+        return (self.U * x +
+                (0 if self.xknown is None else self.K * self.xknown))
         
