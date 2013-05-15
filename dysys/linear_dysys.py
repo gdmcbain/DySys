@@ -27,6 +27,9 @@ class LinearDySys(DySys):
 
           . the discretization of the temporal derivative.
 
+        Since occasionally the steady-state D * x = f (inf) is of
+        interest, M may be None.
+
         '''
 
         self.M, self.D, self.f = M, D, f
