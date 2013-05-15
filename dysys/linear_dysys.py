@@ -56,11 +56,10 @@ class LinearDySys(DySys):
         # obvious right thing.  I think the problem applies to NumPy
         # too.
         
-        if len(known) > 0:
-            return [identity(len(self))[:,c] for c in
-                    (np.setdiff1d(np.arange(len(self)), known), known)]
-        else:
-            return [identity(self.nodes), None]
+        return ([identity(len(self))[:,c] for c in
+                 (np.setdiff1d(np.arange(len(self)), known), known)]
+                if len(known) > 0 else
+                [identity(self.nodes), None])
 
     def constrain(self, known, xknown=None, vknown=None):
         '''return a new DySys with constrained degrees of freedom
