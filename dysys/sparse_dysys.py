@@ -7,6 +7,7 @@
 '''
 
 import numpy as np
+from scipy.linalg import eig
 from scipy.sparse.linalg import spsolve
 
 from linear_dysys import LinearDySys
@@ -29,6 +30,11 @@ class SparseDySys(LinearDySys):
     def equilibrium(self):
         '''return the eventual steady-state solution'''
         return spsolve(self.D, self.f(np.inf))
+
+    def spectrum(self):
+        'return the complete spectrum of the system'
+        return eig(-self.D.todense(), self.M.todense(), right=False)
+
 
 if __name__ == '__main__':
 
@@ -55,3 +61,6 @@ if __name__ == '__main__':
     t, x = system.march_while(lambda state: state > ic / 9, np.array([ic]), 0.1)
 
     print np.array((t, x, system.exact(np.array(t), ic))).T
+
+    print 'Equilibrium: ', system.equilibrium()
+    print 'Spectrum: {0} (exact: {1})'.format(system.spectrum(), -1/system.tau)
