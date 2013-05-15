@@ -15,7 +15,7 @@ from dysys import DySys
 
 class LinearDySys(DySys):
     
-    def __init__(self, M, D, f):
+    def __init__(self, M, D, f=None):
         '''a DySys defined by mass and damping operators and
         a time-dependent forcing function, according to (something like)
 
