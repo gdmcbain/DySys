@@ -77,3 +77,10 @@ class Newmark(DySys):
         
         return super(Newmark, self).march(x[0], h, *args, **kwargs)
 
+    # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
+    # eigs (like those of SparseDySys).  One way to formulate this is
+    # to convert the second-order system to a first-order block system
+    # by introducing an auxiliary variable for the temperature, then
+    # the eigenvalue problem is not quadratic but linear, the standard
+    # form of the generalized algebraic eigenvalue problem accepted by
+    # scipy.linalg.eig and scipy.sparse.linalg.eigs.

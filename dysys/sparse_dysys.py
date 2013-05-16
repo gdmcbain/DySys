@@ -35,11 +35,17 @@ class SparseDySys(LinearDySys):
                        np.zeros(self.D.shape[0]) 
                        if self.f is None else self.f(np.inf))
 
-    def spectrum(self):
-        'return the complete spectrum of the system'
-        return eig(-self.D.todense(), self.M.todense(), right=False)
+    def eig(self, *args, **kwargs):
+        '''return the complete spectrum of the system
 
-    def modes(self, *args, **kwargs):
+        Any positional and keyword arguments are passed on to
+        scipy.linalg.eig.
+
+        '''
+
+        return eig(-self.D.todense(), self.M.todense(), *args, **kwargs)
+
+    def eigs(self, *args, **kwargs):
         '''return the first few modes of the system,
 
         being the modes with temporal eigenvalues of least magnitude.
@@ -72,13 +78,21 @@ class SparseDySys(LinearDySys):
         
         '''
 
+        # TODO gmcbain 2013-05-16: Think of a general way to enable
+        # actually optionally returning eigenvectors.
+
+        kw = {'M': self.M, 
+              'sigma': 0, 
+              'which': 'LM',
+              'return_eigenvectors': False}
         try:
-            kwargs.update({'M': self.M, 'sigma': 0, 'which': 'LM',
-                           'return_eigenvectors': False})
+            kwargs.update(kw)
             return eigs(-self.D.tocsc(), *args, **kwargs)
         except ValueError as too_small:
             warn('system too small, converting to dense', UserWarning)
-            return self.spectrum()
+            for key in kw.keys():
+                del kwargs[key]
+            return self.eig(*args, **kwargs)
 
 
 if __name__ == '__main__':
