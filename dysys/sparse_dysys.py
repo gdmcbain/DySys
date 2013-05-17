@@ -122,4 +122,6 @@ if __name__ == '__main__':
     print np.array((t, x, system.exact(np.array(t), ic))).T
 
     print 'Equilibrium: ', system.equilibrium()
-    print 'Spectrum: {0} (exact: {1})'.format(system.spectrum(), -1/system.tau)
+    print 'Spectrum: {0} (exact: {1})'.format(
+        np.real_if_close(system.eig(right=False)), 
+        -1/system.tau)
