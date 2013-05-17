@@ -163,8 +163,9 @@ class DySys(object):
 
         '''
 
-        series = kwargs.pop('Series', False)
-        filtre = lambda h: (pd.Series(dict(h)) if series else zip(*list(h)))
+        df = kwargs.pop('pandas', False)
+        filtre = lambda h: (pd.DataFrame(dict(h)).T if df else
+                            zip(*list(h)))
         return filtre(it.takewhile(condition, self.march(*args, **kwargs)))
 
     def march_till(self, endtime, *args, **kwargs):
@@ -173,8 +174,8 @@ class DySys(object):
         :param endtime: float
 
         :rtype: pair of sequence of times and corresponding sequence
-        of states, unless the keyword argument Series is defined as
-        not False in which case it is a pandas.Series
+        of states, unless the keyword argument pandas is defined as
+        not False in which case it is a pandas.DataFrame
 
         See also: march, march_while, march_truncated
 
@@ -189,8 +190,8 @@ class DySys(object):
         :param predicate: boolean function of state
 
         :rtype: pair of sequence of times and corresponding sequence
-        of states, unless the keyword argument Series is defined as
-        not False in which case it is a pandas.Series
+        of states, unless the keyword argument pandas is defined as
+        not False in which case it is a pandas.DataFrame
 
         See also: march, march_till, march_truncated
 
