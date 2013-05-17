@@ -90,18 +90,12 @@ class DySys(object):
 
         '''
 
-        # TODO 2013-03-01 gmcbain: Maybe add an optional filter f to
-        # yield t, f(x) instead, since "Usually, only a small portion
-        # of data needs to be saved in order to concisely record the
-        # pertinent features of the dynamics." (PyDSTool Project
-        # overview)
-        
         t, x = 0.0, x0
         while True:
             yield t, x
             t, x = t + h, self.step(t, x, h)
 
-    def march(self, x0, h, events=None, substeps=1):
+    def march(self, x0, h, events=None, substeps=1, f=None):
         '''like simple_march, but punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
@@ -117,6 +111,13 @@ class DySys(object):
 
         :param substeps: number of equal substeps to take to make up
         each time-step (default: 1)
+
+        :param f: if provided, this maps the states before output.
+        This can be used to reconstitute the results from a
+        constrained LinearDySys, or for postprocessing: "Usually, only
+        a small portion of data needs to be saved in order to
+        concisely record the pertinent features of the dynamics."
+        (PyDSTool Project overview)
 
         :rtype: yield indefinitely pairs of time and state at end of
         time-steps
@@ -135,10 +136,13 @@ class DySys(object):
         for event in it.chain([] if events is None else events, 
                               [(np.inf, np.asarray)]):
             while True:
-                yield t, x
+                yield t, (x if f is None else f(x))
                 if t + h > event[0]:
+                    ## step to just before event
                     t, x = event[0], self._step(t, x, event[0] - t, substeps)
-                    yield t, x      # step to just before event
+                    yield t, (x if f is None else f(x))
+
+                    ## event
                     x = event[1](t, x)
                     break
                 else:
