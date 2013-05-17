@@ -10,10 +10,10 @@ from warnings import warn
 
 import numpy as np
 from scipy.linalg import eig
+from scipy.sparse import eye
 from scipy.sparse.linalg import (spsolve, eigs)
 
 from linear_dysys import LinearDySys
-from dysys import stepper
 
 class SparseDySys(LinearDySys):
     '''a LinearDySys using sparse matrices and backward Euler
@@ -97,11 +97,6 @@ class SparseDySys(LinearDySys):
 
 if __name__ == '__main__':
 
-    import itertools as it
-
-    import numpy as np
-    from scipy.sparse import eye
-
     class Decay(SparseDySys):
     
         "tau x' + x = 0, which decays exponentially with timescale tau."
@@ -117,9 +112,14 @@ if __name__ == '__main__':
     system = Decay()
     ic = 1.0
 
-    t, x = system.march_while(lambda state: state > ic / 9, np.array([ic]), 0.1)
+    history = system.march_while(lambda state: state > ic / 9, 
+                              np.array([ic]), 
+                              0.1,
+                              pandas=True)
 
-    print np.array((t, x, system.exact(np.array(t), ic))).T
+    history.columns = ['DySys']
+    history['exact'] = system.exact(np.array(history.index, dtype=float), ic)
+    print history
 
     print 'Equilibrium: ', system.equilibrium()
     print 'Spectrum: {0} (exact: {1})'.format(
