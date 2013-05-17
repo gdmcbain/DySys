@@ -88,12 +88,20 @@ class LinearDySys(DySys):
             D,
             lambda t: U.T * (
                 self.f(t) -
-                (0 if xknown is None else self.D * K * xknown) -
-                (0 if vknown is None else self.M * K * vknown)))
-        sys.U, sys.K, sys.xknown = U, K, xknown
+                (0 if xknown is None else self.D * K * np.array(xknown)) -
+                (0 if vknown is None else self.M * K * np.array(vknown))))
+        sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
         return sys
 
     def reconstitute(self, x):
-        "don't try this except on systems returned by constrain"
-        return (self.U * x +
-                (0 if self.xknown is None else self.K * self.xknown))
+        '''reinsert the known degrees of freedom stripped out by constrain
+
+        This is an identity mapping if the system is not constrained
+        (determined by assuming that the system will only have the
+        attribute U if its constrain method has been called).
+
+        '''
+
+        return ((self.U * x +
+                 (0 if self.xknown is None else self.K * self.xknown))
+                if hasattr(self, 'U') else x)
