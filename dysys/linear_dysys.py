@@ -87,11 +87,20 @@ class LinearDySys(DySys):
             M, 
             D,
             lambda t: U.T * (
-                self.f(t) -
+                (0 if self.f is None else self.f(t)) -
                 (0 if xknown is None else self.D * K * np.array(xknown)) -
                 (0 if vknown is None else self.M * K * np.array(vknown))))
         sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
         return sys
+
+    # TODO gmcbain 2013-05-17: It would be nice for LinearDySys to
+    # override the march method from DySys so that it wasn't necessary
+    # to pass sys.reconstitute, but I haven't figured out how to
+    # override a generator function, still invoking the inherited one
+    # with super, despite having read
+    # http://stackoverflow.com/questions/8076312 'Subclassing and
+    # overriding a generator function in python' (which is for Python
+    # 3 and doesn't seem to work anyway).
 
     def reconstitute(self, x):
         '''reinsert the known degrees of freedom stripped out by constrain
