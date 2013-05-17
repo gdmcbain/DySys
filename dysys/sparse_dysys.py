@@ -32,7 +32,7 @@ class SparseDySys(LinearDySys):
     def equilibrium(self):
         '''return the eventual steady-state solution'''
         return spsolve(self.D, 
-                       np.zeros(self.D.shape[0]) 
+                       np.zeros(len(self)) 
                        if self.f is None else self.f(np.inf))
 
     def eig(self, *args, **kwargs):
