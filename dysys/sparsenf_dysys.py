@@ -130,5 +130,43 @@ class SparseNFDySys(LinearDySys):
                     break
         return x
 
-    def constrain(self, known, xknown=None, vknown=None):
-        pass
+    def constrain(self, *args, **kwargs):
+        '''extends the method from the super-class
+
+        Say we have the residual
+
+        r(x) = (M/h+D)x - f(t,x) - (M/h) x0
+
+        and jacobian
+
+        J(x) = (M/h+D) - (df/dx)(t,x)
+
+        and then constrain x = U u + K k so that
+
+        r' = {U.T (M/h+D) U} u - U.T f(t, Uu+Kk) - U.T (M/h) (U u0 + K k)
+
+        (though we expect U.T K = 0, so the last term should drop out)
+
+        r' = {U.T (M/h+D) U} u - U.T f(t, Uu+Kk) - {U.T (M/h) U} u0
+
+           = (M'/h+D') u - df'/dx - (M'/h) u0
+
+        J' = U.T (M/h+D) U - U.T (df/dx) U
+
+           = (M'/h+D') - df'/du
+
+        where M' = U.T * M * U, D' = U.T * D * U, and 
+
+        df'/du = U.T * (df/dx) * U
+        
+        The addition is that if f is changed to U.T * (f - M * K *
+        vknown - D * K * xknown) then its derivative f1 needs to be
+        changed to U.T * f1 * U.
+
+        '''
+
+        sys = super(SparseNFDySys, self).constrain(*args, **kwargs)
+        sys.f1 = (
+            None if self.f1 is None else
+            lambda t, x: sys.U.T * self.f1(t, self.reconstitute(x)) * sys.U)
+        return sys

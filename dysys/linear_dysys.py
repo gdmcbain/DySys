@@ -86,8 +86,8 @@ class LinearDySys(DySys):
         sys = self.__class__(
             M, 
             D,
-            lambda t: U.T * (
-                (0 if self.f is None else self.f(t)) -
+            lambda *args: U.T * (
+                (0 if self.f is None else self.f(*args)) -
                 (0 if xknown is None else self.D * K * np.array(xknown)) -
                 (0 if vknown is None else self.M * K * np.array(vknown))))
         sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
