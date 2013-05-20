@@ -11,9 +11,9 @@ import numpy as np
 from scipy.optimize import fsolve, newton_krylov
 from scipy.sparse.linalg import spsolve
 
-from dysys import DySys
+from linear_dysys import LinearDySys
 
-class SparseNFDySys(DySys):
+class SparseNFDySys(LinearDySys):
 
     '''a DySys with state and time-dependent forcing force and
 
@@ -37,15 +37,14 @@ class SparseNFDySys(DySys):
     def __init__(self, M, D, f, f1=None):
         '''    
 
-        If the Jacobian derivative of f with respect to x is provided,
-        it will be used by self.jacobian to compute the jacobian of
-        the evolution matrix and a linear operator carrying out its
-        inverse passed as the preconditioner to newton_krylov for the
-        time-stepping.
+        :param f1: the Jacobian derivative of f with respect to x; if
+        provided, it will be used to compute the jacobian in the step
+        and equilibrium methods
 
         '''
 
-        self.M, self.D, self.f, self.f1 = M, D, f, f1
+        self.f1 = f1
+        super(SparseNFDySys, self).__init__(M, D, f)
 
     def step(self, t, xold, h, tol=1e-3):
 
@@ -131,3 +130,5 @@ class SparseNFDySys(DySys):
                     break
         return x
 
+    def constrain(self, known, xknown=None, vknown=None):
+        pass
