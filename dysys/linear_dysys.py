@@ -37,33 +37,6 @@ class LinearDySys(DySys):
     def __len__(self):
         return self.D.shape[0]
 
-    def node_maps(self, known):
-        '''return the matrices mapping the unknown and knowns
-
-        to the global nodes.
-
-        This concerns the imposition of nodal degree-of-freedom
-        constraints as inspired by the comments of Roy Stogner in the
-        Libmesh-users list thread "interaction between subdomain_id
-        and dof constraints?"  (2012-02-25).  The idea is to represent
-        the column vector of all unknowns x as U * xu + K * xk, where
-        xu are unknown and xk are known whose lengths together add to
-        that of x and U and K are rectangular matrices, typically
-        columns of the identity.
-
-        '''
-
-        # KLUDGE: gmcbain 2013-01-29: I don't know how to deal with
-        # arrays with zero rows or columns in scipy.sparse, so I need
-        # to treat it as a special case.  Yuck.  GNU Octave does the
-        # obvious right thing.  I think the problem applies to NumPy
-        # too.
-        
-        return ([identity(len(self))[:,c] for c in
-                 (np.setdiff1d(np.arange(len(self)), known), known)]
-                if len(known) > 0 else
-                [identity(self.nodes), None])
-
     def constrain(self, known, xknown=None, vknown=None):
         '''return a new DySys with constrained degrees of freedom
 
@@ -81,7 +54,34 @@ class LinearDySys(DySys):
         
         '''
 
-        U, K = self.node_maps(known)
+        def node_maps(known):
+            '''return the matrices mapping the unknown and knowns
+
+            to the global nodes.
+
+            This concerns the imposition of nodal degree-of-freedom
+            constraints as inspired by the comments of Roy Stogner in the
+            Libmesh-users list thread "interaction between subdomain_id
+            and dof constraints?"  (2012-02-25).  The idea is to represent
+            the column vector of all unknowns x as U * xu + K * xk, where
+            xu are unknown and xk are known whose lengths together add to
+            that of x and U and K are rectangular matrices, typically
+            columns of the identity.
+
+            '''
+
+            # KLUDGE: gmcbain 2013-01-29: I don't know how to deal with
+            # arrays with zero rows or columns in scipy.sparse, so I need
+            # to treat it as a special case.  Yuck.  GNU Octave does the
+            # obvious right thing.  I think the problem applies to NumPy
+            # too.
+
+            return ([identity(len(self))[:,c] for c in
+                     (np.setdiff1d(np.arange(len(self)), known), known)]
+                    if len(known) > 0 else
+                    [identity(self.nodes), None])
+
+        U, K = node_maps(known)
         (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
         sys = self.__class__(
             M, 
