@@ -26,8 +26,10 @@ class SparseDySys(LinearDySys):
 
     def step(self, t, x, h):
         '''estimate the next state using backward Euler'''
-        return spsolve(self.M / h + self.D, 
-                       (0 if self.f is None else self.f(t)) + self.M / h * x) 
+        return (spsolve(self.M / h + self.D,
+                        (0 if self.f is None else 
+                         self.f(t)) + self.M / h * x[0]),
+                x[1])
 
     def equilibrium(self):
         '''return the eventual steady-state solution'''
@@ -94,9 +96,8 @@ class SparseDySys(LinearDySys):
                 del kwargs[key]
             return self.eig(*args, **kwargs)
 
-
-if __name__ == '__main__':
-
+def main():
+    
     class Decay(SparseDySys):
     
         "tau x' + x = 0, which decays exponentially with timescale tau."
@@ -113,10 +114,11 @@ if __name__ == '__main__':
     ic = 1.0
 
     history = system.march_while(lambda state: state > ic / 9, 
-                              np.array([ic]), 
-                              0.1,
-                              pandas=True)
+                                 np.array([ic]), 
+                                 0.1,
+                                 pandas=True)
 
+    del history[1]              # no discrete variables
     history.columns = ['DySys']
     history['exact'] = system.exact(np.array(history.index, dtype=float), ic)
     print history
@@ -125,3 +127,6 @@ if __name__ == '__main__':
     print 'Spectrum: {0} (exact: {1})'.format(
         np.real_if_close(system.eig(right=False)), 
         -1/system.tau)
+
+if __name__ == '__main__':
+    main()
