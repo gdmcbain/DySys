@@ -23,9 +23,9 @@ def stepper(stepping_function):
 
     '''
 
-    def wrapper(*args):
+    def wrapper(*args, **kwargs):
         try:
-            return stepping_function(*args)
+            return stepping_function(*args, **kwargs)
         except ZeroDivisionError: # assume step is zero
             return args[2]
     return wrapper
