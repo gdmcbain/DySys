@@ -101,7 +101,8 @@ class DySys(object):
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
 
-        :param x0: initial condition (typically an np.array)
+        :param x0: initial condition, a numpy.array or a pair of an
+        numpy.array and a dict of discrete variables
 
         :param h: time-step (float)
 
@@ -126,7 +127,7 @@ class DySys(object):
 
         '''
 
-        t, x = 0.0, x0
+        t, x = 0.0, (x0 if type(x0) is tuple else (x0,))
 
         # TRICKY gmcbain 2013-05-09: Append an event at infinite time
         # so that the events iterable is never exhausted.  The
@@ -164,9 +165,13 @@ class DySys(object):
         '''
 
         df = kwargs.pop('pandas', False)
-        filtre = lambda h: (pd.DataFrame(dict(h)).T if df else
-                            zip(*list(h)))
-        return filtre(it.takewhile(condition, self.march(*args, **kwargs)))
+        l = list(it.takewhile(condition, self.march(*args, **kwargs)))
+        if df:
+            df = pd.DataFrame.from_items((t, s[0]) for (t, s) in l).T
+            df.join(pd.DataFrame.from_items((t, s[1:]) for (t, s) in l).T)
+            return df
+        else:
+            return zip(*l)
 
     def march_till(self, endtime, *args, **kwargs):
         '''march until the time passes endtime
@@ -182,7 +187,7 @@ class DySys(object):
         '''
 
         return self.march_truncated(lambda event: event[0] < endtime,
-                                     *args, **kwargs)
+                                    *args, **kwargs)
 
     def march_while(self, predicate, *args, **kwargs):
         '''march until the state fails the predicate
