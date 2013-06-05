@@ -111,6 +111,6 @@ class LinearDySys(DySys):
 
         '''
 
-        return ((self.U * x +
+        return ((self.U * x[0] +
                  (0 if self.xknown is None else self.K * self.xknown))
-                if hasattr(self, 'U') else x)
+                if hasattr(self, 'U') else x[0],) + x[1:]
