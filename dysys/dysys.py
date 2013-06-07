@@ -154,7 +154,7 @@ class DySys(object):
 
         :param condition: a predicate on pairs of time and state
         
-        :param Series: define this keyword as not False to get the
+        :param pandas: define this keyword as not False to get the
         result as a pandas.Series
 
         :rtype: pair of sequence of times and corresponding sequence
