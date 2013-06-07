@@ -154,24 +154,17 @@ class DySys(object):
 
         :param condition: a predicate on pairs of time and state
         
-        :param pandas: define this keyword as not False to get the
-        result as a pandas.Series
+        :rtype: iterable of pairs of times and states
 
-        :rtype: pair of sequence of times and corresponding sequence
-        of states, unless Series is defined unfalse
+        For immediate inspection, the output is conveniently passed to
+        dict and then perhaps pandas.DataFrame, but more usually would
+        be mapped between those two steps.
 
         See also: march_till, march_while
 
         '''
 
-        df = kwargs.pop('pandas', False)
-        l = list(it.takewhile(condition, self.march(*args, **kwargs)))
-        if df:
-            df = pd.DataFrame.from_items((t, s[0]) for (t, s) in l).T
-            df.join(pd.DataFrame.from_items((t, s[1:]) for (t, s) in l).T)
-            return df
-        else:
-            return zip(*l)
+        return it.takewhile(condition, self.march(*args, **kwargs))
 
     def march_till(self, endtime, *args, **kwargs):
         '''march until the time passes endtime
