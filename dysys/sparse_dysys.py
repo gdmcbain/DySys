@@ -9,6 +9,7 @@
 from warnings import warn
 
 import numpy as np
+
 from scipy.linalg import eig
 from scipy.sparse import eye
 from scipy.sparse.linalg import (spsolve, eigs)
@@ -96,7 +97,10 @@ class SparseDySys(LinearDySys):
             return self.eig(*args, **kwargs)
 
 def main():
-    # see msmdir.003744 for an archived run
+    # see msmdir.003774 for an archived run
+
+    import pandas as pd
+
     class Decay(SparseDySys):
     
         "tau x' + x = 0, which decays exponentially with timescale tau."
@@ -112,13 +116,13 @@ def main():
     system = Decay()
     ic = 1.0
 
-    history = system.march_while(lambda state: state[0] > ic / 9, 
-                                 np.array([ic]), 
-                                 0.1,
-                                 pandas=True)
+    history = pd.Series(
+        dict((t, s[0][0]) for (t, s) in
+             system.march_while(lambda state: state[0] > ic / 9, [ic], 0.1)))
 
-    history.columns = ['DySys']
-    history['exact'] = system.exact(np.array(history.index, dtype=float), ic)
+    history = pd.DataFrame({
+            'DySys': history,
+            'exact': system.exact(np.array(history.index, dtype=float), ic)})
     print history
 
     print 'Equilibrium: ', system.equilibrium()
