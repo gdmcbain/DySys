@@ -93,14 +93,11 @@ class LinearDySys(DySys):
         sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
         return sys
 
-    # TODO gmcbain 2013-05-17: It would be nice for LinearDySys to
+    # TODO gmcbain 2013-05-17: It might be nice for LinearDySys to
     # override the march method from DySys so that it wasn't necessary
-    # to pass sys.reconstitute, but I haven't figured out how to
-    # override a generator function, still invoking the inherited one
-    # with super, despite having read
+    # to pass sys.reconstitute; see
     # http://stackoverflow.com/questions/8076312 'Subclassing and
-    # overriding a generator function in python' (which is for Python
-    # 3 and doesn't seem to work anyway).
+    # overriding a generator function in python'.
 
     def reconstitute(self, x):
         '''reinsert the known degrees of freedom stripped out by constrain
