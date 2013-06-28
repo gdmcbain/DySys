@@ -27,7 +27,7 @@ class SparseDySys(LinearDySys):
 
     def step(self, t, x, h):
         '''estimate the next state using backward Euler'''
-        # TRICKY gmcbain 2013-06-28: Some very nasty workarounds were
+        # TRICKY gmcbain 2013-06-28: A very nasty workaround is
         # required here to accommodate changes to
         # scipy.sparse.linalg.spsolve between 0.10.1 and 0.12.0, for
         # handling trivial 1x1 systems which fall foul of being
