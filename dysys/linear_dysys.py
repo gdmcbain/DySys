@@ -76,7 +76,14 @@ class LinearDySys(DySys):
             # obvious right thing.  I think the problem applies to NumPy
             # too.
 
-            return ([identity(len(self))[:,c] for c in
+            # TRICKY gmcbain 2013-06-28: Between versions 0.10.1 and
+            # 0.12.0, SciPy switched from having scipy.sparse.identity
+            # return csr_matrix to dia_matrix.  This broke the code
+            # below since the latter does not support indexing!
+            # (i.e. raises TypeError: dia_matrix object has no
+            # attribute __getitem__)
+
+            return ([identity(len(self), format='csr')[:,c] for c in
                      [np.setdiff1d(np.arange(len(self)), known), known]]
                     if len(known) > 0 else
                     [identity(self.nodes), None])
