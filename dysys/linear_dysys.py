@@ -77,7 +77,7 @@ class LinearDySys(DySys):
             # too.
 
             return ([identity(len(self))[:,c] for c in
-                     (np.setdiff1d(np.arange(len(self)), known), known)]
+                     [np.setdiff1d(np.arange(len(self)), known), known]]
                     if len(known) > 0 else
                     [identity(self.nodes), None])
 
