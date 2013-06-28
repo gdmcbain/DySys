@@ -11,7 +11,7 @@ from warnings import warn
 import numpy as np
 
 from scipy.linalg import eig
-from scipy.sparse import eye
+from scipy.sparse import identity
 from scipy.sparse.linalg import (spsolve, eigs)
 
 from linear_dysys import LinearDySys
@@ -27,15 +27,28 @@ class SparseDySys(LinearDySys):
 
     def step(self, t, x, h):
         '''estimate the next state using backward Euler'''
-        return (spsolve(self.M / h + self.D,
-                        self.M / h * x[0] +
-                        (0 if self.f is None else self.f(t))),) + x[1:]
+        # TRICKY gmcbain 2013-06-28: Some very nasty workarounds were
+        # required here to accommodate changes to
+        # scipy.sparse.linalg.spsolve between 0.10.1 and 0.12.0, for
+        # handling trivial 1x1 systems which fall foul of being
+        # squeezed, since then the have a shape which is an empty
+        # tuple and that can't be indexed!
+        b = (self.M / h * x[0] +
+             (0 if self.f is None else self.f(t)))
+        try:
+            y = spsolve(self.M / h + self.D, b)
+        except IndexError:              # singleton system?
+            y = np.array([b[0] / (self.M / h + self.D)[0,0]])
+        return (y,) + x[1:]
 
     def equilibrium(self):
         '''return the eventual steady-state solution'''
-        return (spsolve(self.D, 
-                        np.zeros(len(self)) 
-                        if self.f is None else self.f(np.inf)),)
+        b = np.zeros(len(self)) if self.f is None else self.f(np.inf)
+        try:
+            y = spsolve(self.D, b)
+        except IndexError:      # singleton system?
+            y = np.array([b[0] / (self.D)[0,0]])
+        return (y,)
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
@@ -107,7 +120,7 @@ def main():
 
         def __init__(self, tau=0.7):
             self.tau = tau
-            D = eye(1, 1)
+            D = identity(1, format='csr')
             super(Decay, self).__init__(tau * D, D)
 
         def exact(self, t, ic):
@@ -118,7 +131,9 @@ def main():
 
     history = pd.Series(
         dict((t, s[0][0]) for (t, s) in
-             system.march_while(lambda state: state[0] > ic / 9, [ic], 0.1)))
+             system.march_while(lambda state: state[0][0] > ic / 9,
+                                np.array([ic]),
+                                0.1)))
 
     history = pd.DataFrame({
             'DySys': history,
