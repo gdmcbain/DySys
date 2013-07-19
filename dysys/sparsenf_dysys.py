@@ -67,16 +67,8 @@ class SparseNFDySys(LinearDySys):
         def jacobian(x):
             return (self.M / h + self.D) - self.f1(t, x)
 
-        if self.f1 is None:
-            x = fsolve(lambda x: residual(x), xold)
-        else:
-            x = copy(xold)
-            while True:         # Newton iteration
-                dx = spsolve(jacobian(x), residual(x))
-                x = (x[0] - dx,) + x[1:]
-                if np.linalg.norm(dx) < tol:
-                    break
-        return x
+        return (fsolve(residual, xold) if self.f1 is None
+                else newton(residual, jacobian, xold, tol))
 
     def equilibrium(self, x0, tol=1e-3):
         '''solve for a steady-state equilibrium
@@ -124,15 +116,8 @@ class SparseNFDySys(LinearDySys):
 
         x = x0 if type(x0) is tuple else (x0,)
 
-        if self.f1 is None:
-            x = fsolve(residual, x)
-        else:
-            while True:
-                dx = spsolve(jacobian(x), residual(x))
-                x = (x[0] - dx,) + x[1:]
-                if np.linalg.norm(dx) < tol:
-                    break
-        return x
+        return (fsolve(residual, x) if self.f1 is None
+                else newton(residual, jacobian, x, tol))
 
     def constrain(self, *args, **kwargs):
         '''extends the method from the super-class
@@ -174,3 +159,15 @@ class SparseNFDySys(LinearDySys):
             None if self.f1 is None else
             lambda t, x: sys.U.T * self.f1(t, self.reconstitute(x)) * sys.U)
         return sys
+
+def newton(residual, jacobian, x, tol=np.MachAr().eps):
+
+    '''eliminate the residual by Newton-iteration'''
+
+    def iteration(x):
+        while True:
+            dx = spsolve(jacobian(x), residual(x))
+            x = (x[0] - dx,) + x[1:]
+            yield x, dx
+
+    return next(y for y, h in iteration(x) if np.linalg.norm(h) < tol)
