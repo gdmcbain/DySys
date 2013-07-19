@@ -10,7 +10,7 @@ from copy import copy
 
 import numpy as np
 
-from scipy.optimize import fsolve, newton_krylov
+from scipy.optimize import fsolve
 from scipy.sparse.linalg import spsolve
 
 from linear_dysys import LinearDySys
