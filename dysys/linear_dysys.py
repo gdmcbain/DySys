@@ -84,7 +84,9 @@ class LinearDySys(DySys):
             # attribute __getitem__)
 
             return ([identity(len(self), format='csr')[:,c] for c in
-                     [np.setdiff1d(np.arange(len(self)), known), known]]
+                     [np.setdiff1d(np.arange(len(self)),
+                                   np.mod(known, len(self))), 
+                      known]]
                     if len(known) > 0 else
                     [identity(self.nodes), None])
 
