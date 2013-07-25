@@ -83,12 +83,13 @@ class LinearDySys(DySys):
             # (i.e. raises TypeError: dia_matrix object has no
             # attribute __getitem__)
 
-            return ([identity(len(self), format='csr')[:,c] for c in
-                     [np.setdiff1d(np.arange(len(self)),
-                                   np.mod(known, len(self))), 
-                      known]]
-                    if len(known) > 0 else
-                    [identity(self.nodes), None])
+            if len(known) > 0:
+                I = identity(len(self), format='csr')
+                U = I[:,np.setdiff1d(np.arange(len(self)),
+                                     np.mod(known, len(self)))]
+                return U, I[:,known]
+            else:
+                return [identity(self.nodes), None]
 
         U, K = node_maps(known)
         (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
