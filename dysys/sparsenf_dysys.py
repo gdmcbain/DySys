@@ -15,6 +15,7 @@ from scipy.sparse.linalg import spsolve
 
 from linear_dysys import LinearDySys
 
+
 class SparseNFDySys(LinearDySys):
 
     '''a DySys with state and time-dependent forcing force and
@@ -35,9 +36,9 @@ class SparseNFDySys(LinearDySys):
     as returned by self.jacobian.
 
     '''
-    
+
     def __init__(self, M, D, f, f1=None):
-        '''    
+        '''
 
         :param f1: the Jacobian derivative of f with respect to x; if
         provided, it will be used to compute the jacobian in the step
@@ -77,27 +78,27 @@ class SparseNFDySys(LinearDySys):
         the f1 data member (e.g. during initialization), otherwise
         scipy.optimize.fsolve
 
-        The steady-state problem is 
+        The steady-state problem is
 
-            D x = f (inf, x) , 
+            D x = f (inf, x) ,
 
         so the residual is
- 
-            r (x) = D x - f (inf, x) 
 
-        with Jacobian 
+            r (x) = D x - f (inf, x)
 
-            r' (x) = D - f_x (inf, x) .  
+        with Jacobian
 
-        To set up the Newton iteration, for a given x, try to make 
+            r' (x) = D - f_x (inf, x) .
 
-            r (x - dx) = 0 , 
+        To set up the Newton iteration, for a given x, try to make
 
-        expand in a Taylor series to get 
+            r (x - dx) = 0 ,
 
-            r (x - dx) = r (x) - r' (x) dx + O (dx**2) 
+        expand in a Taylor series to get
 
-        and solve that to first order for dx, i.e. 
+            r (x - dx) = r (x) - r' (x) dx + O (dx**2)
+
+        and solve that to first order for dx, i.e.
 
             r' (x) dx = r (x) .
 
@@ -109,7 +110,7 @@ class SparseNFDySys(LinearDySys):
         # forcing which tends asymptotically to a constant value.
 
         def residual(x):
-            return self.D * x[0] - self.f(np.inf, x) # t -> np.inf
+            return self.D * x[0] - self.f(np.inf, x)  # t -> np.inf
 
         def jacobian(x):
             return self.D - self.f1(np.inf, x)
@@ -144,10 +145,10 @@ class SparseNFDySys(LinearDySys):
 
            = (M'/h+D') - df'/du
 
-        where M' = U.T * M * U, D' = U.T * D * U, and 
+        where M' = U.T * M * U, D' = U.T * D * U, and
 
         df'/du = U.T * (df/dx) * U
-        
+
         The addition is that if f is changed to U.T * (f - M * K *
         vknown - D * K * xknown) then its derivative f1 needs to be
         changed to U.T * f1 * U.
@@ -160,6 +161,7 @@ class SparseNFDySys(LinearDySys):
             lambda t, x: sys.U.T * self.f1(t, self.reconstitute(x)) * sys.U)
         return sys
 
+
 def newton(residual, jacobian, x, tol=np.MachAr().eps):
 
     '''eliminate the residual by Newton-iteration'''
@@ -169,5 +171,11 @@ def newton(residual, jacobian, x, tol=np.MachAr().eps):
             dx = spsolve(jacobian(x), residual(x))
             x = (x[0] - dx,) + x[1:]
             yield x, dx
+
+    # TODO gmcbain 2013-07-29: I think that the fixed-point iteration
+    # which follows in the return line might be more easily
+    # generalized if the iteration function were not passed the
+    # initial data inside the generator expression; instead require
+    # the variable 'iteration' to be an iterable
 
     return next(y for y, h in iteration(x) if np.linalg.norm(h) < tol)

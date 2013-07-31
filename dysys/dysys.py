@@ -14,6 +14,7 @@ import itertools as it
 
 import numpy as np
 
+
 def stepper(stepping_function):
     '''decorator to do nothing for steps of zero length
 
@@ -25,9 +26,10 @@ def stepper(stepping_function):
     def wrapper(*args, **kwargs):
         try:
             return stepping_function(*args, **kwargs)
-        except ZeroDivisionError: # assume step is zero
+        except ZeroDivisionError:  # assume step is zero
             return args[2]
     return wrapper
+
 
 class DySys(object):
     '''virtual base class for dynamical systems
@@ -138,7 +140,7 @@ class DySys(object):
         # associated function will never be called; np.asarray is
         # chosen as it is near enough to an identity.
 
-        for event in it.chain([] if events is None else events, 
+        for event in it.chain([] if events is None else events,
                               [(np.inf, np.asarray)]):
             while True:
                 yield t, (x if f is None else f(x))
@@ -157,7 +159,7 @@ class DySys(object):
         '''truncate a march when condition fails
 
         :param condition: a predicate on pairs of time and state
-        
+
         :rtype: iterable of pairs of times and states
 
         For immediate inspection, the output is conveniently passed to

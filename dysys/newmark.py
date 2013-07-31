@@ -10,6 +10,7 @@ from scipy.sparse.linalg import spsolve
 
 from dysys import DySys
 
+
 class Newmark(DySys):
     '''a dynamical system advancing with a Newmark method
 
@@ -27,7 +28,7 @@ class Newmark(DySys):
     # velocity and acceleration, the former being required as the
     # system is of second order while the latter is merely convenient.
 
-    def __init__ (self, M, C, K, f, beta=0.25, gamma=0.5):
+    def __init__(self, M, C, K, f, beta=0.25, gamma=0.5):
         ''':param M: mass scipy.sparse matrix
 
         :param C: damping scipy.sparse matrix
@@ -45,7 +46,7 @@ class Newmark(DySys):
         note 3)
 
         '''
-        
+
         self.M, self.C, self.K = M, C, K
         self.f = f
         self.beta, self.gamma = beta, gamma
@@ -53,7 +54,7 @@ class Newmark(DySys):
     def step(self, t, d, h):
         'evolve from displacement d at time t to t+h'
 
-        d += h * self.v + h*h*(1-2*self.beta)*self.a / 2
+        d += h * self.v + h * h * (1 - 2 * self.beta) * self.a / 2
         self.v += (1 - self.gamma) * h * self.a
         self.a = spsolve(self.A,
                          self.f(t) - self.C * self.v - self.K * d)
@@ -74,7 +75,7 @@ class Newmark(DySys):
         self.a = spsolve(self.M, self.f(0.) - self.C * x[1] - self.K * x[0])
 
         self.A = self.M + self.gamma * h * self.C + self.beta * h * h * self.K
-        
+
         return super(Newmark, self).march(x[0], h, *args, **kwargs)
 
     # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and

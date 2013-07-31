@@ -13,8 +13,9 @@ from scipy.sparse import identity
 
 from dysys import DySys
 
+
 class LinearDySys(DySys):
-    
+
     def __init__(self, M, D, f=None):
         '''a DySys defined by mass and damping operators and
         a time-dependent forcing function, according to (something like)
@@ -51,7 +52,7 @@ class LinearDySys(DySys):
 
         The returned system is attributed the U and K matrices from
         self.node_maps and therefore can use :method reconstitute:.
-        
+
         '''
 
         def node_maps(known):
@@ -85,16 +86,16 @@ class LinearDySys(DySys):
 
             if len(known) > 0:
                 I = identity(len(self), format='csr')
-                U = I[:,np.setdiff1d(np.arange(len(self)),
-                                     np.mod(known, len(self)))]
-                return U, I[:,known]
+                U = I[:, np.setdiff1d(np.arange(len(self)),
+                                      np.mod(known, len(self)))]
+                return U, I[:, known]
             else:
                 return [identity(self.nodes), None]
 
         U, K = node_maps(known)
         (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
         sys = self.__class__(
-            M, 
+            M,
             D,
             lambda *args: U.T * (
                 (0 if self.f is None else self.f(*args)) -

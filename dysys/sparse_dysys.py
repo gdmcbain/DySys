@@ -16,13 +16,14 @@ from scipy.sparse.linalg import (spsolve, eigs)
 
 from linear_dysys import LinearDySys
 
+
 class SparseDySys(LinearDySys):
     '''a LinearDySys using sparse matrices and backward Euler
 
     The matrices might be individually singular, but the pencil should
     be regular (see Yip & Sincovec 1981); i.e. M/h+D should be
     invertible for positive time-step h.
-    
+
     '''
 
     def step(self, t, x, h):
@@ -38,7 +39,7 @@ class SparseDySys(LinearDySys):
         try:
             y = spsolve(self.M / h + self.D, b)
         except IndexError:              # singleton system?
-            y = np.array([b[0] / (self.M / h + self.D)[0,0]])
+            y = np.array([b[0] / (self.M / h + self.D)[0, 0]])
         return (y,) + x[1:]
 
     def equilibrium(self):
@@ -47,7 +48,7 @@ class SparseDySys(LinearDySys):
         try:
             y = spsolve(self.D, b)
         except IndexError:      # singleton system?
-            y = np.array([b[0] / (self.D)[0,0]])
+            y = np.array([b[0] / (self.D)[0, 0]])
         return (y,)
 
     def eig(self, *args, **kwargs):
@@ -82,7 +83,7 @@ class SparseDySys(LinearDySys):
 
         All positional and keyword arguments are passed to eigs, in
         particular k:
-        
+
         :param k: number of modes to return (counting complex
         conjugate pairs together), defaulting to 6 (the current
         default of scipy.sparse.linalg.eigs)
@@ -90,14 +91,14 @@ class SparseDySys(LinearDySys):
         :rtype: pair, being np.array of (generally complex)
         eigenvalues
 
-        
+
         '''
 
         # TODO gmcbain 2013-05-16: Think of a general way to enable
         # actually optionally returning eigenvectors.
 
-        kw = {'M': self.M, 
-              'sigma': 0, 
+        kw = {'M': self.M,
+              'sigma': 0,
               'which': 'LM',
               'return_eigenvectors': False}
         try:
@@ -109,13 +110,14 @@ class SparseDySys(LinearDySys):
                 del kwargs[key]
             return self.eig(*args, **kwargs)
 
+
 def main():
     # see msmdir.003774 for an archived run
 
     import pandas as pd
 
     class Decay(SparseDySys):
-    
+
         "tau x' + x = 0, which decays exponentially with timescale tau."
 
         def __init__(self, tau=0.7):
@@ -142,8 +144,8 @@ def main():
 
     print 'Equilibrium: ', system.equilibrium()
     print 'Spectrum: {0} (exact: {1})'.format(
-        np.real_if_close(system.eig(right=False)), 
-        -1/system.tau)
+        np.real_if_close(system.eig(right=False)),
+        -1 / system.tau)
 
 if __name__ == '__main__':
     main()
