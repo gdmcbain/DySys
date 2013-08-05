@@ -162,20 +162,20 @@ class SparseNFDySys(LinearDySys):
         return sys
 
 
-def newton(residual, jacobian, x, tol=np.MachAr().eps):
+def fixed_point(iteration, tol=np.MachAr().eps):
+    '''return the fixed point x of an iteration yielding pairs (x, h)
 
-    '''eliminate the residual by Newton-iteration'''
+    determined by h falling below tol in norm'''
 
+    return next(y for y, h in iteration if np.linalg.norm(h) < tol)
+
+
+def newton(residual, jacobian, x, *args, **kwargs):
+    'eliminate the residual by Newton-iteration'
     def iteration(x):
         while True:
             dx = spsolve(jacobian(x), residual(x))
             x = (x[0] - dx,) + x[1:]
             yield x, dx
 
-    # TODO gmcbain 2013-07-29: I think that the fixed-point iteration
-    # which follows in the return line might be more easily
-    # generalized if the iteration function were not passed the
-    # initial data inside the generator expression; instead require
-    # the variable 'iteration' to be an iterable
-
-    return next(y for y, h in iteration(x) if np.linalg.norm(h) < tol)
+    return fixed_point(iteration(x), *args, **kwargs)
