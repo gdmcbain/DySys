@@ -7,6 +7,7 @@
 '''
 
 from copy import copy
+import itertools as it
 
 import numpy as np
 
@@ -162,12 +163,13 @@ class SparseNFDySys(LinearDySys):
         return sys
 
 
-def fixed_point(iteration, tol=np.MachAr().eps):
+def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
     '''return the fixed point x of an iteration yielding pairs (x, h)
 
     determined by h falling below tol in norm'''
 
-    return next(y for y, h in iteration if np.linalg.norm(h) < tol)
+    return next(y for y, h in it.islice(iteration, maxiter)
+                if np.linalg.norm(h) < tol)
 
 
 def newton(residual, jacobian, x, *args, **kwargs):
