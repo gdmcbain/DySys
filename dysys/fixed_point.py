@@ -12,13 +12,7 @@ import numpy as np
 from scipy.sparse.linalg import spsolve
 
 
-class FixedPoint(object):
-
-    '''fixed-point iteration'''
-
-    def __init__(self, iteration,
-                 tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
-
+def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
         '''
 
         :param: iteration, iterable generating pairs of values and
@@ -33,24 +27,9 @@ class FixedPoint(object):
         than tol (in the sense of numpy.linalg.norm)
 
         '''
-
-        self.iteration = iteration
-        self.tol = tol
-        self.maxiter = maxiter
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        while True:
-            y, h = next(it.islice(self.iteration, self.maxiter))
-            self.maxiter -= 1
-            if np.linalg.norm(h) < self.tol:
-                break
-        return y
-
-    def __call__(self):
-        return next(self)
+        
+        return next(y for y, h in it.islice(iteration, maxiter)
+                    if np.linalg.norm(h) < tol)
 
 
 def newton(residual, jacobian, x, *args, **kwargs):
@@ -65,9 +44,8 @@ def newton(residual, jacobian, x, *args, **kwargs):
     :param: x, a tuple with first term a one-dimensional numpy.array
     of the length expected by the residual and jacobian functions
 
-    Any other positional or keyword arguments are passed on to the
-    FixedPoint constructor; of particular interest are tol and
-    maxiter.
+    Any other positional or keyword arguments are passed on to
+    fixed_point; of particular interest are tol and maxiter.
 
     '''
 
@@ -80,4 +58,4 @@ def newton(residual, jacobian, x, *args, **kwargs):
             x = (x[0] - dx,) + x[1:]
             yield x, dx
 
-    return FixedPoint(iteration(x), *args, **kwargs)()
+    return fixed_point(iteration(x), *args, **kwargs)
