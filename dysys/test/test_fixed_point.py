@@ -17,10 +17,6 @@ from dysys import newton
 
 class TestNewton(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        pass
-
     def test_sqrt(self, x=(2 * np.arange(1, 3),), decimals=5):
 
         def res(y):
