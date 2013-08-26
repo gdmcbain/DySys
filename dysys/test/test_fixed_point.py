@@ -29,8 +29,6 @@ class TestNewton(TestCase):
         def jac(y):
             return spdiags(2 * y[0], 0, *(len(x[0]),)*2)
             
-        print 'answer: ', newton(res, jac, x)
-
         np.testing.assert_array_almost_equal(
             newton(res, jac, x, tol=10 ** -decimals),
             np.sqrt(x),
