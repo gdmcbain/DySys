@@ -28,7 +28,6 @@ class FixedPoint(object):
     def next(self):
         while True:
             y, h = next(it.islice(self.iteration, self.maxiter))
-            print self.maxiter, y
             self.maxiter -= 1
             if np.linalg.norm(h) < self.tol:
                 break
@@ -45,10 +44,6 @@ def newton(residual, jacobian, x, *args, **kwargs):
             try:
                 dx = spsolve(jacobian(x), residual(x))
             except ValueError:
-                print 'residual: {0} ({1}, {2})'.format(
-                    residual(x), type(residual(x)), residual(x).shape)
-                print 'jacobian: {0} ({1}, {2})'.format(
-                    jacobian(x), type(jacobian(x)), jacobian(x).shape)
                 dx = residual(x) / jacobian(x)
             x = (x[0] - dx,) + x[1:]
             yield x, dx
