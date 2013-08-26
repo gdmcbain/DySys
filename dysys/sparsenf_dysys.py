@@ -12,9 +12,9 @@ import itertools as it
 import numpy as np
 
 from scipy.optimize import fsolve
-from scipy.sparse.linalg import spsolve
 
-from linear_dysys import LinearDySys
+from .linear_dysys import LinearDySys
+from .fixed_point import newton
 
 
 class SparseNFDySys(LinearDySys):
@@ -161,23 +161,3 @@ class SparseNFDySys(LinearDySys):
             None if self.f1 is None else
             lambda t, x: sys.U.T * self.f1(t, self.reconstitute(x)) * sys.U)
         return sys
-
-
-def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
-    '''return the fixed point x of an iteration yielding pairs (x, h)
-
-    determined by h falling below tol in norm'''
-
-    return next(y for y, h in it.islice(iteration, maxiter)
-                if np.linalg.norm(h) < tol)
-
-
-def newton(residual, jacobian, x, *args, **kwargs):
-    'eliminate the residual by Newton-iteration'
-    def iteration(x):
-        while True:
-            dx = spsolve(jacobian(x), residual(x))
-            x = (x[0] - dx,) + x[1:]
-            yield x, dx
-
-    return fixed_point(iteration(x), *args, **kwargs)
