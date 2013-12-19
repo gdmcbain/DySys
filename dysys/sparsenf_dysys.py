@@ -11,7 +11,7 @@ import itertools as it
 
 import numpy as np
 
-from scipy.optimize import fsolve
+from scipy.optimize import root
 
 from .linear_dysys import LinearDySys
 from .fixed_point import newton
@@ -69,7 +69,7 @@ class SparseNFDySys(LinearDySys):
         def jacobian(x):
             return (self.M / h + self.D) - self.f1(t, x)
 
-        return (fsolve(residual, xold) if self.f1 is None
+        return (root(residual, xold).x if self.f1 is None
                 else newton(residual, jacobian, xold, tol))
 
     def equilibrium(self, x0, tol=1e-3):
@@ -118,7 +118,7 @@ class SparseNFDySys(LinearDySys):
 
         x = x0 if type(x0) is tuple else (x0,)
 
-        return (fsolve(residual, x) if self.f1 is None
+        return (root(residual, x).x if self.f1 is None
                 else newton(residual, jacobian, x, tol))
 
     def constrain(self, *args, **kwargs):
