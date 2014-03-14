@@ -6,6 +6,7 @@
 
 '''
 
+from __future__ import absolute_import, division, print_function
 from warnings import warn
 
 import numpy as np
@@ -137,15 +138,15 @@ def main():
                                 np.array([ic]),
                                 0.1)))
 
-    history = pd.DataFrame({
-            'DySys': history,
-            'exact': system.exact(np.array(history.index, dtype=float), ic)})
-    print history
+    history = pd.DataFrame({'DySys': history,
+                            'exact': system.exact(np.array(history.index,
+                                                           dtype=float), ic)})
+    print(history)
 
-    print 'Equilibrium: ', system.equilibrium()
-    print 'Spectrum: {0} (exact: {1})'.format(
-        np.real_if_close(system.eig(right=False)),
-        -1 / system.tau)
+    print('Equilibrium: ', system.equilibrium())
+    print('Spectrum: {0} (exact: {1})'.format(
+          np.real_if_close(system.eig(right=False)),
+          -1 / system.tau))
 
 if __name__ == '__main__':
     main()

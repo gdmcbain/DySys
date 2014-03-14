@@ -6,8 +6,7 @@
 
 '''
 
-from copy import copy
-import itertools as it
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
@@ -157,7 +156,7 @@ class SparseNFDySys(LinearDySys):
         '''
 
         sys = super(SparseNFDySys, self).constrain(*args, **kwargs)
-        sys.f1 = (
-            None if self.f1 is None else
-            lambda t, x: sys.U.T * self.f1(t, self.reconstitute(x)) * sys.U)
+        sys.f1 = (None if self.f1 is None else
+                  (lambda t, x: (sys.U.T *
+                                 self.f1(t, self.reconstitute(x)) * sys.U)))
         return sys

@@ -6,6 +6,8 @@
 
 '''
 
+from __future__ import absolute_import, division, print_function
+
 from scipy.sparse.linalg import spsolve
 
 from dysys import DySys
