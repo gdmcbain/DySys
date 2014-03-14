@@ -9,7 +9,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dysys.sparse_dysys import main
+from dysys.sparse_dysys import demo
 
 if __name__ == '__main__':
-    main()
+    demo()
