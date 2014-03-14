@@ -15,7 +15,7 @@ from scipy.linalg import eig
 from scipy.sparse import identity
 from scipy.sparse.linalg import (spsolve, eigs)
 
-from linear_dysys import LinearDySys
+from .linear_dysys import LinearDySys
 
 
 class SparseDySys(LinearDySys):
