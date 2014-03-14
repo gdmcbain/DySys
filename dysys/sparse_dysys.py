@@ -112,7 +112,7 @@ class SparseDySys(LinearDySys):
             return self.eig(*args, **kwargs)
 
 
-def main():
+def demo():
     # see msmdir.003774 for an archived run
 
     import pandas as pd
@@ -147,6 +147,3 @@ def main():
     print('Spectrum: {0} (exact: {1})'.format(
           np.real_if_close(system.eig(right=False)),
           -1 / system.tau))
-
-if __name__ == '__main__':
-    main()
