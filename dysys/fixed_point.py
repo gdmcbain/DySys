@@ -57,6 +57,8 @@ def newton(residual, jacobian, x, *args, **kwargs):
                 dx = spsolve(jacobian(x), residual(x))
             except ValueError:
                 dx = residual(x) / jacobian(x)
+	    except IndexError:
+		dx = residual(x) / jacobian(x).toarray()    
             x = (x[0] - dx,) + x[1:]
             yield x, dx
 
