@@ -62,8 +62,8 @@ class SparseNFDySys(LinearDySys):
             raise ZeroDivisionError
 
         def residual(x):
-            return ((self.M / h + self.D) * x[0] -
-                    self.f(t, x) - self.M / h * xold[0])
+            return ((self.M / h + self.D).dot(x[0]) -
+                    self.f(t, x) - self.M.dot(xold[0]) / h)
 
         def jacobian(x):
             return (self.M / h + self.D) - self.f1(t, x)
@@ -110,7 +110,7 @@ class SparseNFDySys(LinearDySys):
         # forcing which tends asymptotically to a constant value.
 
         def residual(x):
-            return self.D * x[0] - self.f(np.inf, x)  # t -> np.inf
+            return self.D.dot(x[0]) - self.f(np.inf, x)  # t -> np.inf
 
         def jacobian(x):
             return self.D - self.f1(np.inf, x)
@@ -157,6 +157,6 @@ class SparseNFDySys(LinearDySys):
 
         sys = super(SparseNFDySys, self).constrain(*args, **kwargs)
         sys.f1 = (None if self.f1 is None else
-                  (lambda t, x: (sys.U.T *
-                                 self.f1(t, self.reconstitute(x)) * sys.U)))
+                  (lambda t, x: (
+                    sys.U.T.dot(self.f1(t, self.reconstitute(x)).dot(sys.U)))))
         return sys

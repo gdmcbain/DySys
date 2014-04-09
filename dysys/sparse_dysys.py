@@ -35,7 +35,7 @@ class SparseDySys(LinearDySys):
         # handling trivial 1x1 systems which fall foul of being
         # squeezed, since then the have a shape which is an empty
         # tuple and that can't be indexed!
-        b = (self.M / h * x[0] +
+        b = (self.M.dot(x[0]) / h +
              (0 if self.f is None else self.f(t)))
         try:
             y = spsolve(self.M / h + self.D, b)
