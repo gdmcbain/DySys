@@ -9,6 +9,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+import numpy as np
+
 from .linear_dysys import LinearDySys
 from .fixed_point import newton
 
@@ -50,3 +52,17 @@ class NonlinearSparseDySys(LinearDySys):
             return self.M(t + h, x) / h + self.D(t + h, x)
 
         return newton(residual, jacobian, xold, tol)
+
+    def equilibrium(self, x0, tol=1e-3):
+        '''take an infinitely long backward-Euler step'''
+        
+        def residual(x):
+            # r(x) = F(oo, x, 0)
+            return self.F(np.inf, x, np.zeros(x[0].shape))
+
+        def jacobian(x):
+            # r(x+dx) = F(oo, x + dx, 0) ~ r(x) + D(t, x) dx
+            return self.D(np.inf, x)
+
+        return newton(residual, jacobian, x0, tol)
+
