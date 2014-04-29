@@ -17,9 +17,9 @@ from .fixed_point import newton
 
 
 class NonlinearSparseDySys(LinearDySys):
-    
+
     def __init__(self, F, M, D, n=None):
-        '''an alternative to SparseNFDySys 
+        '''an alternative to SparseNFDySys
 
         The system evolves according to the more general F(t, x, x') = 0.
 
@@ -48,27 +48,27 @@ class NonlinearSparseDySys(LinearDySys):
         if h == 0:
             raise ZeroDivisionError
 
-        def rate_of_change(x):
-            return (x[0] - xold[0]) / h
+        def arg_map(x):
+            return t + h, x, (x[0] - xold[0]) / h
 
         def residual(x):
             '''approximate the rate of change using backward Euler'''
-            return self.F(t + h, x, rate_of_change(x))
+            return self.F(*arg_map(x))
 
         def jacobian(x):
-            # r(x + dx) = F(t, x + dx, (x + dx - xold) / h) 
+            # r(x + dx) = F(t, x + dx, (x + dx - xold) / h)
 
             #          ~= r(x) + (F_x + F_v / h) dx
 
             # Thus J = F_x + F_v / h.
-            v = rate_of_change(x)
-            return self.M(t + h, x, v) / h + self.D(t + h, x, v)
+
+            return self.M(*arg_map(x)) / h + self.D(*arg_map(x))
 
         return newton(residual, jacobian, xold, tol)
 
     def equilibrium(self, x0, tol=1e-3):
         '''take an infinitely long backward-Euler step'''
-        
+
         def residual(x):
             # r(x) = F(oo, x, 0)
             return self.F(np.inf, x, np.zeros(x[0].shape))
@@ -91,7 +91,7 @@ class NonlinearSparseDySys(LinearDySys):
 
         The returned system is attributed the U and K matrices from
         self.node_maps and therefore can use :method reconstitute:.
-        
+
         '''
 
         def node_maps(known):
@@ -132,11 +132,12 @@ class NonlinearSparseDySys(LinearDySys):
                 return [identity(len(self)), None]
 
         U, K = node_maps(known)
-        
+
         def arg_map(t, u, u1):
             '''transform the arguments for the constraining'''
-            return (t, 
-                    (U.dot(u[0]) + (0 if xknown is None else K.dot(xknown)),),
+            return (t,
+                    (U.dot(u[0]) + (0 if xknown is None else K.dot(xknown)),) +
+                    u[1:],
                     U.dot(u1) + (0 if vknown is None else K.dot(vknown)))
 
         sys = self.__class__(
@@ -153,5 +154,5 @@ class NonlinearSparseDySys(LinearDySys):
         '''
 
         return ((self.U.dot(u[0]) +
-                 (0 if self.xknown is None else self.K.dot(self.xknown)))
-                ,) + u[1:]
+                 (0 if self.xknown is None else self.K.dot(self.xknown))),
+                ) + u[1:]
