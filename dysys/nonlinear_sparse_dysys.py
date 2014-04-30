@@ -96,11 +96,16 @@ class NonlinearSparseDySys(LinearDySys):
         
         U, K = node_maps(known, len(self))
 
+        def reconstitute(u):
+            '''put back the known degrees of freedom constrained out'''
+
+            return ((U.dot(u[0]) + (0 if xknown is None else K.dot(xknown))),
+                    ) + u[1:]
+
         def arg_map(t, u, u1):
             '''transform the arguments for the constraining'''
             return (t,
-                    (U.dot(u[0]) + (0 if xknown is None else K.dot(xknown)),) +
-                    u[1:],
+                    reconstitute(u),
                     U.dot(u1) + (0 if vknown is None else K.dot(vknown)))
 
         sys = self.__class__(
@@ -108,14 +113,8 @@ class NonlinearSparseDySys(LinearDySys):
             lambda t, u, u1: U.T.dot(self.M(*arg_map(t, u, u1))).dot(U),
             lambda t, u, u1: U.T.dot(self.D(*arg_map(t, u, u1))).dot(U),
             U.shape[1])
-        sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
+
+        sys.reconstitute = reconstitute
+
         return sys
 
-    def reconstitute(self, u):
-        '''put back the known degrees of freedom constrained out
-
-        '''
-
-        return ((self.U.dot(u[0]) +
-                 (0 if self.xknown is None else self.K.dot(self.xknown))),
-                ) + u[1:]

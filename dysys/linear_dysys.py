@@ -14,6 +14,7 @@ import numpy as np
 
 from dysys import DySys, node_maps
 
+
 class LinearDySys(DySys):
 
     def __init__(self, M, D, f=None):
@@ -56,32 +57,25 @@ class LinearDySys(DySys):
         '''
 
         U, K = node_maps(known, len(self))
-        (M, D) = [None if A is None else U.T * A * U for A in [self.M, self.D]]
+        M, D = [None if A is None else U.T * A * U for A in [self.M, self.D]]
         sys = self.__class__(
             M,
             D,
-            lambda *args: U.T * (
+            lambda *args: U.T.dot(
                 (0 if self.f is None else self.f(*args)) -
-                (0 if xknown is None else self.D * K * np.array(xknown)) -
-                (0 if vknown is None else self.M * K * np.array(vknown))))
-        sys.U, sys.K, sys.xknown, sys.vknown = U, K, xknown, vknown
+                (0 if xknown is None else self.D.dot(K.dot(xknown))) -
+                (0 if vknown is None else self.M.dot(K.dot(vknown)))))
+
+        def reconstitute(u):
+            '''reinsert the known degrees of freedom stripped out by constrain
+
+            This is an identity mapping if the system is not constrained
+            (determined by assuming that the system will only have the
+            attribute U if its constrain method has been called).
+
+            '''
+            return ((U.dot(u[0]) + (0 if xknown is None else K.dot(xknown))),
+                    ) + u[1:]
+
+        sys.reconstitute = reconstitute
         return sys
-
-    # TODO gmcbain 2013-05-17: It might be nice for LinearDySys to
-    # override the march method from DySys so that it wasn't necessary
-    # to pass sys.reconstitute; see
-    # http://stackoverflow.com/questions/8076312 'Subclassing and
-    # overriding a generator function in python'.
-
-    def reconstitute(self, x):
-        '''reinsert the known degrees of freedom stripped out by constrain
-
-        This is an identity mapping if the system is not constrained
-        (determined by assuming that the system will only have the
-        attribute U if its constrain method has been called).
-
-        '''
-
-        return ((self.U * x[0] +
-                 (0 if self.xknown is None else self.K * self.xknown))
-                if hasattr(self, 'U') else x[0],) + x[1:]

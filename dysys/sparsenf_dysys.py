@@ -156,7 +156,17 @@ class SparseNFDySys(LinearDySys):
         '''
 
         sys = super(SparseNFDySys, self).constrain(*args, **kwargs)
+
+        # KLUDGE gmcbain 2014-04-30: Because the U map has been
+        # encapsulated now, it's not accessible here for mapping f1
+        # and so needs to be recalculated.  Yuck.  This should go away
+        # when this class is deprecated in favour of
+        # NonlinearSparseDySys.
+
+        from dysys import node_maps
+
+        U, _ = node_maps(args[0], len(self))
         sys.f1 = (None if self.f1 is None else
                   (lambda t, x: (
-                    sys.U.T.dot(self.f1(t, self.reconstitute(x)).dot(sys.U)))))
+                    U.T.dot(self.f1(t, sys.reconstitute(x)).dot(U)))))
         return sys
