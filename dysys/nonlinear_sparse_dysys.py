@@ -69,13 +69,16 @@ class NonlinearSparseDySys(LinearDySys):
     def equilibrium(self, x0, tol=1e-3):
         '''take an infinitely long backward-Euler step'''
 
+        def arg_map(x):
+            return np.inf, x, np.zeros_like(x[0])
+
         def residual(x):
             # r(x) = F(oo, x, 0)
-            return self.F(np.inf, x, np.zeros(x[0].shape))
+            return self.F(*arg_map(x))
 
         def jacobian(x):
-            # r(x+dx) = F(oo, x + dx, 0) ~ r(x) + D(t, x) dx
-            return self.D(np.inf, x)
+            # r(x+s) = F(oo, x + s, 0) ~ r(x) + D(oo, x, 0) s
+            return self.D(*arg_map(x))
 
         return newton(residual, jacobian, x0, tol)
 
