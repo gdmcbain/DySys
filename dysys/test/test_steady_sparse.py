@@ -27,19 +27,25 @@ class TestLadder(TestCase):
     equal branches, with one corner node (0) vented and the one
     diagonally opposite (7) at a constant suction of -5 kPa.
 
-    .|--(0)-[6]-(4)
-         |       |
-        [0]     [3]
-         |       |
-        (1)-[7]-(7)
-         |       |
-        [1]     [4]
-         |       |
-        (2)-[8]-(7)
-         |       |
-        [2]     [5]
-         |       |
-        (3)-[9]-(7)=<-5 kPa>-|.
+    .|--(0)-[6]->-(4)
+         |         |
+        [0]       [3]
+         |         |
+         v         v
+         |         |
+        (1)-[7]->-(7)
+         |         |
+        [1]       [4]
+         |         |
+         v         v
+         |         |
+        (2)-[8]->-(7)
+         |         |
+        [2]       [5]
+         |         |
+         v         v
+         |         |
+        (3)-[9]->-(7)=<-5 kPa>-|.
 
     In the exact solution, nodes (4) and (1) have pressures -1 and -5
     / 3.
