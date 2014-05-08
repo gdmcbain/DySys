@@ -27,6 +27,17 @@ class TestLumpedLine(TestCase):
     with serial resistance R and inertance L, shunt compliance C and
     duty Q and fixed inlet pressure
 
+              R         L
+    IN o---^^^^^^^---%%%%%%%%--T----T-----o OUT
+             q->               |    |
+                               |    | ^
+                             C =    8 | Q
+                               |    |
+                               _    _
+                               -    -
+                               .    .
+
+
     '''
 
     
