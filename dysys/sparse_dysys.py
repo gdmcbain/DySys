@@ -69,10 +69,9 @@ class SparseDySys(LinearDySys):
 
         # (D + j w M) X - F = 0
 
-        sys = self.__class__(None,
-                             self.D + 1j * omega * self.M,
-                             self.f)
-        return sys.equilibrium()        
+        return [sys.equilibrium() for sys in
+                (self.__class__(None, self.D + 1j * w * self.M, self.f)
+                 for w in omega)]
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system

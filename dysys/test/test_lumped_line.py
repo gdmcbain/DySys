@@ -70,10 +70,10 @@ class TestLumpedLine(TestCase):
         np.testing.assert_array_almost_equal(q, -self.Q)
 
     def test_harmonic(self):
-        f = 14.0
+        f = np.array([14.0])
         omega = 2 * np.pi * f
         sys = self.sys.constrain([0], [0.])
-        soln = sys.reconstitute(sys.harmonic(omega))[0]
+        soln = sys.reconstitute(sys.harmonic(omega)[0])[0]
         p, q = soln[:2], soln[2]
 
         Z = self.R + 1j * omega * self.L
