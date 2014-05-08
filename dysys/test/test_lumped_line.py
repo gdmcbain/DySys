@@ -61,7 +61,6 @@ class TestLumpedLine(TestCase):
         pressure-drop is all across the resistance
 
         '''
-
         sys = self.sys.constrain([0], [self.pin])
         soln = sys.reconstitute(sys.equilibrium())[0]
         p, q = soln[:2], soln[2]
@@ -69,6 +68,21 @@ class TestLumpedLine(TestCase):
             p,
             self.pin + np.array([0, self.Q * self.R]))
         np.testing.assert_array_almost_equal(q, -self.Q)
+
+    def test_harmonic(self):
+        f = 14.0
+        omega = 2 * np.pi * f
+        sys = self.sys.constrain([0], [0.])
+        soln = sys.reconstitute(sys.harmonic(omega))[0]
+        p, q = soln[:2], soln[2]
+
+        Z = self.R + 1j * omega * self.L
+        Y = 1j * omega * self.C + 1 / Z
+
+        np.testing.assert_array_almost_equal(
+            p, np.concatenate(np.broadcast_arrays([0], self.Q / Y)))
+        np.testing.assert_array_almost_equal(
+            q, -self.Q / (Y * Z))
             
 
 if __name__ == '__main__':

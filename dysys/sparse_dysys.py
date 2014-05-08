@@ -37,6 +37,10 @@ class SparseDySys(LinearDySys):
         # tuple and that can't be indexed!
         b = (self.M.dot(x[0]) / h +
              (0 if self.f is None else self.f(t)))
+
+        # TODO gmcbain 2014-05-08: factor out this wrapping of
+        # spsolve, perhaps in fixed_point?
+
         try:
             y = spsolve(self.M / h + self.D, b)
         except IndexError:              # singleton system?
@@ -51,6 +55,24 @@ class SparseDySys(LinearDySys):
         except IndexError:      # singleton system?
             y = np.array([b[0] / (self.D)[0, 0]])
         return (y,)
+
+    def harmonic(self, omega):
+        '''return the complex harmonic solution
+
+        :param: omega, float (typically positive)
+
+        # TODO gmcbain 20140508: let omega be a sequence
+
+        '''
+
+        # M x' + D x - f (t) = 0, with f(t) = F exp (j w t), X = s exp (j w t)
+
+        # (D + j w M) X - F = 0
+
+        sys = self.__class__(None,
+                             self.D + 1j * omega * self.M,
+                             self.f)
+        return sys.equilibrium()        
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
