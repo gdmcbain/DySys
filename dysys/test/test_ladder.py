@@ -21,6 +21,7 @@ from scipy.sparse import coo_matrix, diags
 
 from dysys import SparseDySys
 
+
 class TestLadder(TestCase):
 
     ''' Consider the three-cell ladder network with (8) nodes and [10]
@@ -49,16 +50,14 @@ class TestLadder(TestCase):
 
     In the exact solution, nodes (4) and (1) have pressures -1 and -5
     / 3.
-        
 
     '''
-
 
     @classmethod
     def setUpClass(cls):
         nodes = 8
         branches = 10
-        
+
         G = -coo_matrix((np.ones(branches),
                          ([0, 1, 2, 4, 5, 6, 0, 1, 2, 3],
                           [1, 2, 3, 5, 6, 7, 4, 5, 6, 7])),
@@ -74,5 +73,3 @@ class TestLadder(TestCase):
 
 if __name__ == '__main__':
     main()
-
-        
