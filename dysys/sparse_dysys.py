@@ -36,7 +36,7 @@ class SparseDySys(LinearDySys):
         # squeezed, since then the have a shape which is an empty
         # tuple and that can't be indexed!
         b = (self.M.dot(x) / h +
-             (0 if self.f is None else self.f(t)))
+             (0 if self.f is None else self.f(t, d)))
 
         # TODO gmcbain 2014-05-08: factor out this wrapping of
         # spsolve, perhaps in fixed_point?
@@ -46,9 +46,9 @@ class SparseDySys(LinearDySys):
         except IndexError:              # singleton system?
             return b / (self.M / h + self.D)[0, 0]
 
-    def equilibrium(self):
+    def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
-        b = np.zeros(len(self)) if self.f is None else self.f(np.inf)
+        b = np.zeros(len(self)) if self.f is None else self.f(np.inf, d)
         try:
             return spsolve(self.D, b)
         except IndexError:      # singleton system?
