@@ -8,9 +8,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from scipy.sparse.linalg import spsolve
-
 from dysys import DySys
+
+from .fixed_point import solve
 
 
 class Newmark(DySys):
@@ -53,17 +53,17 @@ class Newmark(DySys):
         self.f = f
         self.beta, self.gamma = beta, gamma
 
-    def step(self, t, d, h):
-        'evolve from displacement d at time t to t+h'
+    def step(self, t, h, x, d):
+        'evolve from displacement x at time t to t+h'
 
-        d += h * self.v + h * h * (1 - 2 * self.beta) * self.a / 2
+        x += h * self.v + h * h * (1 - 2 * self.beta) * self.a / 2
         self.v += (1 - self.gamma) * h * self.a
-        self.a = spsolve(self.A,
-                         self.f(t) - self.C * self.v - self.K * d)
+        self.a = solve(self.A,
+                       self.f(t, x) - self.C.dot(self.v) - self.K.dot(x))
         self.v += self.gamma * h * self.a
-        return d + self.beta * h * h * self.a
+        return x + self.beta * h * h * self.a
 
-    def march(self, x, h, *args, **kwargs):
+    def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
 
         This involves setting the internal variables for velocity and
@@ -73,12 +73,15 @@ class Newmark(DySys):
 
         '''
 
+        d = {} if d is None else d
+
         self.v = x[1]
-        self.a = spsolve(self.M, self.f(0.) - self.C * x[1] - self.K * x[0])
+        self.a = solve(self.M,
+                       self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
 
         self.A = self.M + self.gamma * h * self.C + self.beta * h * h * self.K
 
-        return super(Newmark, self).march(x[0], h, *args, **kwargs)
+        return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
 
     # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
     # eigs (like those of SparseDySys).  One way to formulate this is

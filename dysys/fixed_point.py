@@ -66,4 +66,4 @@ def solve(A, b):
     # except ValueError:
     #             return b / A
     except IndexError:
-        return b / A.toarray()
+        return b / A.toarray()[0, 0]

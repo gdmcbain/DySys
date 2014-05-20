@@ -13,8 +13,9 @@ import numpy as np
 
 from scipy.linalg import eig
 from scipy.sparse import identity
-from scipy.sparse.linalg import (spsolve, eigs)
+from scipy.sparse.linalg import eigs
 
+from .fixed_point import solve
 from .linear_dysys import LinearDySys
 
 
@@ -41,16 +42,18 @@ class SparseDySys(LinearDySys):
         # TODO gmcbain 2014-05-08: factor out this wrapping of
         # spsolve, perhaps in fixed_point?
 
-        try:
-            return spsolve(self.M / h + self.D, b)
-        except IndexError:              # singleton system?
-            return b / (self.M / h + self.D)[0, 0]
+        # try:
+        #     return spsolve(self.M / h + self.D, b)
+        # except IndexError:              # singleton system?
+        #     return b / (self.M / h + self.D)[0, 0]
+        
+        return solve(self.M / h + self.D, b)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
         b = np.zeros(len(self)) if self.f is None else self.f(np.inf, d)
         try:
-            return spsolve(self.D, b)
+            return solve(self.D, b)
         except IndexError:      # singleton system?
             return np.array(b / (self.D)[0, 0])
 
