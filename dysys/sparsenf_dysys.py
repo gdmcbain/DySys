@@ -49,7 +49,7 @@ class SparseNFDySys(LinearDySys):
         self.f1 = f1
         super(SparseNFDySys, self).__init__(M, D, f)
 
-    def step(self, t, xold, h, tol=1e-3):
+    def step(self, t, h, xold, tol=1e-3):
 
         # KLUDGE gmcbain 2013-04-08: An unpythonic LBYL check is used
         # here because a division by zero inside the residual and

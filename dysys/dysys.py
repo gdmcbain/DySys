@@ -30,7 +30,7 @@ def stepper(stepping_function):
         try:
             return stepping_function(*args, **kwargs)
         except ZeroDivisionError:  # assume step is zero
-            return args[2]
+            return args[3]
     return wrapper
 
 
@@ -42,7 +42,7 @@ class DySys(object):
 
     '''
 
-    def step(self, t, y, h):
+    def step(self, t, h, y):
         '''abstract method to be overridden by subclasses
 
         which should return the state at time t+h given the initial
@@ -64,7 +64,7 @@ class DySys(object):
         raise NotImplementedError
 
     @stepper
-    def _step(self, t, y, h, substeps=1):
+    def _step(self, t, h, y, substeps=1):
         'wrap the step method as universally required'
 
         # TODO 2013-04-11 gmcbain: The option of substeps here does
@@ -88,7 +88,7 @@ class DySys(object):
 
         h /= substeps
         for i in xrange(substeps):
-            t, y = t + h, self.step(t, y, h)
+            t, y = t + h, self.step(t, h, y)
         return y
 
     def simple_march(self, x0, h):
@@ -102,9 +102,9 @@ class DySys(object):
         t, x = 0.0, x0
         while True:
             yield t, x
-            t, x = t + h, self.step(t, x, h)
+            t, x = t + h, self.step(t, h, x)
 
-    def march(self, x0, h, events=None, substeps=1, f=None):
+    def march(self, h, x0, events=None, substeps=1, f=None):
         '''like simple_march, but punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
@@ -149,14 +149,14 @@ class DySys(object):
                 yield t, (x if f is None else f(x))
                 if t + h > event[0]:
                     ## step to just before event
-                    t, x = event[0], self._step(t, x, event[0] - t, substeps)
+                    t, x = event[0], self._step(t, event[0] - t, x, substeps)
                     yield t, (x if f is None else f(x))
 
                     ## event
                     x = event[1](t, x)
                     break
                 else:
-                    t, x = t + h, self._step(t, x, h, substeps)
+                    t, x = t + h, self._step(t, h, x, substeps)
 
     def march_truncated(self, condition, *args, **kwargs):
         '''truncate a march when condition fails

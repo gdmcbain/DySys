@@ -27,7 +27,7 @@ class SparseDySys(LinearDySys):
 
     '''
 
-    def step(self, t, x, h):
+    def step(self, t, h, x):
         '''estimate the next state using backward Euler'''
         # TRICKY gmcbain 2013-06-28: A very nasty workaround is
         # required here to accommodate changes to
