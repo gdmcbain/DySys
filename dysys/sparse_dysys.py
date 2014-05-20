@@ -44,7 +44,7 @@ class SparseDySys(LinearDySys):
         try:
             return spsolve(self.M / h + self.D, b)
         except IndexError:              # singleton system?
-            return np.array([b / (self.M / h + self.D)[0, 0]])
+            return b / (self.M / h + self.D)[0, 0]
 
     def equilibrium(self):
         '''return the eventual steady-state solution'''
