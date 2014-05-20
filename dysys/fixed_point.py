@@ -53,13 +53,17 @@ def newton(residual, jacobian, x, *args, **kwargs):
 
     def iteration(x):
         while True:
-            try:
-                dx = spsolve(jacobian(x), residual(x))
-            except ValueError:
-                dx = residual(x) / jacobian(x)
-	    except IndexError:
-		dx = residual(x) / jacobian(x).toarray()
+	    dx = solve(jacobian(x), residual(x))
 	    x = x - dx
             yield x, dx
 
     return fixed_point(iteration(x), *args, **kwargs)
+
+
+def solve(A, b):
+    try:
+        return spsolve(A, b)
+    # except ValueError:
+    #             return b / A
+    except IndexError:
+        return b / A.toarray()
