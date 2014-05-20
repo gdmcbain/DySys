@@ -27,7 +27,7 @@ class SparseDySys(LinearDySys):
 
     '''
 
-    def step(self, t, h, x):
+    def step(self, t, h, x, d):
         '''estimate the next state using backward Euler'''
         # TRICKY gmcbain 2013-06-28: A very nasty workaround is
         # required here to accommodate changes to
@@ -35,26 +35,24 @@ class SparseDySys(LinearDySys):
         # handling trivial 1x1 systems which fall foul of being
         # squeezed, since then the have a shape which is an empty
         # tuple and that can't be indexed!
-        b = (self.M.dot(x[0]) / h +
+        b = (self.M.dot(x) / h +
              (0 if self.f is None else self.f(t)))
 
         # TODO gmcbain 2014-05-08: factor out this wrapping of
         # spsolve, perhaps in fixed_point?
 
         try:
-            y = spsolve(self.M / h + self.D, b)
+            return spsolve(self.M / h + self.D, b)
         except IndexError:              # singleton system?
-            y = np.array([b[0] / (self.M / h + self.D)[0, 0]])
-        return (y,) + x[1:]
+            return np.array([b / (self.M / h + self.D)[0, 0]])
 
     def equilibrium(self):
         '''return the eventual steady-state solution'''
         b = np.zeros(len(self)) if self.f is None else self.f(np.inf)
         try:
-            y = spsolve(self.D, b)
+            return spsolve(self.D, b)
         except IndexError:      # singleton system?
-            y = np.array([b[0] / (self.D)[0, 0]])
-        return (y,)
+            return np.array(b / (self.D)[0, 0])
 
     def harmonic(self, omega):
         '''return the complex harmonic solution

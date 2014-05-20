@@ -42,7 +42,7 @@ class DySys(object):
 
     '''
 
-    def step(self, t, h, y):
+    def step(self, t, h, y, d):
         '''abstract method to be overridden by subclasses
 
         which should return the state at time t+h given the initial
@@ -64,7 +64,7 @@ class DySys(object):
         raise NotImplementedError
 
     @stepper
-    def _step(self, t, h, y, substeps=1):
+    def _step(self, t, h, y, d=None, substeps=1):
         'wrap the step method as universally required'
 
         # TODO 2013-04-11 gmcbain: The option of substeps here does
@@ -88,23 +88,23 @@ class DySys(object):
 
         h /= substeps
         for i in xrange(substeps):
-            t, y = t + h, self.step(t, h, y)
+            t, y = t + h, self.step(t, h, y, d)
         return y
 
-    def simple_march(self, x0, h):
-        '''generate the sequence of pairs of times and states
+    # def simple_march(self, x0, h):
+    #     '''generate the sequence of pairs of times and states
 
-        from the initial condition x0 at time 0.0 with constant
-        time-step h, using the step method
+    #     from the initial condition x0 at time 0.0 with constant
+    #     time-step h, using the step method
 
-        '''
+    #     '''
 
-        t, x = 0.0, x0
-        while True:
-            yield t, x
-            t, x = t + h, self.step(t, h, x)
+    #     t, x = 0.0, x0
+    #     while True:
+    #         yield t, x
+    #         t, x = t + h, self.step(t, h, x)
 
-    def march(self, h, x0, events=None, substeps=1, f=None):
+    def march(self, h, x, d=None, events=None, substeps=1, f=None):
         '''like simple_march, but punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
@@ -136,7 +136,7 @@ class DySys(object):
 
         '''
 
-        t, x = 0.0, (x0 if type(x0) is tuple else (x0,))
+        t, d = 0.0, {} if d is None else d
 
         # TRICKY gmcbain 2013-05-09: Append an event at infinite time
         # so that the events iterable is never exhausted.  The
@@ -146,17 +146,18 @@ class DySys(object):
         for event in it.chain([] if events is None else events,
                               [(np.inf, np.asarray)]):
             while True:
-                yield t, (x if f is None else f(x))
+                yield t, (x if f is None else f(x)), d
                 if t + h > event[0]:
                     ## step to just before event
-                    t, x = event[0], self._step(t, event[0] - t, x, substeps)
-                    yield t, (x if f is None else f(x))
+                    x = self._step(t, event[0] - t, x, d, substeps)
+                    t = event[0]
+                    yield t, (x if f is None else f(x)), d
 
                     ## event
-                    x = event[1](t, x)
+                    x, d = event[1](t, x, d)
                     break
                 else:
-                    t, x = t + h, self._step(t, h, x, substeps)
+                    t, x = t + h, self._step(t, h, x, d, substeps)
 
     def march_truncated(self, condition, *args, **kwargs):
         '''truncate a march when condition fails

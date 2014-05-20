@@ -58,8 +58,8 @@ def newton(residual, jacobian, x, *args, **kwargs):
             except ValueError:
                 dx = residual(x) / jacobian(x)
 	    except IndexError:
-		dx = residual(x) / jacobian(x).toarray()    
-            x = (x[0] - dx,) + x[1:]
+		dx = residual(x) / jacobian(x).toarray()
+	    x = x - dx
             yield x, dx
 
     return fixed_point(iteration(x), *args, **kwargs)

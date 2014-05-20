@@ -74,8 +74,7 @@ class LinearDySys(DySys):
             attribute U if its constrain method has been called).
 
             '''
-            return ((U.dot(u[0]) + (0 if xknown is None else K.dot(xknown))),
-                    ) + u[1:]
+            return U.dot(u) + (0 if xknown is None else K.dot(xknown))
 
         sys.reconstitute = reconstitute
         return sys

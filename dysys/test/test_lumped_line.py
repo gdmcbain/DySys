@@ -62,7 +62,7 @@ class TestLumpedLine(TestCase):
 
         '''
         sys = self.sys.constrain([0], [self.pin])
-        soln = sys.reconstitute(sys.equilibrium())[0]
+        soln = sys.reconstitute(sys.equilibrium())
         p, q = soln[:2], soln[2]
         np.testing.assert_array_almost_equal(
             p,
@@ -73,7 +73,7 @@ class TestLumpedLine(TestCase):
         f = np.array([14.0])
         omega = 2 * np.pi * f
         sys = self.sys.constrain([0], [0.])
-        soln = sys.reconstitute(sys.harmonic(omega)[0])[0]
+        soln = sys.reconstitute(sys.harmonic(omega)[0])
         p, q = soln[:2], soln[2]
 
         Z = self.R + 1j * omega * self.L
@@ -83,6 +83,9 @@ class TestLumpedLine(TestCase):
             p, np.concatenate(np.broadcast_arrays([0], self.Q / Y)))
         np.testing.assert_array_almost_equal(
             q, -self.Q / (Y * Z))
+
+    # def test_march(self):
+    #     pass
             
 
 if __name__ == '__main__':

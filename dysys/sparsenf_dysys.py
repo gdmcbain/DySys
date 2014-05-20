@@ -49,7 +49,7 @@ class SparseNFDySys(LinearDySys):
         self.f1 = f1
         super(SparseNFDySys, self).__init__(M, D, f)
 
-    def step(self, t, h, xold, tol=1e-3):
+    def step(self, t, h, xold, d, tol=1e-3):
 
         # KLUDGE gmcbain 2013-04-08: An unpythonic LBYL check is used
         # here because a division by zero inside the residual and
@@ -62,16 +62,16 @@ class SparseNFDySys(LinearDySys):
             raise ZeroDivisionError
 
         def residual(x):
-            return ((self.M / h + self.D).dot(x[0]) -
-                    self.f(t, x) - self.M.dot(xold[0]) / h)
+            return ((self.M / h + self.D).dot(x) -
+                    self.f(t, x, d) - self.M.dot(xold) / h)
 
         def jacobian(x):
-            return (self.M / h + self.D) - self.f1(t, x)
+            return (self.M / h + self.D) - self.f1(t, x, d)
 
         return (root(residual, xold).x if self.f1 is None
                 else newton(residual, jacobian, xold, tol))
 
-    def equilibrium(self, x0, tol=1e-3):
+    def equilibrium(self, x0, d=None, tol=1e-3):
         '''solve for a steady-state equilibrium
 
         using Newton iteration if the Jacobian has been provided in
@@ -110,15 +110,13 @@ class SparseNFDySys(LinearDySys):
         # forcing which tends asymptotically to a constant value.
 
         def residual(x):
-            return self.D.dot(x[0]) - self.f(np.inf, x)  # t -> np.inf
+            return self.D.dot(x) - self.f(np.inf, x, d)  # t -> np.inf
 
         def jacobian(x):
-            return self.D - self.f1(np.inf, x)
+            return self.D - self.f1(np.inf, x, d)
 
-        x = x0 if type(x0) is tuple else (x0,)
-
-        return (root(residual, x).x if self.f1 is None
-                else newton(residual, jacobian, x, tol))
+        return (root(residual, x0).x if self.f1 is None
+                else newton(residual, jacobian, x0, tol))
 
     def constrain(self, *args, **kwargs):
         '''extends the method from the super-class
@@ -167,6 +165,6 @@ class SparseNFDySys(LinearDySys):
 
         U, _ = node_maps(args[0], len(self))
         sys.f1 = (None if self.f1 is None else
-                  (lambda t, x: (
-                    U.T.dot(self.f1(t, sys.reconstitute(x)).dot(U)))))
+                  (lambda t, x, d: (
+                    U.T.dot(self.f1(t, sys.reconstitute(x), d).dot(U)))))
         return sys
