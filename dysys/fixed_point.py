@@ -15,23 +15,23 @@ from scipy.sparse.linalg import spsolve
 
 
 def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
-        '''
+    '''
 
-        :param: iteration, iterable generating pairs of values and
-        convergence test values
+    :param: iteration, iterable generating pairs of values and
+    convergence test values
 
-        :param: tol, positive float
+    :param: tol, positive float
 
-        :param: maxiter, positive integer
+    :param: maxiter, positive integer
 
-        When called (without arguments), the object returns the first
-        element of the first pair for which the second value is less
-        than tol (in the sense of numpy.linalg.norm)
+    When called (without arguments), the object returns the first
+    element of the first pair for which the second value is less than
+    tol (in the sense of numpy.linalg.norm)
 
-        '''
+    '''
 
-        return next(y for y, h in it.islice(iteration, maxiter)
-                    if np.linalg.norm(h) < tol)
+    return next(y for y, h in it.islice(iteration, maxiter)
+                if np.linalg.norm(h) < tol)
 
 
 def newton(residual, jacobian, x, *args, **kwargs):
@@ -53,8 +53,8 @@ def newton(residual, jacobian, x, *args, **kwargs):
 
     def iteration(x):
         while True:
-	    dx = solve(jacobian(x), residual(x))
-	    x = x - dx
+            dx = solve(jacobian(x), residual(x))
+            x = x - dx
             yield x, dx
 
     return fixed_point(iteration(x), *args, **kwargs)
