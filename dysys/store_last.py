@@ -18,9 +18,11 @@ class StoreLast(object):
     def __init__(self, source):
         self.source = source
 
-    def next(self):
-        self.last = self.source.next()
+    def __next__(self):
+        self.last = next(self.source)
         return self.last
+
+    next = __next__             # backward-compatibility with python2
 
     def __iter__(self):
         return self

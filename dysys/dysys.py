@@ -87,7 +87,7 @@ class DySys(object):
         # Springer
 
         h /= substeps
-        for i in xrange(substeps):
+        for i in range(substeps):
             t, y = t + h, self.step(t, h, y, d)
         return y
 
