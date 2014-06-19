@@ -203,7 +203,7 @@ class DySys(object):
 
         '''
 
-        return self.march_truncated(lambda event: predicate(event[1]),
+        return self.march_truncated(lambda event: predicate(*event[1:]),
                                     *args, **kwargs)
 
 
