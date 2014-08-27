@@ -129,8 +129,8 @@ class DySys(object):
         concisely record the pertinent features of the dynamics."
         (PyDSTool Project overview)
 
-        :rtype: yield indefinitely pairs of time and state at end of
-        time-steps
+        :rtype: yield indefinitely triples of time, continuous state,
+        and discrete state at end of time-steps
 
         See also: march_till, march_while
 
@@ -164,7 +164,7 @@ class DySys(object):
 
         :param condition: a predicate on pairs of time and state
 
-        :rtype: iterable of pairs of times and states
+        :rtype: like march but truncated
 
         For immediate inspection, the output is conveniently passed to
         dict and then perhaps pandas.DataFrame, but more usually would
@@ -181,8 +181,7 @@ class DySys(object):
 
         :param endtime: float
 
-        :rtype: iterable of pairs of times and corresponding states,
-        like march_truncated
+        :rtype: like march_truncated
 
         See also: march, march_while, march_truncated
 
@@ -194,16 +193,17 @@ class DySys(object):
     def march_while(self, predicate, *args, **kwargs):
         '''march until the state fails the predicate
 
-        :param predicate: boolean function of state
+        :param predicate: boolean function of continuous state and
+        discrete state
 
-        :rtype: iterable of pairs of times and corresponding states,
-        like march_truncated
+        :rtype: like march_truncated
 
         See also: march, march_till, march_truncated
 
         '''
 
-        return self.march_truncated(lambda event: predicate(*event[1:]),
+        return self.march_truncated(lambda event: predicate(event[1],
+                                                            **event[2]),
                                     *args, **kwargs)
 
 
