@@ -117,21 +117,15 @@ class SparseDySys(LinearDySys):
 
         '''
 
-        # TODO gmcbain 2013-05-16: Think of a general way to enable
-        # actually optionally returning eigenvectors.
+        if 'return_eigenvectors' not in kwargs:
+            kwargs['return_eigenvectors'] = False
+        kwargs['M'] = self.M
 
-        kw = {'M': self.M,
-              'sigma': 0,
-              'which': 'LM',
-              'return_eigenvectors': False}
         try:
-            kwargs.update(kw)
             return eigs(-self.D.tocsc(), *args, **kwargs)
         except ValueError as too_small:
             warn('system too small, converting to dense', UserWarning)
-            for key in kw.keys():
-                del kwargs[key]
-            return self.eig(*args, **kwargs)
+            return self.eig()
 
 
 def demo():
