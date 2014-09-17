@@ -241,4 +241,4 @@ def node_maps(known, size):
                               np.mod(known, size))]
         return U, I[:, known]
     else:
-        return [I, None]
+        return [I, np.zeros((size, 0))]
