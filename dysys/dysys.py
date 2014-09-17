@@ -206,7 +206,6 @@ class DySys(object):
             lambda event: predicate(event[1], **event[2]), *args, **kwargs)
 
 
-
 def node_maps(known, size):
     '''return the matrices mapping the unknown and knowns
 
