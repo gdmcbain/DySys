@@ -148,12 +148,12 @@ class DySys(object):
             while True:
                 yield t, (x if f is None else f(x)), d
                 if t + h > event[0]:
-                    ## step to just before event
+                    # step to just before event
                     x = self._step(t, event[0] - t, x, d, substeps)
                     t = event[0]
                     yield t, (x if f is None else f(x)), d
 
-                    ## event
+                    # event
                     x, d = event[1](t, x, d)
                     break
                 else:
