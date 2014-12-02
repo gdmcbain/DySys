@@ -125,7 +125,8 @@ class SparseDySys(LinearDySys):
             return eigs(-self.D.tocsc(), *args, **kwargs)
         except ValueError as too_small:
             warn('system too small, converting to dense', UserWarning)
-            del kwargs['k']
+            if 'k' in kwargs:
+                del kwargs['k']
             del kwargs['M']
             kwargs['right'] = kwargs.pop('return_eigenvectors')
             return self.eig(*args, **kwargs)
