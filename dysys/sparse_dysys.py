@@ -125,7 +125,10 @@ class SparseDySys(LinearDySys):
             return eigs(-self.D.tocsc(), *args, **kwargs)
         except ValueError as too_small:
             warn('system too small, converting to dense', UserWarning)
-            return self.eig()
+            del kwargs['k']
+            del kwargs['M']
+            kwargs['right'] = kwargs.pop('return_eigenvectors')
+            return self.eig(*args, **kwargs)
 
 
 def demo():
@@ -160,6 +163,6 @@ def demo():
     print(history)
 
     print('Equilibrium: ', system.equilibrium())
-    print('Spectrum: {0} (exact: {1})'.format(
+    Print('Spectrum: {0} (exact: {1})'.format(
           np.real_if_close(system.eig(right=False)),
           -1 / system.tau))
