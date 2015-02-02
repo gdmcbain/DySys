@@ -58,9 +58,8 @@ class NonlinearSparseDySys(LinearDySys):
         def jacobian(x):
             # r(x + dx) = F(t, x + dx, (x + dx - xold) / h)
 
-            #          ~= r(x) + (F_x + F_v / h) dx
+            #          ~= r(x) + (M / h + D) dx
 
-            # Thus J = F_x + F_v / h.
 
             return self.M(*arg_map(x)) / h + self.D(*arg_map(x))
 
