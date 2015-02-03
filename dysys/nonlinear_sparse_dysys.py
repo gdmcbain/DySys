@@ -49,17 +49,17 @@ class NonlinearSparseDySys(LinearDySys):
             raise ZeroDivisionError
 
         def arg_map(x):
-            return t + h, x, (x[0] - xold[0]) / h
+            return t + h, x, (x - xold) / h
 
         def residual(x):
             '''approximate the rate of change using backward Euler'''
+            # r(x) = F(t, x, (x - xold) / h)
             return self.F(*arg_map(x))
 
         def jacobian(x):
             # r(x + dx) = F(t, x + dx, (x + dx - xold) / h)
 
-            #          ~= r(x) + (M / h + D) dx
-
+            #          ~= r(x) + (M / h + D) dx == r + J dx
 
             return self.M(*arg_map(x)) / h + self.D(*arg_map(x))
 
@@ -95,7 +95,7 @@ class NonlinearSparseDySys(LinearDySys):
         self.node_maps and therefore can use :method reconstitute:.
 
         '''
-        
+
         U, K = node_maps(known, len(self))
 
         def reconstitute(u, k=xknown):
@@ -115,7 +115,7 @@ class NonlinearSparseDySys(LinearDySys):
             :param d: dict, discrete dynamical variables
 
             '''
-            
+
             return (t, reconstitute(u), reconstitute(u, vknown), d)
 
         sys = self.__class__(
@@ -127,4 +127,3 @@ class NonlinearSparseDySys(LinearDySys):
         sys.reconstitute = reconstitute
 
         return sys
-

@@ -46,7 +46,7 @@ class SparseDySys(LinearDySys):
         #     return spsolve(self.M / h + self.D, b)
         # except IndexError:              # singleton system?
         #     return b / (self.M / h + self.D)[0, 0]
-        
+
         return solve(self.M / h + self.D, b)
 
     def equilibrium(self, d=None):
