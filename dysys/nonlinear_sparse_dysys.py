@@ -21,14 +21,14 @@ class NonlinearSparseDySys(LinearDySys):
     def __init__(self, F, M, D, n=None):
         '''an alternative to SparseNFDySys
 
-        The system evolves according to the more general F(t, x, x') = 0.
+        The system evolves according to the more general F(t, x, x'; d) = 0.
 
-        :param: F(t, x, v), where v is understood to be the rate of
+        :param: F(t, x, v, d), where v is understood to be the rate of
         change of x
 
-        :param: M(t, x, v), returning the partial derivative of F w.r.t. v
+        :param: M(t, x, v, d), returning the partial derivative of F w.r.t. v
 
-        :param: D(t, x, v), returning the partial derivative of F w.r.t. x
+        :param: D(t, x, v, d), returning the partial derivative of F w.r.t. x
 
         :param: n, order of system, i.e. len of F; calculated from
         D(0, [], []) if omitted (which will only work if D doesn't
@@ -37,12 +37,12 @@ class NonlinearSparseDySys(LinearDySys):
         '''
 
         self.F, self.M, self.D = F, M, D
-        self.n = D(0, [], []).shape[0] if n is None else n
+        self.n = D(0, [], [], {}).shape[0] if n is None else n
 
     def __len__(self):
         return self.n
 
-    def step(self, t, xold, h, tol=1e-3):
+    def step(self, t, h, xold, tol=1e-3):
         '''take a backward-Euler step'''
 
         if h == 0:
@@ -65,11 +65,11 @@ class NonlinearSparseDySys(LinearDySys):
 
         return newton(residual, jacobian, xold, tol)
 
-    def equilibrium(self, x0, tol=1e-3):
+    def equilibrium(self, x0, d=None, tol=1e-3):
         '''take an infinitely long backward-Euler step'''
 
         def arg_map(x):
-            return np.inf, x, np.zeros_like(x[0])
+            return np.inf, x, np.zeros_like(x[0]), d
 
         def residual(x):
             # r(x) = F(oo, x, 0)
@@ -98,22 +98,30 @@ class NonlinearSparseDySys(LinearDySys):
         
         U, K = node_maps(known, len(self))
 
-        def reconstitute(u):
+        def reconstitute(u, k=xknown):
             '''put back the known degrees of freedom constrained out'''
 
-            return ((U.dot(u[0]) + (0 if xknown is None else K.dot(xknown))),
-                    ) + u[1:]
+            return U.dot(u) + (0 if k is None else K.dot(k))
 
-        def arg_map(t, u, u1):
-            '''transform the arguments for the constraining'''
-            return (t,
-                    reconstitute(u),
-                    U.dot(u1) + (0 if vknown is None else K.dot(vknown)))
+        def arg_map(t, u, u1, d=None):
+            '''transform the arguments for the constraining
+
+            :param t: float, time
+
+            :param u: numpy.ndarray, the dynamical variables
+
+            :param u1: numpy.ndarray, the rate of change
+
+            :param d: dict, discrete dynamical variables
+
+            '''
+            
+            return (t, reconstitute(u), reconstitute(u, vknown), d)
 
         sys = self.__class__(
-            lambda t, u, u1: U.T.dot(self.F(*arg_map(t, u, u1))),
-            lambda t, u, u1: U.T.dot(self.M(*arg_map(t, u, u1))).dot(U),
-            lambda t, u, u1: U.T.dot(self.D(*arg_map(t, u, u1))).dot(U),
+            lambda *args: U.T.dot(self.F(*arg_map(*args))),
+            lambda *args: U.T.dot(self.M(*arg_map(*args))).dot(U),
+            lambda *args: U.T.dot(self.D(*arg_map(*args))).dot(U),
             U.shape[1])
 
         sys.reconstitute = reconstitute
