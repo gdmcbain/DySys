@@ -20,7 +20,11 @@ class ODySys(DySys):
         self.f, self.jac = f, jac
         self.r = ode(f, jac)
 
+    def march(self, h, x, *args, **kwargs):
+        '''like DySys.march'''
+        self.r.set_initial_value(x, 0.)
+        return super(ODySys, self).march(h, x, *args, **kwargs)
+
     def step(self, t, h, x, d):
-        '''estimate the next state'''
-        self.r.set_initial_value(x, t)
+        '''integrate to time t + h from x at t'''
         return self.r.integrate(self.r.t + h)
