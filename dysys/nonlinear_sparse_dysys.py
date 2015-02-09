@@ -49,10 +49,10 @@ class NonlinearSparseDySys(LinearDySys):
             raise ZeroDivisionError
 
         def arg_map(x):
+            '''approximate the rate of change using backward Euler'''
             return t + h, x, (x - xold) / h
 
         def residual(x):
-            '''approximate the rate of change using backward Euler'''
             # r(x) = F(t, x, (x - xold) / h)
             return self.F(*arg_map(x))
 
