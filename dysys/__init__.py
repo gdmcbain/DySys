@@ -5,3 +5,4 @@ from .nonlinear_sparse_dysys import NonlinearSparseDySys
 from .sparsenf_dysys import SparseNFDySys
 from .store_last import StoreLast
 from .newmark import Newmark
+from .odysys import ODySys
