@@ -30,6 +30,9 @@ def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
 
     '''
 
+    # TODO gmcbain 2015-03-23: Investigate replacing this with
+    # scipy.optimize.fixed_point.
+
     return next(y for y, h in it.islice(iteration, maxiter)
                 if np.linalg.norm(h) < tol)
 
