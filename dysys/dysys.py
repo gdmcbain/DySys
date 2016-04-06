@@ -2,12 +2,21 @@
 # -*- coding: latin-1 -*-
 
 
-'''
-A demonstration of using the backward Euler method of marching a
-sparse-linear differential-algebraic system in time.
+'''A demonstration of using the backward Euler method 
+
+of marching a sparse-linear differential-algebraic system in time.
+
+
+References
+----------
+
+ * Söderlind, G. (2002). Automatic control and adaptive
+   Time-Stepping. Numerical Algorithms 31(1-4):281-310
 
 :author: G. D. McBain <gmcbain>
+
 :created: 2012-10-11
+
 '''
 
 from __future__ import absolute_import, division, print_function
@@ -46,7 +55,8 @@ class DySys(object):
         '''abstract method to be overridden by subclasses
 
         which should return the state at time t+h given the initial
-        condition y at time t
+        condition y at time t; d is an optional object containing
+        discrete dynamical parameters
 
         The basic idea is that: '...the nature of time-stepping is
         inherently sequential or local; given the "state" y(t), the
@@ -55,9 +65,6 @@ class DySys(object):
         accuracy for efficiency and vice versa, and is therefore the
         principal _internal_ means of controlling the error'
         (Söderlind 2002, S. 1)
-
-        Söderlind, G. (2002). Automatic control and adaptive
-        Time-Stepping. Numerical Algorithms 31(1-4):281-310
 
         '''
 
