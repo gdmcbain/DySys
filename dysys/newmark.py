@@ -59,7 +59,7 @@ class Newmark(DySys):
         x += h * self.v + h * h * (1 - 2 * self.beta) * self.a / 2
         self.v += (1 - self.gamma) * h * self.a
         self.a = solve(self.A,
-                       self.f(t, x) - self.C.dot(self.v) - self.K.dot(x))
+                       self.f(t + h, x) - self.C.dot(self.v) - self.K.dot(x))
         self.v += self.gamma * h * self.a
         return x + self.beta * h * h * self.a
 
