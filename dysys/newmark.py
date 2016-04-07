@@ -85,13 +85,7 @@ class Newmark(DySys):
 
         return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)
 
-    # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
-    # eigs (like those of SparseDySys).  One way to formulate this is
-    # to convert the second-order system to a first-order block system
-    # by introducing an auxiliary variable for the temperature, then
-    # the eigenvalue problem is not quadratic but linear, the standard
-    # form of the generalized algebraic eigenvalue problem accepted by
-    # scipy.linalg.eig and scipy.sparse.linalg.eigs.
+### Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
 
 trapezoidal = partial(Newmark, beta=.25, gamma=.5)
 
@@ -100,3 +94,11 @@ linear_acceleration = partial(Newmark, beta=1/6, gamma=.5)
 fox_goodwin = partial(Newmark, beta=1/12, gamma=.5)
 
 central_difference = partial(Newmark, beta=0, gamma=.5)
+
+    # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
+    # eigs (like those of SparseDySys).  One way to formulate this is
+    # to convert the second-order system to a first-order block system
+    # by introducing an auxiliary variable for the temperature, then
+    # the eigenvalue problem is not quadratic but linear, the standard
+    # form of the generalized algebraic eigenvalue problem accepted by
+    # scipy.linalg.eig and scipy.sparse.linalg.eigs.
