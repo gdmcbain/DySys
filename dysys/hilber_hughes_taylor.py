@@ -40,7 +40,6 @@ References
 from __future__ import absolute_import, division, print_function
 
 from .dysys import DySys
-
 from .fixed_point import solve
 
 
