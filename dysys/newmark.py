@@ -56,12 +56,13 @@ class Newmark(DySys):
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
 
-        x += h * self.v + h * h * (1 - 2 * self.beta) * self.a / 2
-        self.v += (1 - self.gamma) * h * self.a
+        xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
+        vt = self.v + (1 - self.gamma) * h * self.a
+
         self.a = solve(self.A,
-                       self.f(t + h, x) - self.C.dot(self.v) - self.K.dot(x))
-        self.v += self.gamma * h * self.a
-        return x + self.beta * h * h * self.a
+                       self.f(t + h, d) - self.C.dot(vt) - self.K.dot(xt))
+        self.v = vt + self.gamma * h * self.a
+        return xt + self.beta * h**2 * self.a
 
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
@@ -79,7 +80,7 @@ class Newmark(DySys):
         self.a = solve(self.M,
                        self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
 
-        self.A = self.M + self.gamma * h * self.C + self.beta * h * h * self.K
+        self.A = self.M + h * (self.gamma * self.C + self.beta * h * self.K)
 
         return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)
 
