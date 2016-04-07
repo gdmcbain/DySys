@@ -8,8 +8,9 @@
 
 from __future__ import absolute_import, division, print_function
 
-from .dysys import DySys
+from functools import partial
 
+from .dysys import DySys
 from .fixed_point import solve
 
 
@@ -91,3 +92,11 @@ class Newmark(DySys):
     # the eigenvalue problem is not quadratic but linear, the standard
     # form of the generalized algebraic eigenvalue problem accepted by
     # scipy.linalg.eig and scipy.sparse.linalg.eigs.
+
+trapezoidal = partial(Newmark, beta=.25, gamma=.5)
+
+linear_acceleration = partial(Newmark, beta=1/6, gamma=.5)
+
+fox_goodwin = partial(Newmark, beta=1/12, gamma=.5)
+
+central_difference = partial(Newmark, beta=0, gamma=.5)
