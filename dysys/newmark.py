@@ -8,7 +8,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dysys import DySys
+from .dysys import DySys
 
 from .fixed_point import solve
 
@@ -81,7 +81,7 @@ class Newmark(DySys):
 
         self.A = self.M + self.gamma * h * self.C + self.beta * h * h * self.K
 
-        return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
+        return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)
 
     # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
     # eigs (like those of SparseDySys).  One way to formulate this is
