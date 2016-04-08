@@ -104,9 +104,6 @@ class HilberHughesTaylor(DySys):
 
         '''
 
-        # TODO gmcbain 2016-04-08: Return self.v too.  Can the f
-        # keyword-argument of DySys.march be used for this?
-
         d = {} if d is None else d
 
         self.v = x[1]
@@ -116,4 +113,9 @@ class HilberHughesTaylor(DySys):
         self.A = self.M + (1 + self.alpha) * h * (self.gamma * self.C +
                                                   self.beta * h * self.K)
 
+        if 'f' not in kwargs:
+            # TRICKY gmcbain 2016-04-08: Return the rate of change of
+            # the solution too
+            kwargs['f'] = lambda x: (x, self.v)
+            
         return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)

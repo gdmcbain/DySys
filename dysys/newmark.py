@@ -83,6 +83,11 @@ class Newmark(DySys):
 
         self.A = self.M + h * (self.gamma * self.C + self.beta * h * self.K)
 
+        if 'f' not in kwargs:
+            # TRICKY gmcbain 2016-04-08: Return the rate of change of
+            # the solution too
+            kwargs['f'] = lambda x: (x, self.v)
+
         return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)
 
 ### Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
