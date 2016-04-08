@@ -104,6 +104,9 @@ class HilberHughesTaylor(DySys):
 
         '''
 
+        # TODO gmcbain 2016-04-08: Return self.v too.  Can the f
+        # keyword-argument of DySys.march be used for this?
+
         d = {} if d is None else d
 
         self.v = x[1]
