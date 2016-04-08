@@ -39,11 +39,11 @@ References
 
 from __future__ import absolute_import, division, print_function
 
-from .dysys import DySys
+from .newmark import Newmark
 from .fixed_point import solve
 
 
-class HilberHughesTaylor(DySys):
+class HilberHughesTaylor(Newmark):
     '''a dynamical system advancing with a Hilber-Hughes-Taylor method
 
     having constant sparse mass, damping, and stiffness matrices and a
@@ -71,12 +71,10 @@ class HilberHughesTaylor(DySys):
 
         '''
 
-        self.M, self.C, self.K = M, C, K
-        self.f = f
+        super(self.__class__, self).__init__(M, C, K, f,
+                                             (1 - alpha)**2 / 4.,
+                                             (1 - 2 * alpha) / 2.)
         self.alpha = alpha
-
-        self.beta = (1 - alpha)**2 / 4.
-        self.gamma = (1 - 2 * alpha) / 2.
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
@@ -94,28 +92,6 @@ class HilberHughesTaylor(DySys):
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
 
-    def march(self, h, x, d=None, *args, **kwargs):
-        '''evolve from displacement x[0] and velocity x[1] with time-step h
-
-        This involves setting the internal variables for velocity and
-        acceleration (v and a, respectively), and, for convenience,
-        the evolution matrix A, and then deferring to the march method
-        of the super-class, DySys.
-
-        '''
-
-        d = {} if d is None else d
-
-        self.v = x[1]
-        self.a = solve(self.M,
-                       self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
-
+    def setA(self, h):
         self.A = self.M + (1 + self.alpha) * h * (self.gamma * self.C +
                                                   self.beta * h * self.K)
-
-        if 'f' not in kwargs:
-            # TRICKY gmcbain 2016-04-08: Return the rate of change of
-            # the solution too
-            kwargs['f'] = lambda x: (x, self.v)
-            
-        return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)

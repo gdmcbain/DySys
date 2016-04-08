@@ -65,6 +65,9 @@ class Newmark(DySys):
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
 
+    def setA(self, h):
+        self.A = self.M + h * (self.gamma * self.C + self.beta * h * self.K)
+
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
 
@@ -81,14 +84,14 @@ class Newmark(DySys):
         self.a = solve(self.M,
                        self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
 
-        self.A = self.M + h * (self.gamma * self.C + self.beta * h * self.K)
+        self.setA(h)
 
         if 'f' not in kwargs:
             # TRICKY gmcbain 2016-04-08: Return the rate of change of
             # the solution too
             kwargs['f'] = lambda x: (x, self.v)
 
-        return super(self.__class__, self).march(h, x[0], d, *args, **kwargs)
+        return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
 
 ### Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
 
