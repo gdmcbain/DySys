@@ -1,7 +1,36 @@
 #!/usr/bin/env python
 
 '''
+
+References
+----------
+
+ * Cook, R.D., Malkus, D.S., & Plesha, M.E. (1989). Concepts and
+   Applications of Finite Elements Analysis (3rd ed.). New York: Wiley
+   & Sons
+
+ * Craveur, J.-C. (2008). Modélisation par éléments finis (Third
+   ed.). Paris: Dunod
+
+ * Hilber, H. M. (1976). Analysis and design of numerical integration
+   methods in structural dynamics. Technical Report UCB/EERC-76/29,
+   Earthquake Engineering Research Center, University of California
+   Berkeley (unsighted, cited by Hughes 2000, p. 532)
+
+ * Hilber, H. M., T. J. R. Hughes, & R. L. Taylor (1977). Improved
+   numerical dissipation for time integration algorithms in structural
+   dynamics. Earthquake Engineering & Structural Dynamics 5 (3),
+   283-292 (unsighted, cited by Cook, Malkus, & Plesha 1989, p. 409;
+   Hughes 2000, p. 532)
+
+ * Hughes, T. J. R. (2000). The Finite Element Method. Mineola, New
+   York: Dover, ch. 9 "Algorithms for Hyperbolic and
+   Parabolic-Hyperbolic Problems"
+
+
+
 :author: G. D. McBain <gmcbain>
+
 :created: 2013-02-08
 
 '''
@@ -20,16 +49,12 @@ class Newmark(DySys):
     having constant sparse mass, damping, and stiffness matrices and a
     forcing function depending on time
 
-    Reference: Hughes, T. J. R. (2000). The Finite Element
-    Method. Mineola, New York: Dover, ch. 9 "Algorithms for Hyperbolic
-    and Parabolic-Hyperbolic Problems"
+    A Newmark system evolves with the "displacement" as the
+    dynamical variable but also has "state" in the form of the
+    velocity and acceleration, the former being required as the
+    system is of second order while the latter is merely convenient.
 
     '''
-
-    # A Newmark system evolves with the "displacement" as the
-    # dynamical variable but also has "state" in the form of the
-    # velocity and acceleration, the former being required as the
-    # system is of second order while the latter is merely convenient.
 
     def __init__(self, M, C, K, f, beta=0.25, gamma=0.5):
         ''':param M: mass scipy.sparse matrix

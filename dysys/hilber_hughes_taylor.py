@@ -46,15 +46,9 @@ from .fixed_point import solve
 class HilberHughesTaylor(Newmark):
     '''a dynamical system advancing with a Hilber-Hughes-Taylor method
 
-    having constant sparse mass, damping, and stiffness matrices and a
-    forcing function depending on time
-
+    (a.k.a. alpha-method), like the Newmark method
+    
     '''
-
-    # A Hilber-Hughes-Taylor system evolves with the "displacement" as
-    # the dynamical variable but also has "state" in the form of the
-    # velocity and acceleration, the former being required as the
-    # system is of second order while the latter is merely convenient.
 
     def __init__(self, M, C, K, f, alpha=0.):
         ''':param M: mass scipy.sparse matrix
