@@ -136,8 +136,8 @@ class DySys(object):
         concisely record the pertinent features of the dynamics."
         (PyDSTool Project overview)
 
-        :rtype: yield indefinitely triples of time, continuous state,
-        and discrete state at end of time-steps
+        :rtype: yield indefinitely triples (time, continuous state,
+         discrete state) at ends of time-steps
 
         See also: march_till, march_while
 
