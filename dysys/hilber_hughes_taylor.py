@@ -33,11 +33,11 @@ class HilberHughesTaylor(Newmark):
 
         :param K: stiffness scipy.sparse
 
-        :param f: function of time returning forcing vector
+        :param f: function of time and dict of discrete dynamical
+        variables, returning forcing vector
 
         :param alpha: float, Hilber-Hughes-Taylor method parameter,
         should be in [-1/3, 0]
-
 
         '''
 

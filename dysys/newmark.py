@@ -36,7 +36,8 @@ class Newmark(DySys):
 
         :param K: stiffness scipy.sparse
 
-        :param f: function of time returning forcing vector
+        :param f: function of time and dict of discrete dynamical
+        variables, returning forcing vector
 
         :param beta: Newmark method parameter, default 0.25 (which,
         with gamma=0.5, is the implicit and unconditionally stable
