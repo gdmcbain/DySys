@@ -7,12 +7,6 @@
 of marching a sparse-linear differential-algebraic system in time.
 
 
-References
-----------
-
- * Söderlind, G. (2002). Automatic control and adaptive
-   Time-Stepping. Numerical Algorithms 31(1-4):281-310
-
 :author: G. D. McBain <gmcbain>
 
 :created: 2012-10-11
