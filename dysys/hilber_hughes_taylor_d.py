@@ -70,11 +70,11 @@ class HilberHughesTaylor_d(DySys):
                               (1 - self.gamma / 2. / self.beta) * h * self.a) +
                    self.K.dot(self.alpha * x))
 
-        a1 = ((x1 - x - h * self.v) / self.beta / h**2 -
-              (.5 / self.beta - 1)  * self.a)
-        self.v = self.v + h * ((1 - self.gamma) * self.a + self.gamma * a1)
-        
-        self.a = a1
+        self.v, self.a = ((self.gamma / self.beta / h * (x1 - x) +
+                           (1 - self.gamma / self.beta) * self.v +
+                           h * (1 - .5 * self.gamma / self.beta) * self.a),
+                          ((x1 - x - h * self.v) / self.beta / h**2 -
+                           (.5 / self.beta - 1)  * self.a))
 
         return x1
 
