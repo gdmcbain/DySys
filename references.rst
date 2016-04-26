@@ -1,9 +1,18 @@
-o* Cook, R.D., Malkus, D.S., & Plesha, M.E. (1989). Concepts and
+* Brenan, K. E., S. L. Campbell, & L. R. Petzold 1996 Numerical
+  solution of initial-value problems in differential-algebraic
+  equations.  Classics in Applied Mathematics 14.  Philadelphia:
+  Society for Industrial and Applied Mathematics
+
+* Cook, R.D., Malkus, D.S., & Plesha, M.E. (1989). Concepts and
   Applications of Finite Elements Analysis (3rd ed.). New York: Wiley
   & Sons
 
 * Craveur, J.-C. (2008). Modélisation par éléments finis (Third
   ed.). Paris: Dunod
+
+* Hairer, E., C. Lubich, & M. Roche 1989 The numerical solution of
+  differential-algebraic systems by Runge-Kutta methods.  Lecture
+  Notes in Mathematics 1409.  Berlin: Springer
 
 * Hilber, H. M. (1976). Analysis and design of numerical integration
   methods in structural dynamics. Technical Report UCB/EERC-76/29,

@@ -76,17 +76,6 @@ class DySys(object):
         # Petzold 1996, S. 4.6, pp. 108--114).  It might also be
         # useful for the estimation of error and step-size control.
 
-        # Brenan, K. E., S. L. Campbell, & L. R. Petzold 1996
-        # Numerical solution of initial-value problems in
-        # differential-algebraic equations.  Classics in Applied
-        # Mathematics 14.  Philadelphia: Society for Industrial and
-        # Applied Mathematics
-
-        # Hairer, E., C. Lubich, & M. Roche 1989 The numerical
-        # solution of differential-algebraic systems by Runge-Kutta
-        # methods.  Lecture Notes in Mathematics 1409.  Berlin:
-        # Springer
-
         h /= substeps
         for i in range(substeps):
             t, y = t + h, self.step(t, h, y, d)
