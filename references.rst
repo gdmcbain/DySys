@@ -19,6 +19,10 @@ o* Cook, R.D., Malkus, D.S., & Plesha, M.E. (1989). Concepts and
 * Hughes, T. J. R. (2000). The Finite Element Method. Mineola, New
   York: Dover
 
+* Iserles, A. (1996). A First Course in the Numerical Analysis of
+  Differential Equations. Cambridge Texts in Applied
+  Mathematics. Cambridge University Press
+
 * Söderlind, G. (2002). Automatic control and adaptive
   Time-Stepping. Numerical Algorithms 31(1-4):281-310
 
