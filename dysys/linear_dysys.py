@@ -76,3 +76,20 @@ class LinearDySys(DySys):
 
         sys.reconstitute = reconstitute
         return sys
+
+    def theta_method(self, h, theta):
+        '''return a LinearDySys that evolves by a theta method
+
+        as described by Iserles (1996, S. 1.4)
+
+        '''
+
+        # KLUDGE gmcbain 2016-04-26: The backward Euler method that is
+        # equivalent to the theta method depends on the step-length h
+        # as well as the parameter theta.
+
+        return self.__class__(self.M - h * (1 - theta) * self.D,
+                              self.D,
+                              None if self.f is None else
+                              lambda t, d: (theta * self.f(t, d) +
+                                            (1 - theta) * self.f(t - h, d)))
