@@ -15,11 +15,13 @@ from dysys import DySys, node_maps
 
 class LinearDySys(DySys):
 
-    def __init__(self, M, D, f=None):
-        '''a DySys defined by mass and damping operators and
-        a time-dependent forcing function, according to (something like)
+    def __init__(self, M, D, f=None, theta=1.0):
+        '''a DySys defined by mass and damping operators
 
-            M * x' + D * x = f (t)
+        and a time-dependent forcing function, according to (something
+        like)
+
+            M * x' + D * x = f (t, d)
 
         though this class is still virtual since it depends on:
 
@@ -30,9 +32,21 @@ class LinearDySys(DySys):
         Since occasionally the steady-state D * x = f (inf) is of
         interest, M may be None.
 
+        :param M: mass operator (abstract)
+
+        :param D: damping operator (abstract)
+
+        :param f: function of time and dict of discrete dynamical
+        variables, returning right-hand side (default zero function)
+
+        :param theta: float, parameter of theta time-stepping method,
+        default 1.0 for backward Euler, 0.5 for trapezoidal, 0 for
+        forward Euler
+
         '''
 
         self.M, self.D, self.f = M, D, f
+        self.theta = theta
 
     def __len__(self):
         return self.D.shape[0]
@@ -76,20 +90,3 @@ class LinearDySys(DySys):
 
         sys.reconstitute = reconstitute
         return sys
-
-    def theta_method(self, h, theta):
-        '''return a LinearDySys that evolves by a theta method
-
-        as described by Iserles (1996, S. 1.4)
-
-        '''
-
-        # KLUDGE gmcbain 2016-04-26: The backward Euler method that is
-        # equivalent to the theta method depends on the step-length h
-        # as well as the parameter theta.
-
-        return self.__class__(self.M - h * (1 - theta) * self.D,
-                              self.D,
-                              None if self.f is None else
-                              lambda t, d: (theta * self.f(t, d) +
-                                            (1 - theta) * self.f(t - h, d)))

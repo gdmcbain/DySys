@@ -36,8 +36,16 @@ class SparseDySys(LinearDySys):
         # handling trivial 1x1 systems which fall foul of being
         # squeezed, since then the have a shape which is an empty
         # tuple and that can't be indexed!
-        b = (self.M.dot(x) / h +
-             (0 if self.f is None else self.f(t, d)))
+
+        M = self.M - h * (1 - self.theta) * self.D
+
+        if self.f is None:
+            f = None
+        else:
+            f = lambda t, d: (self.theta * self.f(t, d) +
+                              (1 - self.theta) * self.f(t - h, d))
+        
+        b = M.dot(x) / h + (0 if f is None else f(t, d))
 
         # TODO gmcbain 2014-05-08: factor out this wrapping of
         # spsolve, perhaps in fixed_point?
@@ -47,7 +55,7 @@ class SparseDySys(LinearDySys):
         # except IndexError:              # singleton system?
         #     return b / (self.M / h + self.D)[0, 0]
 
-        return solve(self.M / h + self.D, b)
+        return solve(M / h + self.D, b)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
