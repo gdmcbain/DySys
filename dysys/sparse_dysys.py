@@ -55,6 +55,11 @@ class SparseDySys(LinearDySys):
         # except IndexError:              # singleton system?
         #     return b / (self.M / h + self.D)[0, 0]
 
+        # TODO gmcbain 2016-05-03: This is very inefficient.  Since M
+        # / h + self.D is unchanging, could it be factorized?  Or
+        # should an iterative scheme be preferred?  (In either case,
+        # how is hermiticity to be exploited?)
+
         return solve(M / h + self.D, b)
 
     def equilibrium(self, d=None):
