@@ -37,15 +37,12 @@ class SparseDySys(LinearDySys):
         # squeezed, since then the have a shape which is an empty
         # tuple and that can't be indexed!
 
-        M = self.M - h * (1 - self.theta) * self.D
+        M = self.M / h - (1 - self.theta) * self.D
 
-        if self.f is None:
-            f = None
-        else:
-            f = lambda t, d: (self.theta * self.f(t, d) +
-                              (1 - self.theta) * self.f(t - h, d))
-        
-        b = M.dot(x) / h + (0 if f is None else f(t, d))
+        b = M.dot(x)
+        if self.f is not None:
+            b += (self.theta * self.f(t + h, d) +
+                  (1 - self.theta) * self.f(t, d))
 
         # TODO gmcbain 2014-05-08: factor out this wrapping of
         # spsolve, perhaps in fixed_point?
@@ -60,7 +57,7 @@ class SparseDySys(LinearDySys):
         # should an iterative scheme be preferred?  (In either case,
         # how is hermiticity to be exploited?)
 
-        return solve(M / h + self.D, b)
+        return solve(M + self.D, b)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
