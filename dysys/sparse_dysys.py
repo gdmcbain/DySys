@@ -7,6 +7,8 @@
 '''
 
 from __future__ import absolute_import, division, print_function
+
+from functools import partial
 from warnings import warn
 
 import numpy as np
@@ -37,16 +39,30 @@ class SparseDySys(LinearDySys):
 
         if not hasattr(self, '_memo') or h != self._memo['h']:
             M = self.M / h - (1 - self.theta) * self.D
+            M1 = M + self.D
+
             self._memo = {'h': h,
                           'M': M,
-                          'solve': sla.spilu(M + self.D).solve}
+                          'solve': partial(sla.lgmres, M1, x0=x,
+                                           M=sla.LinearOperator(
+                                               M.shape, sla.spilu(M1).solve))}
 
         b = self._memo['M'].dot(x)
         if self.f is not None:
             b += (self.theta * self.f(t + h, d) +
                   (1 - self.theta) * self.f(t, d))
 
-        return self._memo['solve'](b)
+        x1, info = self._memo['solve'](b)
+
+        if info == 0:
+            return x1
+        else:
+            if info > 0:
+                raise RuntimeEror(
+                    'convergence to tolerance not achieved in %s iterations' %
+                    info)
+            else:
+                raise ValueError('info %d' % info)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
