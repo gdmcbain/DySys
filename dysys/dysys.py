@@ -2,10 +2,9 @@
 # -*- coding: latin-1 -*-
 
 
-'''A demonstration of using the backward Euler method 
+'''A dynamical system
 
-of marching a sparse-linear differential-algebraic system in time.
-
+taking approximate discrete steps in continuous time
 
 :author: G. D. McBain <gmcbain>
 
