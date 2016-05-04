@@ -108,7 +108,8 @@ class DySys(object):
         accessed by the functions in events
 
         :param events: iterable of pairs of time and mapping on time,
-        x and d
+        x and d; the second term may be None for the identity mapping,
+        if it is just desired to force a step at that time
 
         :param substeps: number of equal substeps to take to make up
         each time-step (default: 1)
@@ -139,13 +140,13 @@ class DySys(object):
             while True:
                 yield t, (x if f is None else f(x)), d
                 if t + h > event[0]:
-                    # step to just before event
+
                     x = self._step(t, event[0] - t, x, d, substeps)
                     t = event[0]
                     yield t, (x if f is None else f(x)), d
 
-                    # event
-                    x, d = event[1](t, x, d)
+                    if event[1] is not None:
+                        x, d = event[1](t, x, d)
                     break
                 else:
                     t, x = t + h, self._step(t, h, x, d, substeps)
