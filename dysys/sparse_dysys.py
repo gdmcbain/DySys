@@ -12,8 +12,7 @@ from warnings import warn
 import numpy as np
 
 from scipy.linalg import eig
-from scipy.sparse import identity
-from scipy.sparse.linalg import eigs
+from scipy.sparse import identity, linalg as sla
 
 from .fixed_point import solve
 from .linear_dysys import LinearDySys
@@ -29,35 +28,25 @@ class SparseDySys(LinearDySys):
     '''
 
     def step(self, t, h, x, d):
-        '''estimate the next state using backward Euler'''
-        # TRICKY gmcbain 2013-06-28: A very nasty workaround is
-        # required here to accommodate changes to
-        # scipy.sparse.linalg.spsolve between 0.10.1 and 0.12.0, for
-        # handling trivial 1x1 systems which fall foul of being
-        # squeezed, since then the have a shape which is an empty
-        # tuple and that can't be indexed!
+        '''estimate the next state using theta method
 
-        M = self.M / h - (1 - self.theta) * self.D
+        memoizing the incomplete-LU factors of the evolution matrix
+        for fast time-stepping
 
-        b = M.dot(x)
+        '''
+
+        if not hasattr(self, '_memo') or h != self._memo['h']:
+            M = self.M / h - (1 - self.theta) * self.D
+            self._memo = {'h': h,
+                          'M': M,
+                          'solve': sla.spilu(M + self.D).solve}
+                          
+        b = self._memo['M'].dot(x)
         if self.f is not None:
             b += (self.theta * self.f(t + h, d) +
                   (1 - self.theta) * self.f(t, d))
 
-        # TODO gmcbain 2014-05-08: factor out this wrapping of
-        # spsolve, perhaps in fixed_point?
-
-        # try:
-        #     return spsolve(self.M / h + self.D, b)
-        # except IndexError:              # singleton system?
-        #     return b / (self.M / h + self.D)[0, 0]
-
-        # TODO gmcbain 2016-05-03: This is very inefficient.  Since M
-        # / h + self.D is unchanging, could it be factorized?  Or
-        # should an iterative scheme be preferred?  (In either case,
-        # how is hermiticity to be exploited?)
-
-        return solve(M + self.D, b)
+        return self._memo['solve'](b)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
@@ -132,7 +121,7 @@ class SparseDySys(LinearDySys):
         kwargs['M'] = self.M
 
         try:
-            return eigs(-self.D.tocsc(), *args, **kwargs)
+            return sla.eigs(-self.D.tocsc(), *args, **kwargs)
         except ValueError:
             warn('system too small, converting to dense', UserWarning)
             for k in ['k', 'M', 'which']:
