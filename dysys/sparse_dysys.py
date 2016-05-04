@@ -40,7 +40,7 @@ class SparseDySys(LinearDySys):
             self._memo = {'h': h,
                           'M': M,
                           'solve': sla.spilu(M + self.D).solve}
-                          
+
         b = self._memo['M'].dot(x)
         if self.f is not None:
             b += (self.theta * self.f(t + h, d) +
