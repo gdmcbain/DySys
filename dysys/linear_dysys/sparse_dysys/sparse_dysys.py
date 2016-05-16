@@ -16,8 +16,8 @@ import numpy as np
 from scipy.linalg import eig
 from scipy.sparse import identity, linalg as sla
 
-from .fixed_point import solve
-from .linear_dysys import LinearDySys
+from ...fixed_point import solve
+from ..linear_dysys import LinearDySys
 
 
 class SparseDySys(LinearDySys):
