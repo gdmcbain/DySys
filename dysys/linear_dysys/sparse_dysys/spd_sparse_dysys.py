@@ -14,6 +14,7 @@ from sksparse.cholmod import cholesky
 
 from dysys import SparseDySys
 
+
 class SPDSparseDySys(SparseDySys):
 
     def step(self, t, h, x, d):
@@ -26,11 +27,8 @@ class SPDSparseDySys(SparseDySys):
 
         if not hasattr(self, '_memo') or h != self._memo['h']:
             M = self.M / h - (1 - self.theta) * self.D
-            M1 = M + self.D
 
-            self._memo = {'h': h,
-                          'M': M,
-                          'solve': cholesky(M + self.D)}
+            self._memo = {'h': h, 'M': M, 'solve': cholesky(M + self.D)}
 
         b = self._memo['M'].dot(x)
         if self.f is not None:
