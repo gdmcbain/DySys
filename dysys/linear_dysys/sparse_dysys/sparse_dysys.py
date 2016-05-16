@@ -58,7 +58,7 @@ class SparseDySys(LinearDySys):
             return x1
         else:
             if info > 0:
-                raise RuntimeEror(
+                raise RuntimeError(
                     'convergence to tolerance not achieved in %s iterations' %
                     info)
             else:
