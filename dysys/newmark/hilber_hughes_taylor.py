@@ -16,7 +16,7 @@ generalization of the Newmark method
 from __future__ import absolute_import, division, print_function
 
 from .newmark import Newmark
-from .fixed_point import solve
+from ..fixed_point import solve
 
 
 class HilberHughesTaylor(Newmark):

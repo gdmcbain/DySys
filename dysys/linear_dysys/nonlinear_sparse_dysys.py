@@ -13,7 +13,7 @@ import numpy as np
 
 from dysys import node_maps
 from .linear_dysys import LinearDySys
-from .fixed_point import newton
+from ..fixed_point import newton
 
 
 class NonlinearSparseDySys(LinearDySys):
