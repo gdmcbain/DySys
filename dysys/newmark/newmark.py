@@ -29,15 +29,17 @@ class Newmark(DySys):
 
     '''
 
-    def __init__(self, M, C, K, f, beta=0.25, gamma=0.5):
+    def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5):
         ''':param M: mass scipy.sparse matrix
-
-        :param C: damping scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
 
+        :param C: damping scipy.sparse matrix, or None, in which case
+        it is constructed as like M but with no nonzero entries
+
         :param f: function of time and dict of discrete dynamical
-        variables, returning forcing vector
+        variables, returning forcing vector, or None in which case a
+        null function is substituted
 
         :param beta: Newmark method parameter, default 0.25 (which,
         with gamma=0.5, is the implicit and unconditionally stable
@@ -49,8 +51,8 @@ class Newmark(DySys):
 
         '''
 
-        self.M, self.C, self.K = M, C, K
-        self.f = f
+        self.M, self.K, self.C = M, K, C
+        self.f = (lambda _, __: np.zeros(M.shape[0])) if f is None else f
         self.beta, self.gamma = beta, gamma
 
     def step(self, t, h, x, d):
@@ -59,13 +61,20 @@ class Newmark(DySys):
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        self.a = solve(self.A,
-                       self.f(t + h, d) - self.C.dot(vt) - self.K.dot(xt))
+        rhs = -self.K.dot(xt)
+        if self.f is not None:
+            rhs += self.f(t + h, d)
+        if self.C is not None:
+            rhs -= self.C.dot(vt)
+            
+        self.a = solve(self.A, rhs)
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
 
     def setA(self, h):
-        self.A = self.M + h * (self.gamma * self.C + self.beta * h * self.K)
+        self.A = self.M + h**2 * self.beta * self.K
+        if self.C is not None:
+            self.A += h * self.gamma * self.C
 
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
@@ -80,8 +89,12 @@ class Newmark(DySys):
         d = {} if d is None else d
 
         self.v = x[1]
-        self.a = solve(self.M,
-                       self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
+        rhs = -self.K.dot(x[0])
+        if self.f is not None:
+            rhs += self.f(0., d)
+        if self.C is not None:
+            rhs -= self.C.dot(x[1])
+        self.a = solve(self.M, rhs)
 
         self.setA(h)
 
