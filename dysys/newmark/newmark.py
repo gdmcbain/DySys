@@ -12,6 +12,8 @@ from __future__ import absolute_import, division, print_function
 
 from functools import partial
 
+from sksparse.cholmod import cholesky
+
 from ..dysys import DySys
 from ..fixed_point import solve
 
@@ -29,7 +31,8 @@ class Newmark(DySys):
 
     '''
 
-    def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5):
+    def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
+                 definite=False):
         ''':param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
@@ -49,11 +52,14 @@ class Newmark(DySys):
         required for second order accuracy: Hughes 2000, Table 9.1.1,
         note 3)
 
+        :param definite: bool, for if system is (positive-)definite
+
         '''
 
         self.M, self.K, self.C = M, K, C
         self.f = (lambda _, __: np.zeros(M.shape[0])) if f is None else f
         self.beta, self.gamma = beta, gamma
+        self.definite = definite
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
@@ -67,7 +73,7 @@ class Newmark(DySys):
         if self.C is not None:
             rhs -= self.C.dot(vt)
             
-        self.a = solve(self.A, rhs)
+        self.a = self.solve(rhs)
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
 
@@ -75,6 +81,11 @@ class Newmark(DySys):
         self.A = self.M + h**2 * self.beta * self.K
         if self.C is not None:
             self.A += h * self.gamma * self.C
+
+        if self.definite:
+            self.solve = cholesky(self.A)
+        else:
+            self.solve = partial(solve, self.A)
 
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
