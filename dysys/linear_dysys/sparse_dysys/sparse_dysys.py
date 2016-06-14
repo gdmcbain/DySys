@@ -41,28 +41,42 @@ class SparseDySys(LinearDySys):
             M = self.M / h - (1 - self.theta) * self.D
             M1 = M + self.D
 
-            self._memo = {'h': h,
-                          'M': M,
-                          'solve': partial(sla.lgmres, M1, x0=x,
-                                           M=sla.LinearOperator(
-                                               M.shape, sla.spilu(M1).solve))}
+            self._memo = {'h': h, 'M': M}
+
+            if self.definite:
+                try:
+                    from sksparse.cholmod import cholesky
+                    self._memo['solve'] = cholesky(M + self.D)
+                except ImportError as error:
+                    del self._memo['solve']
+                    print(__file__, error)
+                    pass
+
+            if 'solve' not in self._memo:
+                self._memo['solve'] = partial(
+                    sla.lgmres, M1, x0=x,
+                    M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
 
         b = self._memo['M'].dot(x)
         if self.f is not None:
             b += (self.theta * self.f(t + h, d) +
                   (1 - self.theta) * self.f(t, d))
 
-        x1, info = self._memo['solve'](b)
+        retval = self._memo['solve'](b)
 
-        if info == 0:
-            return x1
+        if self.definite:
+            return retval
         else:
-            if info > 0:
-                raise RuntimeError(
-                    'convergence to tolerance not achieved in %s iterations' %
-                    info)
+            x1, info = retval
+            if info == 0:
+                return x1
             else:
-                raise ValueError('info %d' % info)
+                if info > 0:
+                    raise RuntimeError(
+                        'convergence to tolerance not achieved '
+                        'in %s iterations' % info)
+                else:
+                    raise ValueError('info %d' % info)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''

@@ -15,7 +15,7 @@ from dysys import DySys, node_maps
 
 class LinearDySys(DySys):
 
-    def __init__(self, M, D, f=None, theta=1.0):
+    def __init__(self, M, D, f=None, theta=1.0, definite=False):
         '''a DySys defined by mass and damping operators
 
         and a time-dependent forcing function, according to (something
@@ -42,11 +42,14 @@ class LinearDySys(DySys):
         :param theta: float, parameter of theta time-stepping method,
         default 1.0 for backward Euler, 0.5 for trapezoidal, 0 for
         forward Euler
+        
+        :param definite: bool, for if system is (positive-)definite
 
         '''
 
         self.M, self.D, self.f = M, D, f
         self.theta = theta
+        self.definite = definite
 
     def __len__(self):
         return self.D.shape[0]
