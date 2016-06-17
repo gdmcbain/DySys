@@ -11,7 +11,6 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from dysys import node_maps
 from .linear_dysys import LinearDySys
 from ..fixed_point import newton
 
@@ -96,7 +95,7 @@ class NonlinearSparseDySys(LinearDySys):
 
         '''
 
-        U, K = node_maps(known, len(self))
+        U, K = self.node_maps(known)
 
         def reconstitute(u, k=xknown):
             '''put back the known degrees of freedom constrained out'''

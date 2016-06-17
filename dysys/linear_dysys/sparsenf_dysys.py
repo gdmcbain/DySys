@@ -161,9 +161,7 @@ class SparseNFDySys(LinearDySys):
         # when this class is deprecated in favour of
         # NonlinearSparseDySys.
 
-        from dysys import node_maps
-
-        U, _ = node_maps(args[0], len(self))
+        U, _ = self.node_maps(args[0])
         sys.f1 = (None if self.f1 is None else
                   (lambda t, x, d: U.T.dot(
                       self.f1(t, sys.reconstitute(x), d).dot(U))))

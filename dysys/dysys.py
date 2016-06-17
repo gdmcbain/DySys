@@ -197,6 +197,43 @@ class DySys(object):
         return self.march_truncated(
             lambda event: predicate(event[1], **event[2]), *args, **kwargs)
 
+    def node_maps(self, known):
+        '''return the matrices mapping the unknown and knowns
+
+        to the global nodes
+
+        This concerns the imposition of nodal degree-of-freedom
+        constraints as inspired by the comments of Roy Stogner in the
+        Libmesh-users list thread "interaction between subdomain_id
+        and dof constraints?"  (2012-02-25).  The idea is to represent
+        the column vector of all unknowns x as U * xu + K * xk, where
+        xu are unknown and xk are known whose lengths together add to
+        that of x and U and K are rectangular matrices, typically
+        columns of the identity.
+
+        '''
+
+        # KLUDGE: gmcbain 2013-01-29: I don't know how to deal with
+        # arrays with zero rows or columns in scipy.sparse, so I need
+        # to treat it as a special case.  Yuck.  GNU Octave does the
+        # obvious right thing.  I think the problem applies to NumPy
+        # too.
+
+        # TRICKY gmcbain 2013-06-28: Between versions 0.10.1 and
+        # 0.12.0, SciPy switched from having scipy.sparse.identity
+        # return csr_matrix to dia_matrix.  This broke the code
+        # below since the latter does not support indexing!
+        # (i.e. raises TypeError: dia_matrix object has no
+        # attribute __getitem__)
+
+        size = len(self)
+        I = identity(size, format='csr')
+
+        return ((I, np.zeros((size, 0))) if len(known) == 0
+                else
+                (I[:, np.setdiff1d(np.arange(size), np.mod(known, size))],
+                 I[:, known]))
+
 
 def node_maps(known, size):
     '''return the matrices mapping the unknown and knowns

@@ -10,7 +10,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from dysys import DySys, node_maps
+from dysys import DySys
 
 
 class LinearDySys(DySys):
@@ -71,7 +71,7 @@ class LinearDySys(DySys):
 
         '''
 
-        U, K = node_maps(known, len(self))
+        U, K = self.node_maps(known)
         M, D = [None if A is None else U.T * A * U for A in [self.M, self.D]]
         sys = self.__class__(
             M,
