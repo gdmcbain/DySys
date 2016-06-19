@@ -11,6 +11,7 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import partial
+from warnings import warn
 
 from sksparse.cholmod import cholesky
 
@@ -57,9 +58,12 @@ class Newmark(DySys):
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = (lambda _, __: np.zeros(M.shape[0])) if f is None else f
+        self.f = (lambda _, __: np.zeros(K.shape[0])) if f is None else f
         self.beta, self.gamma = beta, gamma
         self.definite = definite
+
+    def __len__(self):
+        return self.K.shape[0]
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
@@ -116,7 +120,7 @@ class Newmark(DySys):
 
         return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
 
-    def constrain(self, known, xknown=None, vknown=None):
+    def constrain(self, known, xknown=None, vknown=None, aknown=None):
         '''return a new DySys with constrained degrees of freedom
 
         having the same class as self.
@@ -128,32 +132,26 @@ class Newmark(DySys):
 
         :param vknown: corresponding sequence of their rates of change
 
-        The returned system is attributed the U and K matrices from
-        self.node_maps and therefore can use :method reconstitute:.
+        :param aknown: corresponding sequence of their second
+        derivatives
 
         '''
 
-        U, K = node_maps(known, len(self))
-        M, D = [None if A is None else U.T * A * U for A in [self.M, self.D]]
+        U, Kn = node_maps(known, len(self))
+        M, K, C = [None if A is None else U.T * A * U
+                   for A in [self.M, self.K, self.C]]
         sys = self.__class__(
             M,
-            D,
+            K,
+            C,
             lambda *args: U.T.dot(
                 (0 if self.f is None else self.f(*args)) -
-                (0 if xknown is None else self.D.dot(K.dot(xknown))) -
-                (0 if vknown is None else self.M.dot(K.dot(vknown)))))
+                (0 if xknown is None else self.K.dot(Kn.dot(xknown))) -
+                (0 if vknown is None else self.C.dot(Kn.dot(vknown))) -
+                (0 if aknown is None else self.M.dot(Kn.dot(aknown)))),
+            self.beta, self.gamma, self.definite)
 
-        def reconstitute(u):
-            '''reinsert the known degrees of freedom stripped out by constrain
-
-            This is an identity mapping if the system is not constrained
-            (determined by assuming that the system will only have the
-            attribute U if its constrain method has been called).
-
-            '''
-            return U.dot(u) + (0 if xknown is None else K.dot(xknown))
-
-        sys.reconstitute = reconstitute
+        sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
         return sys
 
 
@@ -174,3 +172,26 @@ central_difference = partial(Newmark, beta=0, gamma=.5)
     # the eigenvalue problem is not quadratic but linear, the standard
     # form of the generalized algebraic eigenvalue problem accepted by
     # scipy.linalg.eig and scipy.sparse.linalg.eigs.
+
+    def eig(self, *args, **kwargs):
+        '''return the complete spectrum of the system'''
+        return NotImplemented
+
+    def eigs(self, *args, **kwargs):
+        '''return the first few modes of the system'''
+
+        if self.C is None:
+            if 'return_eigenvectors' not in kwargs:
+                kwargs['return_eigenvectors'] = False
+            kwargs['M'] = self.M
+            try:
+                return sla.eigs(-self.K, *args, **kwargs)
+            except ValueError:
+                warn('system too small, converting to dense', UserWarning)
+                for k in ['k', 'M', 'which']:
+                    if k in kwargs:
+                        del kwargs[k]
+                kwargs['right'] = kwargs.pop('return_eigenvectors')
+                return self.eig(*args, **kwargs)
+        else:
+            raise NotImplementedError

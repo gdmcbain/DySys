@@ -234,6 +234,18 @@ class DySys(object):
                 (I[:, np.setdiff1d(np.arange(size), np.mod(known, size))],
                  I[:, known]))
 
+    @staticmethod
+    def reconstituter(U, K, x, u):
+        '''reinsert the known degrees of freedom stripped out by constrain
+
+        This is an identity mapping if the system is not constrained
+        (determined by assuming that the system will only have the
+        attribute U if its constrain method has been called).
+
+        '''
+
+        return U.dot(u) + (0 if x is None else K.dot(x))
+
 
 def node_maps(known, size):
     '''return the matrices mapping the unknown and knowns
@@ -271,3 +283,24 @@ def node_maps(known, size):
         return U, I[:, known]
     else:
         return [I, np.zeros((size, 0))]
+
+    def eig(self, *args, **kwargs):
+        '''return the complete spectrum of the system
+
+        Designed for small dense systems; see self.eigs for large
+        sparse systems.
+
+        '''
+        
+        return NotImplemented
+
+    def eigs(self, *args, **kwargs):
+        '''return the first few modes of the system
+
+        Designed for large sparse systems; default to self.eig, converting
+        to dense, if the system is too small.
+
+        '''
+        
+        return NotImplemented
+

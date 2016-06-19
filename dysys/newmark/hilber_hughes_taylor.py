@@ -84,3 +84,37 @@ class HilberHughesTaylor(Newmark):
             self.solve = cholesky(self.A)
         else:
             self.solve = partial(solve, self.A)
+
+    def constrain(self, known, xknown=None, vknown=None, aknown=None):
+        '''return a new DySys with constrained degrees of freedom
+
+        having the same class as self.
+
+        :param known: sequence of indices of known degrees of freedom
+
+        :param xknown: corresponding sequence of their values
+        (default: zeros)
+
+        :param vknown: corresponding sequence of their rates of change
+
+        :param aknown: corresponding sequence of their second
+        derivatives
+
+        '''
+
+        U, Kn = self.node_maps(known)
+        M, K, C = [None if A is None else U.T * A * U
+                   for A in [self.M, self.K, self.C]]
+        sys = self.__class__(
+            M,
+            K,
+            C,
+            lambda *args: U.T.dot(
+                (0 if self.f is None else self.f(*args)) -
+                (0 if xknown is None else self.K.dot(Kn.dot(xknown))) -
+                (0 if vknown is None else self.C.dot(Kn.dot(vknown))) -
+                (0 if aknown is None else self.M.dot(Kn.dot(aknown)))),
+            self.alpha, self.definite)
+
+        sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
+        return sys

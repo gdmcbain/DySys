@@ -10,6 +10,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 from dysys import DySys
 
 
@@ -66,9 +68,6 @@ class LinearDySys(DySys):
 
         :param vknown: corresponding sequence of their rates of change
 
-        The returned system is attributed the U and K matrices from
-        self.node_maps and therefore can use :method reconstitute:.
-
         '''
 
         U, K = self.node_maps(known)
@@ -81,15 +80,15 @@ class LinearDySys(DySys):
                 (0 if xknown is None else self.D.dot(K.dot(xknown))) -
                 (0 if vknown is None else self.M.dot(K.dot(vknown)))))
 
-        def reconstitute(u):
-            '''reinsert the known degrees of freedom stripped out by constrain
+        # def reconstitute(u):
+        #     '''reinsert the known degrees of freedom stripped out by constrain
 
-            This is an identity mapping if the system is not constrained
-            (determined by assuming that the system will only have the
-            attribute U if its constrain method has been called).
+        #     This is an identity mapping if the system is not constrained
+        #     (determined by assuming that the system will only have the
+        #     attribute U if its constrain method has been called).
 
-            '''
-            return U.dot(u) + (0 if xknown is None else K.dot(xknown))
+        #     '''
+        #     return U.dot(u) + (0 if xknown is None else K.dot(xknown))
 
-        sys.reconstitute = reconstitute
+        sys.reconstitute = partial(self.reconstituter, U, K, xknown)
         return sys
