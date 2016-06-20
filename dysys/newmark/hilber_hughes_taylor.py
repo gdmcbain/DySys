@@ -27,7 +27,7 @@ class HilberHughesTaylor(Newmark):
     '''a dynamical system advancing with a Hilber-Hughes-Taylor method
 
     (a.k.a. alpha-method), like the Newmark method
-    
+
     '''
 
     def __init__(self, M, K, C=None, f=None, alpha=0., definite=False):

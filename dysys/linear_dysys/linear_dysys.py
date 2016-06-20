@@ -44,7 +44,7 @@ class LinearDySys(DySys):
         :param theta: float, parameter of theta time-stepping method,
         default 1.0 for backward Euler, 0.5 for trapezoidal, 0 for
         forward Euler
-        
+
         :param definite: bool, for if system is (positive-)definite
 
         '''
@@ -79,16 +79,6 @@ class LinearDySys(DySys):
                 (0 if self.f is None else self.f(*args)) -
                 (0 if xknown is None else self.D.dot(K.dot(xknown))) -
                 (0 if vknown is None else self.M.dot(K.dot(vknown)))))
-
-        # def reconstitute(u):
-        #     '''reinsert the known degrees of freedom stripped out by constrain
-
-        #     This is an identity mapping if the system is not constrained
-        #     (determined by assuming that the system will only have the
-        #     attribute U if its constrain method has been called).
-
-        #     '''
-        #     return U.dot(u) + (0 if xknown is None else K.dot(xknown))
 
         sys.reconstitute = partial(self.reconstituter, U, K, xknown)
         return sys

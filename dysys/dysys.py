@@ -291,7 +291,7 @@ def node_maps(known, size):
         sparse systems.
 
         '''
-        
+
         return NotImplemented
 
     def eigs(self, *args, **kwargs):
@@ -301,6 +301,5 @@ def node_maps(known, size):
         to dense, if the system is too small.
 
         '''
-        
-        return NotImplemented
 
+        return NotImplemented

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 '''
 
@@ -13,6 +14,7 @@ from __future__ import absolute_import, division, print_function
 from functools import partial
 from warnings import warn
 
+import numpy as np
 from scipy.sparse import linalg as sla
 from sksparse.cholmod import cholesky
 
@@ -77,7 +79,7 @@ class Newmark(DySys):
             rhs += self.f(t + h, d)
         if self.C is not None:
             rhs -= self.C.dot(vt)
-            
+
         self.a = self.solve(rhs)
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
@@ -138,7 +140,7 @@ class Newmark(DySys):
 
         '''
 
-        U, Kn = node_maps(known, len(self))
+        U, Kn = self.node_maps(known)
         M, K, C = [None if A is None else U.T * A * U
                    for A in [self.M, self.K, self.C]]
         sys = self.__class__(
@@ -162,7 +164,7 @@ class Newmark(DySys):
             if 'return_eigenvectors' not in kwargs:
                 kwargs['return_eigenvectors'] = False
             kwargs['M'] = self.M
-            kwargs['sigma'] = 0. # inverse iteration (Hughes §10.5.2)
+            kwargs['sigma'] = 0.  # inverse iteration (Hughes §10.5.2)
             try:
                 return ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
@@ -183,10 +185,10 @@ class Newmark(DySys):
             # problem is not quadratic but linear, the standard form
             # of the generalized algebraic eigenvalue problem accepted
             # by scipy.linalg.eig and scipy.sparse.linalg.eigs.
-            
+
             return NotImplemented
 
-### Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
+# Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
 
 trapezoidal = partial(Newmark, beta=.25, gamma=.5)
 
