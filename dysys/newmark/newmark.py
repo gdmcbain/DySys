@@ -162,6 +162,7 @@ class Newmark(DySys):
             if 'return_eigenvectors' not in kwargs:
                 kwargs['return_eigenvectors'] = False
             kwargs['M'] = self.M
+            kwargs['sigma'] = 0. # inverse iteration (Hughes §10.5.2)
             try:
                 return ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
