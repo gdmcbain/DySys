@@ -13,6 +13,7 @@ from __future__ import absolute_import, division, print_function
 from functools import partial
 from warnings import warn
 
+from scipy.sparse import linalg as sla
 from sksparse.cholmod import cholesky
 
 from ..dysys import DySys
@@ -154,6 +155,35 @@ class Newmark(DySys):
         sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
         return sys
 
+    def eigs(self, *args, **kwargs):
+        '''return the first few modes of the system'''
+
+        if self.C is None:
+            if 'return_eigenvectors' not in kwargs:
+                kwargs['return_eigenvectors'] = False
+            kwargs['M'] = self.M
+            try:
+                return ((sla.eigsh if self.definite else sla.eigs)
+                        (-self.K, *args, **kwargs))
+            except ValueError:
+                warn('system too small, converting to dense', UserWarning)
+                for k in ['k', 'M', 'which']:
+                    if k in kwargs:
+                        del kwargs[k]
+                kwargs['right'] = kwargs.pop('return_eigenvectors')
+                return self.eig(*args, **kwargs)
+        else:
+
+            # TODO gmcbain 2013-05-16: Provide modal analysis methods
+            # eig and eigs (like those of SparseDySys).  One way to
+            # formulate this is to convert the second-order system to
+            # a first-order block system by introducing an auxiliary
+            # variable for the rate of change, then the eigenvalue
+            # problem is not quadratic but linear, the standard form
+            # of the generalized algebraic eigenvalue problem accepted
+            # by scipy.linalg.eig and scipy.sparse.linalg.eigs.
+            
+            return NotImplemented
 
 ### Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
 
@@ -164,34 +194,3 @@ linear_acceleration = partial(Newmark, beta=1/6, gamma=.5)
 fox_goodwin = partial(Newmark, beta=1/12, gamma=.5)
 
 central_difference = partial(Newmark, beta=0, gamma=.5)
-
-    # TODO gmcbain 2013-05-16: Provide modal analysis methods eig and
-    # eigs (like those of SparseDySys).  One way to formulate this is
-    # to convert the second-order system to a first-order block system
-    # by introducing an auxiliary variable for the temperature, then
-    # the eigenvalue problem is not quadratic but linear, the standard
-    # form of the generalized algebraic eigenvalue problem accepted by
-    # scipy.linalg.eig and scipy.sparse.linalg.eigs.
-
-    def eig(self, *args, **kwargs):
-        '''return the complete spectrum of the system'''
-        return NotImplemented
-
-    def eigs(self, *args, **kwargs):
-        '''return the first few modes of the system'''
-
-        if self.C is None:
-            if 'return_eigenvectors' not in kwargs:
-                kwargs['return_eigenvectors'] = False
-            kwargs['M'] = self.M
-            try:
-                return sla.eigs(-self.K, *args, **kwargs)
-            except ValueError:
-                warn('system too small, converting to dense', UserWarning)
-                for k in ['k', 'M', 'which']:
-                    if k in kwargs:
-                        del kwargs[k]
-                kwargs['right'] = kwargs.pop('return_eigenvectors')
-                return self.eig(*args, **kwargs)
-        else:
-            raise NotImplementedError
