@@ -161,13 +161,13 @@ class Newmark(DySys):
         '''return the first few modes of the system'''
 
         if self.C is None:
-            if 'return_eigenvectors' not in kwargs:
-                kwargs['return_eigenvectors'] = False
             kwargs['M'] = self.M
-            kwargs['sigma'] = 0.  # inverse iteration (Hughes §10.5.2)
+            if 'sigma' not in kwargs:  # inverse iteration
+                kwargs['sigma'] = 0.   #  (Hughes 2000, §10.5.2)
             try:
-                return ((sla.eigsh if self.definite else sla.eigs)
+                w, v = ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
+                return np.sqrt(-w), v
             except ValueError:
                 warn('system too small, converting to dense', UserWarning)
                 for k in ['k', 'M', 'which']:
