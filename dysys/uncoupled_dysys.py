@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
 '''A list of uncoupled dynamical systems
 
 taking synchronized approximate discrete steps in continuous time
@@ -19,10 +18,24 @@ from .dysys import DySys
 
 class UncoupledDySys(DySys):
 
-    # TODO gmcbain 2016-07-21: Implement, maybe as a list of DySys.
+    def __init__(self, systems):
+        'initialize with a list of DySys'
 
-    def __init__(self, *args, **kwargs):
-        return NotImplemented
+        self.systems = systems
 
-    def step(self, *args, **kwargs):
-        return NotImplemented
+    def step(self, t, h, yy, dd):
+        '''estimate the next states using appropriate methods
+
+        :param t: float, time
+
+        :param h: float > 0, time-step
+
+        :param yy: list of initial conditions, corresponding to
+        self.systems
+
+        :param dd: list of discrete states, corresponding to
+        self.systems
+
+        '''
+
+        return [s.step(t, h, y, d) for s, y, d in zip(self.systems, yy, dd)]
