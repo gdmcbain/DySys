@@ -249,7 +249,6 @@ class DySys(object):
 
         return U.dot(u) + (0 if x is None else K.dot(x))
 
-
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
 
@@ -307,4 +306,3 @@ def node_maps(known, size):
         return U, I[:, known]
     else:
         return [I, np.zeros((size, 0))]
-
