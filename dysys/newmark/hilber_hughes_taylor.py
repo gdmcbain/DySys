@@ -75,6 +75,10 @@ class HilberHughesTaylor(Newmark):
         # time; therefore, it may be easier to pack it into the dict
         # of discrete dynamical variables.
 
+        # TODO gmcbain 2016-07-28: Actually, this mechanism should be
+        # much more broadly available, possibly even to the DySys
+        # class.
+
         if 'force' in d:
             rhs += ((1 + self.alpha) * d['force']['new'] -
                     self.alpha * d['force']['old'])
