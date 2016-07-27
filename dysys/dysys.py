@@ -264,11 +264,14 @@ class DySys(object):
         :param x: vector in total space
 
         The idea is that if x = U.dot(u) + K.dot(k), then U.T.dot(x) =
-        (U.T.dot(U)).dot(u), assuming U.T.dot(K) = 0
+        (U.T.dot(U)).dot(u), assuming U.T.dot(K) = 0. 
+
+        Further assuming that U is orthogonal in the sense that
+        U.T.dot(U) is the identity, we have u = U.T.dot(x).
 
         '''
-        
-        return solve(U.T.dot(U), U.T.dot(x))
+
+        return U.T.dot(x)
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
