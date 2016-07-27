@@ -185,7 +185,7 @@ class DySys(object):
 
         '''
 
-        return self.march_truncated(lambda t, _, __: t < endtime,
+        return self.march_truncated(lambda event: event[0] < endtime,
                                     *args, **kwargs)
 
     def march_while(self, predicate, *args, **kwargs):
@@ -200,8 +200,8 @@ class DySys(object):
 
         '''
 
-        return self.march_truncated(lambda _, x, d: predicate(x, **d),
-                                    *args, **kwargs)
+        return self.march_truncated(
+            lambda event: predicate(event[1], **event[2]), *args, **kwargs)
 
     def node_maps(self, known):
         '''return the matrices mapping the unknown and knowns
