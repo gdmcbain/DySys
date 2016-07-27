@@ -159,7 +159,8 @@ class DySys(object):
     def march_truncated(self, condition, *args, **kwargs):
         '''truncate a march when condition fails
 
-        :param condition: a predicate on pairs of time and state
+        :param condition: a predicate on triples of time, continuous
+        state, and dict of discrete dynamical variables
 
         :rtype: like march but truncated
 
@@ -184,7 +185,7 @@ class DySys(object):
 
         '''
 
-        return self.march_truncated(lambda event: event[0] < endtime,
+        return self.march_truncated(lambda t, _, __: t < endtime,
                                     *args, **kwargs)
 
     def march_while(self, predicate, *args, **kwargs):
@@ -199,8 +200,8 @@ class DySys(object):
 
         '''
 
-        return self.march_truncated(
-            lambda event: predicate(event[1], **event[2]), *args, **kwargs)
+        return self.march_truncated(lambda _, x, d: predicate(x, **d),
+                                    *args, **kwargs)
 
     def node_maps(self, known):
         '''return the matrices mapping the unknown and knowns
