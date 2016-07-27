@@ -15,14 +15,14 @@ from __future__ import absolute_import, division, print_function
 from unittest import TestCase, main
 
 import numpy as np
-from scipy.sparse import bmat, coo_matrix, diags
+from scipy.sparse import bmat, diags
 
 from dysys import SparseDySys
 
 
 class TestLumpedLine(TestCase):
 
-    '''Consider a single lumped hydraulic conduit 
+    '''Consider a single lumped hydraulic conduit
 
     with serial resistance R and inertance L, shunt compliance C and
     duty Q and fixed inlet pressure
@@ -40,7 +40,6 @@ class TestLumpedLine(TestCase):
 
     '''
 
-    
     @classmethod
     def setUpClass(cls):
         cls.pin = -981.0
@@ -51,7 +50,7 @@ class TestLumpedLine(TestCase):
 
         cls.M = diags([[0, cls.C, cls.L]], [0])
         B = bmat([[+1], [-1]])
-        cls.D = bmat([[None, B], 
+        cls.D = bmat([[None, B],
                       [-B.T, np.array([cls.R])]])
         cls.sys = SparseDySys(cls.M, cls.D,
                               lambda t, _: [0, cls.Q, 0])
@@ -84,9 +83,6 @@ class TestLumpedLine(TestCase):
         np.testing.assert_array_almost_equal(
             q, -self.Q / (Y * Z))
 
-    # def test_march(self):
-    #     pass
-            
 
 if __name__ == '__main__':
     main()
