@@ -19,7 +19,7 @@ from dysys import newton
 
 class TestNewton(TestCase):
 
-    def test_sqrt(self, x=(2 * np.arange(1, 3),), decimals=5):
+    def test_sqrt(self, x=np.array([[1, 2]]), decimals=5):
 
         '''r(y) = y**2 - x
 
