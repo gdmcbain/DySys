@@ -38,4 +38,4 @@ class UncoupledDySys(DySys):
 
         '''
 
-        return [s.step(t, h, y, d) for s, y, d in zip(self.systems, yy, dd)]
+        return [s._step(t, h, y, d) for s, y, d in zip(self.systems, yy, dd)]
