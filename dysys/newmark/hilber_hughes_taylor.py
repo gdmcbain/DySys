@@ -70,6 +70,15 @@ class HilberHughesTaylor(Newmark):
             rhs += ((1 + self.alpha) * self.f(t + h, d) -
                     self.alpha * self.f(t, d))
 
+        # KLUDGE gmcbain 2016-07-27: For systems driven by other
+        # DySys, the forcing term is not a function of continuous
+        # time; therefore, it may be easier to pack it into the dict
+        # of discrete dynamical variables.
+
+        if 'force' in d:
+            rhs += ((1 + self.alpha) * d['force']['new'] -
+                    self.alpha * d['force']['old'])
+
         self.a = self.solve(rhs)
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
