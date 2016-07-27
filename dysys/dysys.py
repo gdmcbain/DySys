@@ -51,6 +51,9 @@ class DySys(object):
         condition y at time t; d is an optional object containing
         discrete dynamical parameters
 
+        Note that d is not to be returned; it is only modified by
+        'events' during self.march.
+
         The basic idea is that: '...the nature of time-stepping is
         inherently sequential or local; given the "state" y(t), the
         method is a procedure for computing an approximation to y(t+h)
@@ -247,6 +250,27 @@ class DySys(object):
         return U.dot(u) + (0 if x is None else K.dot(x))
 
 
+    def eig(self, *args, **kwargs):
+        '''return the complete spectrum of the system
+
+        Designed for small dense systems; see self.eigs for large
+        sparse systems.
+
+        '''
+
+        return NotImplemented
+
+    def eigs(self, *args, **kwargs):
+        '''return the first few modes of the system
+
+        Designed for large sparse systems; default to self.eig, converting
+        to dense, if the system is too small.
+
+        '''
+
+        return NotImplemented
+
+
 def node_maps(known, size):
     '''return the matrices mapping the unknown and knowns
 
@@ -284,22 +308,3 @@ def node_maps(known, size):
     else:
         return [I, np.zeros((size, 0))]
 
-    def eig(self, *args, **kwargs):
-        '''return the complete spectrum of the system
-
-        Designed for small dense systems; see self.eigs for large
-        sparse systems.
-
-        '''
-
-        return NotImplemented
-
-    def eigs(self, *args, **kwargs):
-        '''return the first few modes of the system
-
-        Designed for large sparse systems; default to self.eig, converting
-        to dense, if the system is too small.
-
-        '''
-
-        return NotImplemented
