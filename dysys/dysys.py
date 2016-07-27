@@ -19,6 +19,8 @@ import itertools as it
 import numpy as np
 from scipy.sparse import identity
 
+from .fixed_point import solve
+
 
 def stepper(stepping_function):
     '''decorator to do nothing for steps of zero length
@@ -248,6 +250,24 @@ class DySys(object):
         '''
 
         return U.dot(u) + (0 if x is None else K.dot(x))
+
+    @staticmethod
+    def projecter(U, x):
+        '''map to constrained space
+
+        using the left-inverse of U from self.node_maps
+
+        :param U: linear operator from constrained space to total
+        space, as returned by self.node_maps
+
+        :param x: vector in total space
+
+        The idea is that if x = U.dot(u) + K.dot(k), then U.T.dot(x) =
+        (U.T.dot(U)).dot(u), assuming U.T.dot(K) = 0
+
+        '''
+        
+        return solve(U.T.dot(U), U.T.dot(x))
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system

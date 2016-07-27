@@ -89,10 +89,8 @@ class Newmark(DySys):
         if self.C is not None:
             self.A += h * self.gamma * self.C
 
-        if self.definite:
-            self.solve = cholesky(self.A)
-        else:
-            self.solve = partial(solve, self.A)
+        self.solve = (cholesky(self.A) if self.definite
+                      else partial(solve, self.A))
 
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
@@ -139,6 +137,8 @@ class Newmark(DySys):
         derivatives
 
         '''
+
+        # TODO gmcbain 2016-07-27: Refactor!
 
         U, Kn = self.node_maps(known)
         M, K, C = [None if A is None else U.T * A * U

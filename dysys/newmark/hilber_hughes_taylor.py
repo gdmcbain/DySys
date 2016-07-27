@@ -102,6 +102,8 @@ class HilberHughesTaylor(Newmark):
 
         '''
 
+        # TODO gmcbain 2016-07-27: Refactor!
+
         U, Kn = self.node_maps(known)
         M, K, C = [None if A is None else U.T * A * U
                    for A in [self.M, self.K, self.C]]
@@ -117,4 +119,6 @@ class HilberHughesTaylor(Newmark):
             self.alpha, self.definite)
 
         sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
+        sys.project = partial(self.projecter, U)
+        
         return sys
