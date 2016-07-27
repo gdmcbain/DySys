@@ -9,7 +9,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-from unittest import (TestCase, main)
+from unittest import TestCase, main
 
 import numpy as np
 from scipy.sparse import spdiags
@@ -35,11 +35,11 @@ class TestNewton(TestCase):
             return y[0]**2 - x[0]
 
         def jac(y):
-            return spdiags(2 * y[0], 0, *(len(x[0]),)*2)
+            return spdiags(2 * y[0], 0, *(len(x[0]),)*2).tocsc()
 
         np.testing.assert_array_almost_equal(
-            newton(res, jac, x, tol=10**-decimals),
-            np.sqrt(x),
+            newton(res, jac, x, tol=10**-(decimals/2))**2,
+            x,
             decimals)
 
 
