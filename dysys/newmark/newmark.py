@@ -68,6 +68,22 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
+    def equilibrium(self, d=None):
+        '''return the eventual steady-state solution
+
+        using the d['force'] if defined, otherwise self.f(np.inf, d)
+
+        :param d: dict
+
+        '''
+
+        try:
+            rhs = d['force']
+        except:
+            rhs = self.f(np.inf, d)
+
+        return solve(self.K, rhs)
+
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
 
