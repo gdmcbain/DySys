@@ -80,11 +80,7 @@ class SparseDySys(LinearDySys):
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
-        b = np.zeros(len(self)) if self.f is None else self.f(np.inf, d)
-        try:
-            return solve(self.D, b)
-        except IndexError:      # singleton system?
-            return np.array(b / (self.D)[0, 0])
+        return solve(self.D, self.f(np.inf, d))
 
     def harmonic(self, omega):
         '''return the complex harmonic solution
