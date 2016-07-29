@@ -71,14 +71,19 @@ class LinearDySys(DySys):
         '''
 
         U, K = self.node_maps(known)
-        M, D = [None if A is None else U.T * A * U for A in [self.M, self.D]]
+        project = partial(self.projector, U)
+
+        M, D = [None if A is None else project(A * U)
+                for A in [self.M, self.D]]
         sys = self.__class__(
             M,
             D,
-            lambda *args: U.T.dot(
+            lambda *args: project(
                 (0 if self.f is None else self.f(*args)) -
                 (0 if xknown is None else self.D.dot(K.dot(xknown))) -
                 (0 if vknown is None else self.M.dot(K.dot(vknown)))))
 
         sys.reconstitute = partial(self.reconstituter, U, K, xknown)
+        sys.project = project
+        
         return sys

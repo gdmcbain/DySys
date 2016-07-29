@@ -157,13 +157,15 @@ class Newmark(DySys):
         # TODO gmcbain 2016-07-27: Refactor!
 
         U, Kn = self.node_maps(known)
-        M, K, C = [None if A is None else U.T * A * U
+        project = partial(self.projector, U)
+
+        M, K, C = [None if A is None else project(A * U)
                    for A in [self.M, self.K, self.C]]
         sys = self.__class__(
             M,
             K,
             C,
-            lambda *args: U.T.dot(
+            lambda *args: project(
                 (0 if self.f is None else self.f(*args)) -
                 (0 if xknown is None else self.K.dot(Kn.dot(xknown))) -
                 (0 if vknown is None else self.C.dot(Kn.dot(vknown))) -
@@ -171,6 +173,8 @@ class Newmark(DySys):
             self.beta, self.gamma, self.definite)
 
         sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
+        sys.project = project
+        
         return sys
 
     def eigs(self, *args, **kwargs):

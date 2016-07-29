@@ -253,7 +253,7 @@ class DySys(object):
         return U.dot(u) + (0 if x is None else K.dot(x))
 
     @staticmethod
-    def projecter(U, x):
+    def projector(U, x):
         '''map to constrained space
 
         using the left-inverse of U from self.node_maps
