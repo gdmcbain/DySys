@@ -74,7 +74,7 @@ class HilberHughesTaylor_d(DySys):
                            (1 - self.gamma / self.beta) * self.v +
                            h * (1 - .5 * self.gamma / self.beta) * self.a),
                           ((x1 - x - h * self.v) / self.beta / h**2 -
-                           (.5 / self.beta - 1)  * self.a))
+                           (.5 / self.beta - 1) * self.a))
 
         return x1
 
