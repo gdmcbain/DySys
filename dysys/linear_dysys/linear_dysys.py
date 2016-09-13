@@ -85,5 +85,5 @@ class LinearDySys(DySys):
 
         sys.reconstitute = partial(self.reconstituter, U, K, xknown)
         sys.project = project
-        
+
         return sys
