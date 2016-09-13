@@ -100,9 +100,6 @@ class Newmark(DySys):
         if self.C is not None:
             self.A += h * self.gamma * self.C
 
-        self.solve = (cholesky(self.A) if self.definite
-                      else partial(solve, self.A))
-
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
 
@@ -124,6 +121,8 @@ class Newmark(DySys):
         self.a = solve(self.M, rhs)
 
         self.setA(h)
+        self.solve = (cholesky(self.A) if self.definite
+                      else partial(solve, self.A))
 
         if 'f' not in kwargs:
             # TRICKY gmcbain 2016-04-08: Return the rate of change of

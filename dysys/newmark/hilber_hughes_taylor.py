@@ -93,11 +93,6 @@ class HilberHughesTaylor(Newmark):
         if self.C is not None:
             self.A += (1 + self.alpha) * h * self.gamma * self.C
 
-        if self.definite:
-            self.solve = cholesky(self.A)
-        else:
-            self.solve = partial(solve, self.A)
-
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
         '''return a new DySys with constrained degrees of freedom
 
@@ -119,7 +114,7 @@ class HilberHughesTaylor(Newmark):
 
         U, Kn = self.node_maps(known)
         project = partial(self.projector, U)
-        
+
         M, K, C = [None if A is None else project(A * U)
                    for A in [self.M, self.K, self.C]]
         sys = self.__class__(
@@ -135,5 +130,5 @@ class HilberHughesTaylor(Newmark):
 
         sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
         sys.project = project
-        
+
         return sys
