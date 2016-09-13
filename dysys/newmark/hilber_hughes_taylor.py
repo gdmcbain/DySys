@@ -17,10 +17,7 @@ from __future__ import absolute_import, division, print_function
 
 from functools import partial
 
-from sksparse.cholmod import cholesky
-
 from .newmark import Newmark
-from ..fixed_point import solve
 
 
 class HilberHughesTaylor(Newmark):

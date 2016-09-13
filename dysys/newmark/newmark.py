@@ -168,7 +168,7 @@ class Newmark(DySys):
 
         sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
         sys.project = project
-        
+
         return sys
 
     def eigs(self, *args, **kwargs):
@@ -177,7 +177,7 @@ class Newmark(DySys):
         if self.C is None:
             kwargs['M'] = self.M
             if 'sigma' not in kwargs:  # inverse iteration
-                kwargs['sigma'] = 0.   #  (Hughes 2000, §10.5.2)
+                kwargs['sigma'] = 0.   # Hughes (2000, §10.5.2)
             try:
                 w, v = ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
