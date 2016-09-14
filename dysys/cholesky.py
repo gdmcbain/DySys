@@ -20,6 +20,8 @@ from __future__ import absolute_import, division, print_function
 from functools import partial
 from warnings import warn
 
+from scipy.sparse import issparse
+
 try:
     from sksparse.cholmod import cholesky
 except ImportError:
@@ -40,7 +42,7 @@ except ImportError:
 
         '''
 
-        c = cho_factor(a)
+        c = cho_factor(a.todense() if issparse(a) else a)
 
         def solve(b):
             return partial(cho_solve, c)
