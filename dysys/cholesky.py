@@ -44,7 +44,4 @@ except ImportError:
 
         c = cho_factor(a.todense() if issparse(a) else a)
 
-        def solve(b):
-            return partial(cho_solve, c)
-
-        return solve
+        return partial(cho_solve, c)
