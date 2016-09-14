@@ -16,8 +16,8 @@ from warnings import warn
 
 import numpy as np
 from scipy.sparse import linalg as sla
-from sksparse.cholmod import cholesky
 
+from ..cholesky import cholesky
 from ..dysys import DySys
 from ..fixed_point import solve
 
@@ -95,10 +95,21 @@ class Newmark(DySys):
         self.v = vt + self.gamma * h * self.a
         return xt + self.beta * h**2 * self.a
 
-    def setA(self, h):
-        self.A = self.M + h**2 * self.beta * self.K
+    def setA(self, h, alpha=0.):
+        '''set the acceleration evolution matrix
+
+        :param h: float > 0, time-step
+
+        :param alpha: optional float, for use by the
+        HilberHughesTaylor subclass, defaulting to 0., in which case
+        Hilber, Hughes, & Taylor's alpha-method degenerates to Newmark
+
+        '''
+
+        A = self.M + (1 + alpha) * h**2 * self.beta * self.K
         if self.C is not None:
-            self.A += h * self.gamma * self.C
+            A += (1 + alpha) * h * self.gamma * self.C
+        self.solve = cholesky(A) if self.definite else partial(solve, A)
 
     def march(self, h, x, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
@@ -121,8 +132,6 @@ class Newmark(DySys):
         self.a = solve(self.M, rhs)
 
         self.setA(h)
-        self.solve = (cholesky(self.A) if self.definite
-                      else partial(solve, self.A))
 
         if 'f' not in kwargs:
             # TRICKY gmcbain 2016-04-08: Return the rate of change of

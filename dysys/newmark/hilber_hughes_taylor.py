@@ -85,10 +85,7 @@ class HilberHughesTaylor(Newmark):
         return xt + self.beta * h**2 * self.a
 
     def setA(self, h):
-        self.A = self.M + (1 + self.alpha) * h**2 * self.beta * self.K
-
-        if self.C is not None:
-            self.A += (1 + self.alpha) * h * self.gamma * self.C
+        super(HilberHughesTaylor, self).setA(h, self.alpha)
 
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
         '''return a new DySys with constrained degrees of freedom

@@ -16,6 +16,7 @@ import numpy as np
 from scipy.linalg import eig
 from scipy.sparse import identity, linalg as sla
 
+from ...cholesky import cholesky
 from ...fixed_point import solve
 from ..linear_dysys import LinearDySys
 
@@ -44,15 +45,8 @@ class SparseDySys(LinearDySys):
             self._memo = {'h': h, 'M': M}
 
             if self.definite:
-                try:
-                    from sksparse.cholmod import cholesky
-                    self._memo['solve'] = cholesky(M + self.D)
-                except ImportError as error:
-                    del self._memo['solve']
-                    print(__file__, error)
-                    pass
-
-            if 'solve' not in self._memo:
+                self._memo['solve'] = cholesky(M + self.D)
+            else:
                 self._memo['solve'] = partial(
                     sla.lgmres, M1, x0=x,
                     M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
