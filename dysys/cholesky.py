@@ -42,6 +42,6 @@ except ImportError:
 
         '''
 
-        c = cho_factor(a.todense() if issparse(a) else a)
+        c = cho_factor(a.toarray() if issparse(a) else a)
 
         return partial(cho_solve, c)
