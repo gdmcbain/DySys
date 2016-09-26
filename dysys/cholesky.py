@@ -20,28 +20,33 @@ from __future__ import absolute_import, division, print_function
 from functools import partial
 from warnings import warn
 
+from scipy.linalg import cho_factor, cho_solve
 from scipy.sparse import issparse
 
+
+def dense_cholesky(a):
+    '''Compute the Cholesky decomposition of a
+
+    with the property that calling it on a right-hand side vector
+    b returns the solution x of a.dot(x) = b.
+
+    :param a: np.ndarray, ndim==2, symmetric, positive-definite
+
+    :rtype: function (np.ndarray, ndim=1, len=n) -> (np.ndarray,
+    ndim=1, len=n), linear
+
+    '''
+
+    return partial(cho_solve,
+                   cho_factor(a.toarray() if issparse(a) else a))
+
 try:
-    from sksparse.cholmod import cholesky
+    from sksparse.cholmod import cholesky as sparse_cholesky
 except ImportError:
     warn('could not import cholesky from sksparse.cholmod,'
          ' falling back on scipy.linalg, which is dense', UserWarning)
-    from scipy.linalg import cho_factor, cho_solve
+    sparse_cholesky = dense_cholesky
+    
 
-    def cholesky(a):
-        '''Compute the Cholesky decomposition of a
-
-        with the property that calling it on a right-hand side vector
-        b returns the solution x of a.dot(x) = b.
-
-        :param a: np.ndarray, ndim==2, symmetric, positive-definite
-
-        :rtype: function (np.ndarray, ndim=1, len=n) -> (np.ndarray,
-        ndim=1, len=n), linear
-
-        '''
-
-        c = cho_factor(a.toarray() if issparse(a) else a)
-
-        return partial(cho_solve, c)
+def cholesky(a):
+    return (sparse_cholesky if issparse(a) else dense_cholesky)(a)
