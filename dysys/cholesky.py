@@ -46,7 +46,7 @@ except ImportError:
     warn('could not import cholesky from sksparse.cholmod,'
          ' falling back on scipy.linalg, which is dense', UserWarning)
     sparse_cholesky = dense_cholesky
-    
+
 
 def cholesky(a):
     return (sparse_cholesky if issparse(a) else dense_cholesky)(a)
