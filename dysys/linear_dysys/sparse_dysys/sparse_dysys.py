@@ -47,10 +47,9 @@ class SparseDySys(LinearDySys):
             if self.definite:
                 self._memo['solve'] = cholesky(M + self.D)
             else:
-                # self._memo['solve'] = partial(
-                #     sla.lgmres, M1, x0=x,
-                #     M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
-                self._memo['solve'] = partial(solve, M + self.D)
+                self._memo['solve'] = partial(
+                    sla.lgmres, M1, x0=x,
+                    M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
 
         b = self._memo['M'].dot(x)
         if self.f is not None:
@@ -59,20 +58,19 @@ class SparseDySys(LinearDySys):
 
         retval = self._memo['solve'](b)
 
-        # if self.definite:
-        #     return retval
-        # else:
-        #     x1, info = retval
-        #     if info == 0:
-        #         return x1
-        #     else:
-        #         if info > 0:
-        #             raise RuntimeError(
-        #                 'convergence to tolerance not achieved '
-        #                 'in %s iterations' % info)
-        #         else:
-        #             raise ValueError('info %d' % info)
-        return retval
+        if self.definite:
+            return retval
+        else:
+            x1, info = retval
+            if info == 0:
+                return x1
+            else:
+                if info > 0:
+                    raise RuntimeError(
+                        'convergence to tolerance not achieved '
+                        'in %s iterations' % info)
+                else:
+                    raise ValueError('info %d' % info)
 
     def equilibrium(self, d=None):
         '''return the eventual steady-state solution'''
