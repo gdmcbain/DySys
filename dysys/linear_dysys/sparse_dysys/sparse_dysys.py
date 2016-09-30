@@ -56,7 +56,10 @@ class SparseDySys(LinearDySys):
             b += (self.theta * self.f(t + h, d) +
                   (1 - self.theta) * self.f(t, d))
 
-        retval = self._memo['solve'](b)
+        try:
+            retval = self._memo['solve'](b)
+        except ValueError:
+            raise ZeroDivisionError
 
         if self.definite:
             return retval
