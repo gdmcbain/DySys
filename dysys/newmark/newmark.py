@@ -15,11 +15,12 @@ from functools import partial
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import linalg as sla
+from scipy.sparse import block_diag, bmat, identity, linalg as sla
 
 from ..cholesky import cholesky
 from ..dysys import DySys
 from ..fixed_point import solve
+from ..linear_dysys import SparseDySys
 
 
 class Newmark(DySys):
@@ -200,16 +201,22 @@ class Newmark(DySys):
                 return self.eig(*args, **kwargs)
         else:
 
-            # TODO gmcbain 2013-05-16: Provide modal analysis methods
-            # eig and eigs (like those of SparseDySys).  One way to
-            # formulate this is to convert the second-order system to
-            # a first-order block system by introducing an auxiliary
-            # variable for the rate of change, then the eigenvalue
-            # problem is not quadratic but linear, the standard form
-            # of the generalized algebraic eigenvalue problem accepted
-            # by scipy.linalg.eig and scipy.sparse.linalg.eigs.
+            return self.to_sparse_dysys().eigs(*args, **kwargs)
 
-            return NotImplemented
+    def to_sparse_dysys(self):
+        '''return an equivalent SparseDySys
+
+        by introducing the rate of change as an auxiliary variable
+
+        '''
+
+        # TODO gmcbain 2016-10-11: Add f etc.
+
+        return SparseDySys(block_diag([identity(self.M.shape[0]),
+                                       self.M]),
+                           bmat([[None, -identity(self.M.shape[0])],
+                                 [self.K, self.C]]))
+
 
 # Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
 
