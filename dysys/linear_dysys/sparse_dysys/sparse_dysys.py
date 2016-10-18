@@ -41,7 +41,7 @@ class SparseDySys(LinearDySys):
         if not hasattr(self, '_memo') or h != self._memo['h']:
             if h == 0.:
                 raise ZeroDivisionError
-            
+
             M = self.M / h - (1 - self.theta) * self.D
             M1 = M + self.D
 
