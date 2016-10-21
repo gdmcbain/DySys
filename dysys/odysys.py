@@ -1,13 +1,15 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 '''
-:author: G. D. McBain <gmcbain>
+
+:author: gmcbain
+
 :created: 2015-02-09
 
 '''
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function
 
 from scipy.integrate import ode
 
@@ -20,11 +22,7 @@ class ODySys(DySys):
         self.f, self.jac = f, jac
         self.r = ode(f, jac)
 
-    def march(self, h, x, *args, **kwargs):
-        '''like DySys.march'''
-        self.r.set_initial_value(x, 0.)
-        return super(ODySys, self).march(h, x, *args, **kwargs)
-
     def step(self, t, h, x, d):
-        '''integrate to time t + h from x at t'''
+        '''estimate the next state'''
+        self.r.set_initial_value(x, t)
         return self.r.integrate(self.r.t + h)
