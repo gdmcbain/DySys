@@ -96,6 +96,25 @@ class DySys(object):
     #         yield t, x
     #         t, x = t + h, self.step(t, h, x)
 
+    def handle_event(self, f, t, x, d):
+        '''handle event
+
+        :param f: function of t, x, d that returns x, d, possibly
+        modified
+
+        :param t: float > 0, time
+
+        :param x: ndarray of continuous dynamical variables
+
+        :param d: dict of discrete dynamical variables
+
+        Subclass designers: Override if more needs to be done, using
+        super to re-call this.
+
+        '''
+        
+        return f(t, x, d)
+
     def march(self, h, x, d=None, events=None, substeps=1, f=None):
         '''like simple_march, but punctated by a sorted iterable of events
 
@@ -138,18 +157,18 @@ class DySys(object):
         # associated function will never be called; np.asarray is
         # chosen as it is near enough to an identity.
 
-        for event in it.chain([] if events is None else events,
+        for epoch, change in it.chain([] if events is None else events,
                               [(np.inf, np.asarray)]):
             while True:
                 yield t, (x if f is None else f(x)), d
-                if t + h > event[0]:
+                if t + h > epoch:
 
-                    x = self._step(t, event[0] - t, x, d, substeps)
-                    t = event[0]
+                    x = self._step(t, epoch - t, x, d, substeps)
+                    t = epoch
                     yield t, (x if f is None else f(x)), d
 
-                    if event[1] is not None:
-                        x, d = event[1](t, x, d)
+                    if change is not None:
+                        x, d = self.handle_event(change, t, x, d)
                     break
                 else:
                     t, x = t + h, self._step(t, h, x, d, substeps)
@@ -199,7 +218,7 @@ class DySys(object):
         '''
 
         return self.march_truncated(
-            lambda event: predicate(event[1], **event[2]), *args, **kwargs)
+            lambda event: predicate(event[1], event[2]), *args, **kwargs)
 
     def node_maps(self, known):
         '''return the matrices mapping the unknown and knowns
