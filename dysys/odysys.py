@@ -20,9 +20,13 @@ class ODySys(DySys):
 
     def __init__(self, f, jac=None):
         self.f, self.jac = f, jac
-        self.r = ode(f, jac)
+        self._ode = ode(f, jac)
+
+    def __getattr__(self, name):
+        '''delegate to ode'''
+        return getattr(self._ode, name)
 
     def step(self, t, h, x, d):
         '''estimate the next state'''
-        self.r.set_initial_value(x, t)
-        return self.r.integrate(self.r.t + h)
+        self.set_initial_value(x, t)
+        return self.integrate(self.t + h)
