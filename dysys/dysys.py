@@ -116,7 +116,10 @@ class DySys(object):
         return f(t, x, d)
 
     def march(self, h, x, d=None, events=None, substeps=1, f=None):
-        '''like simple_march, but punctated by a sorted iterable of events
+        '''generate the evolution of the system in time,
+
+        continuously according to the differential equation, but also
+        punctated by a sorted iterable of events
 
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
