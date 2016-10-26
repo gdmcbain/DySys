@@ -124,10 +124,10 @@ class DySys(object):
         each of which is a pair of the time at which it is scheduled
         and its mapping of the old state to the new
 
+        :param h: time-step (float)
+
         :param x: initial condition, a numpy.array or a pair of an
         numpy.array and a dict of discrete variables
-
-        :param h: time-step (float)
 
         :param d: dict, for discrete dynamical variables, e.g. to be
         accessed by the functions in events
