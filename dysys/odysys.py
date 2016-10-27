@@ -11,9 +11,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+import numpy as np
 from scipy.integrate import ode
 
-from dysys import DySys
+from . import DySys
+from .fixed_point import newton
 
 
 class ODySys(DySys):
@@ -63,3 +65,14 @@ class ODySys(DySys):
             return xnext
         else:
             raise ZeroDivisionError
+
+    def equilibrium(self, y0):
+        '''return a steady-state solution
+
+        :param y0: one-dimensional numpy.ndarray, initial guess
+
+        '''
+        
+        return newton(lambda y: self.f(np.inf, y, *self.f_params),
+                      lambda y: self.jac(np.inf, y, *self.jac_params),
+                      y0)
