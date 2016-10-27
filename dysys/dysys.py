@@ -44,6 +44,15 @@ class DySys(object):
 
     '''
 
+    def equilibrium(self, y0=None):
+        '''return an eventual steady-state solution
+
+        :param y0: initial guess, maybe optional, maybe ignored
+
+        '''
+
+        raise NotImplementedError
+
     def step(self, t, h, y, d):
         '''abstract method to be overridden by subclasses
 
