@@ -126,8 +126,8 @@ class DySys(object):
 
         :param h: time-step (float)
 
-        :param x: initial condition, a numpy.array or a pair of an
-        numpy.array and a dict of discrete variables
+        :param x: initial condition, typically a one-dimensional
+        numpy.ndarray, but may vary with subclass
 
         :param d: dict, for discrete dynamical variables, e.g. to be
         accessed by the functions in events
@@ -224,6 +224,7 @@ class DySys(object):
             lambda event: predicate(event[1], event[2]), *args, **kwargs)
 
     def node_maps(self, known):
+
         '''return the matrices mapping the unknown and knowns
 
         to the global nodes
