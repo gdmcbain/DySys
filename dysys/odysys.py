@@ -22,9 +22,17 @@ class ODySys(DySys):
 
         '''Encapsulate scipy.integrate.ode for DySys
 
-        :param f: 
+        :param f: function of time, state, and possibly other
+        arguments, listed in f_args
 
-        :param jac:
+        :param jac: optional function of time, state, and possibly
+        other arguments, listed in jac_args
+
+        :param f_args: optional list of additional positional
+        arguments for f
+
+        :param jac_args: optional list of additional positional
+        arguments for jac
 
         '''
         
