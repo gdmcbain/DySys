@@ -64,7 +64,7 @@ class ODySys(DySys):
         if self.successful():
             return xnext
         else:
-            raise ZeroDivisionError
+            raise RuntimeError
 
     def equilibrium(self, y0):
         '''return a steady-state solution
