@@ -148,9 +148,6 @@ class ScalarLinearDySys(LinearDySys):
 
         '''
 
-        if h == 0:
-            raise ZeroDivisionError
-
         return ((self.theta * self.f(t + h) +
                  (1 - self.theta) * self.f(t) +
                  (self.M / h - (1 - self.theta) * self.D) * x) /
