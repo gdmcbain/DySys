@@ -11,11 +11,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 import numpy as np
 from scipy.integrate import ode
+from scipy.optimize import root
 
 from . import DySys
-from .fixed_point import newton
 
 
 class ODySys(DySys):
@@ -72,7 +74,8 @@ class ODySys(DySys):
         :param y0: one-dimensional numpy.ndarray, initial guess
 
         '''
-        
-        return newton(lambda y: self.f(np.inf, y, *self.f_params),
-                      lambda y: self.jac(np.inf, y, *self.jac_params),
-                      y0)
+
+        return root(partial(self.f, np.inf),
+                    y0,
+                    self.f_params,
+                    jac=lambda y: self.jac(np.inf, y, *self.jac_params)).x
