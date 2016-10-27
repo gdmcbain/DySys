@@ -40,14 +40,14 @@ def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
 def newton(residual, jacobian, x, *args, **kwargs):
     '''eliminate the residual by Newton-iteration
 
-    :param: residual, a function taking a tuple with first term a
-    one-dimensional numpy.array to another array of the same len
+    :param: residual, a function taking a one-dimensional
+    numpy.ndarray to another array of the same len
 
     :param: jacobian, a function like residual but returning a square
     numpy.array of corresponding shape
 
-    :param: x, a tuple with first term a one-dimensional numpy.array
-    of the length expected by the residual and jacobian functions
+    :param: x, a one-dimensional numpy.ndarray of the length expected
+    by the residual and jacobian functions
 
     Any other positional or keyword arguments are passed on to
     fixed_point; of particular interest are tol and maxiter.
