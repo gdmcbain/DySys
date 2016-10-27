@@ -54,6 +54,9 @@ def newton(residual, jacobian, x, *args, **kwargs):
 
     '''
 
+    # TODO gmcbain 2016-10-28: Can we really not use
+    # scipy.optimize.root?
+
     def iteration(x):
         while True:
             dx = solve(jacobian(x), residual(x))
