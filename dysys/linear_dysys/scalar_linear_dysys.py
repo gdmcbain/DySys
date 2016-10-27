@@ -16,8 +16,15 @@ from __future__ import absolute_import, division, print_function
 
 from .linear_dysys import LinearDySys
 
+from numpy import inf
+
 
 class ScalarLinearDySys(LinearDySys):
+    '''a LinearDySys with scalar mass and damping
+
+    and a force which is a function of time
+
+    '''
 
     def __len__(self):
         return 1
@@ -69,3 +76,82 @@ class ScalarLinearDySys(LinearDySys):
             x = self.driven_step(told, t, x, fold, f, theta)
             told, fold = t, f
             yield t, x
+
+    def forced_step(self, t, x, h, d, f, theta=0.5):
+        '''return the state at t + h given x at t
+
+        :param t: float, time
+
+        :param x: float, initial condition at time t
+
+        :param h: float > 0, time-step
+
+        :param d: dict, discrete dynamical variables
+
+        :param f: (float -> float), time -> rhs
+
+        :param theta: float, in (0, 1), being the parameter of the
+        theta method; default 0.5 for Crank-Nicolson, use 1.0 for
+        backward Euler
+
+        '''
+        
+        if h == 0:
+            raise ZeroDivisionError
+        return (((theta * f(t + h) + (1 - theta) * f(t)) +
+                 (self.M / h - (1 - theta) * self.D) * x) /
+                (self.M / h + theta * self.D))
+
+    def forced_march(self, h, x, forcing, d=None, theta=0.5):
+        '''generate evolution from x due to forcing
+
+        :param h: float > 0, time-step
+
+        :param x: float, initial condition
+
+        :param forcing: (float -> float), (time -> rhs)
+
+        :param d: dict, discrete dynamical variables
+
+        :param theta: float, in (0, 1), being the parameter of the
+        theta method; default 0.5 for Crank-Nicolson, use 1.0 for
+        backward Euler
+
+        '''        
+
+        t, d = 0., d or {}
+
+        while True:
+            yield t, x, d
+            t, x = t + h, self.forced_step(t, x, h, d, forcing, theta)
+
+    def equilibrium(self, y0=None):
+        '''return eventual steady state
+
+        :param y0: initial guess, ignored
+
+        '''
+
+        return self.f(inf) / self.D
+
+    def step(self, t, h, x, d=None):
+        '''estimate the next state using theta method
+
+        :param t: float, time
+
+        :param h: float > 0, time-step
+
+        :param x: float, initial condition at time t
+
+        :param d: dict, discrete dynamical variables, optional
+        (default empty)
+
+        '''
+
+        if h == 0:
+            raise ZeroDivisionError
+
+        return ((self.theta * self.f(t + h) +
+                 (1 - self.theta) * self.f(t) +
+                 (self.M / h - (1 - self.theta) * self.D) * x) /
+                (self.M / h + self.theta * self.D))
