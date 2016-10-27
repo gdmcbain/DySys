@@ -146,9 +146,23 @@ class ScalarLinearDySys(LinearDySys):
         :param d: dict, discrete dynamical variables, optional
         (default empty)
 
+        If 'master' in d, it should be a dict containing a DySys in
+        'system', on the evolution of which the present step depends.
+        The right-hand side self.f(t) is replaced by a generalized
+        trapezoidal sum of the values of
+        d['master']['system']['state'] and where that steps to, both
+        mapped withd['master']['f'].
+
         '''
 
-        return ((self.theta * self.f(t + h) +
-                 (1 - self.theta) * self.f(t) +
+        try:
+            yold = d['master'].pop('state')
+            ynew = d['master']['state'] = d['master']['system'].step(
+                t, h, yold, d['master'].get('d'))
+            fold, fnew = map(d['master']['f'], [yold, ynew])
+        except (TypeError, KeyError):
+            fold, fnew = map(self.f, [t, t + h])
+            
+        return ((self.theta * fnew + (1 - self.theta) * fold +
                  (self.M / h - (1 - self.theta) * self.D) * x) /
                 (self.M / h + self.theta * self.D))
