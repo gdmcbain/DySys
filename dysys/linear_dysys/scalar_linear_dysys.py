@@ -151,7 +151,7 @@ class ScalarLinearDySys(LinearDySys):
         The right-hand side self.f(t) is replaced by a generalized
         trapezoidal sum of the values of
         d['master']['system']['state'] and where that steps to, both
-        mapped withd['master']['f'].
+        mapped with d['master']['f'].
 
         '''
 
