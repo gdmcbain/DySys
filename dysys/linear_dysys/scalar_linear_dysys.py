@@ -125,14 +125,29 @@ class ScalarLinearDySys(LinearDySys):
             yield t, x, d
             t, x = t + h, self.forced_step(t, x, h, d, forcing, theta)
 
-    def equilibrium(self, y0=None):
+    def equilibrium(self, y0=None, d=None, **kwargs):
         '''return eventual steady state
 
         :param y0: initial guess, ignored
 
+        :param d: dict, discrete dynamical variables, currently
+        ignored unless it contains 'master', a DySys, in which case
+        the equilibrium of its 'system', mapped through its 'f', is
+        used as the right-hand side forcing function
+
+        Further keyword arguments are passed on to the equilibrium
+        method of d['master'], if used.
+
         '''
 
-        return self.f(inf) / self.D
+        try:
+            yoo = d['master']['state'] = d['master']['system'].equilibrium(
+                d['master'].get('state'), d['master'].get('d'), **kwargs)
+            f = d['master']['f'](yoo)
+        except (TypeError, KeyError):
+            f = self.f(inf)
+            
+        return f / self.D
 
     def step(self, t, h, x, d=None):
         '''estimate the next state using theta method

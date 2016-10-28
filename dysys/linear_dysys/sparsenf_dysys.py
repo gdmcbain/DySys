@@ -71,7 +71,7 @@ class SparseNFDySys(LinearDySys):
         return (root(residual, xold).x if self.f1 is None
                 else newton(residual, jacobian, xold, tol))
 
-    def equilibrium(self, x0, d=None, tol=1e-3):
+    def equilibrium(self, x0, d=None, **kwargs):
         '''solve for a steady-state equilibrium
 
         using Newton iteration if the Jacobian has been provided in
@@ -109,14 +109,16 @@ class SparseNFDySys(LinearDySys):
         # construed as the state eventually reached after a history of
         # forcing which tends asymptotically to a constant value.
 
+        kwargs.setdefault('tol', 1e-3)
+
         def residual(x):
             return self.D.dot(x) - self.f(np.inf, x, d)  # t -> np.inf
 
         def jacobian(x):
             return self.D - self.f1(np.inf, x, d)
 
-        return (root(residual, x0).x if self.f1 is None
-                else newton(residual, jacobian, x0, tol))
+        return (root(residual, x0, **kwargs).x if self.f1 is None
+                else newton(residual, jacobian, x0, **kwargs))
 
     def constrain(self, *args, **kwargs):
         '''extends the method from the super-class

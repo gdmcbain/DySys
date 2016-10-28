@@ -78,9 +78,19 @@ class SparseDySys(LinearDySys):
                 else:
                     raise ValueError('info %d' % info)
 
-    def equilibrium(self, d=None):
-        '''return the eventual steady-state solution'''
-        return solve(self.D, self.f(np.inf, d))
+    def equilibrium(self, _, d=None, **kwargs):
+        '''return the eventual steady-state solution
+
+        :param _: initial condition, ignored
+
+        :param d: dict, discrete dynamical variables, passed on to
+        self.f
+
+        Further keyword arguments passed on to solve.
+
+        '''
+        
+        return solve(self.D, self.f(np.inf, d), **kwargs)
 
     def harmonic(self, omega):
         '''return the complex harmonic solution

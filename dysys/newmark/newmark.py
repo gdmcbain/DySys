@@ -69,16 +69,20 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
-    def equilibrium(self, d=None):
+    def equilibrium(self, _, d=None, **kwargs):
         '''return the eventual steady-state solution
 
         using self.f(np.inf, d)
 
-        :param d: dict, passed on to self.f
+        :param _: initial guess, ignored
+
+        :param d: dict, passed on to self.f, optional
+
+        Further keyword arguments are passed on to solve
 
         '''
 
-        return solve(self.K, self.f(np.inf, d))
+        return solve(self.K, self.f(np.inf, d), **kwargs)
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'

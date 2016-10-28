@@ -68,14 +68,20 @@ class ODySys(DySys):
         else:
             raise RuntimeError
 
-    def equilibrium(self, y0):
+    def equilibrium(self, y0, d=None, **kwargs):
         '''return a steady-state solution
 
         :param y0: one-dimensional numpy.ndarray, initial guess
+
+        :param d: dict, discrete dynamical variables, currently
+        ignored
+
+        Further keyword-arguments passed on to scipy.optimize.root.
 
         '''
 
         return root(partial(self.f, np.inf),
                     y0,
                     self.f_params,
-                    jac=lambda y: self.jac(np.inf, y, *self.jac_params)).x
+                    jac=lambda y: self.jac(np.inf, y, *self.jac_params),
+                    **kwargs).x

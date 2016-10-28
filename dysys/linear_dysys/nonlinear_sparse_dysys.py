@@ -64,8 +64,16 @@ class NonlinearSparseDySys(LinearDySys):
 
         return newton(residual, jacobian, xold, tol)
 
-    def equilibrium(self, x0, d=None, tol=1e-3):
-        '''take an infinitely long backward-Euler step'''
+    def equilibrium(self, x0, d=None, **kwargs):
+        '''take an infinitely long backward-Euler step
+
+        :param x0: initial condition/guess
+
+        :param d: dict, discrete dynamical variables, optional
+
+        Further keyword arguments are passed on to newton.
+
+        '''
 
         def arg_map(x):
             return np.inf, x, np.zeros_like(x[0]), d
@@ -78,7 +86,9 @@ class NonlinearSparseDySys(LinearDySys):
             # r(x+s) = F(oo, x + s, 0) ~ r(x) + D(oo, x, 0) s
             return self.D(*arg_map(x))
 
-        return newton(residual, jacobian, x0, tol)
+        kwargs.setdefault('tol', 1e-3)
+
+        return newton(residual, jacobian, x0, **kwargs)
 
     def constrain(self, known, xknown=None, vknown=None):
         '''return a new NonlinearSparseDySys with constrained DoFs

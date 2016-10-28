@@ -44,10 +44,15 @@ class DySys(object):
 
     '''
 
-    def equilibrium(self, y0=None):
+    def equilibrium(self, y0=None, d=None, **kwargs):
         '''return an eventual steady-state solution
 
         :param y0: initial guess, maybe optional, maybe ignored
+
+        :param d: dict, discrete dynamical variables, optional
+
+        Further keyword-arguments may be passed on to the back-end
+        solver.
 
         '''
 

@@ -66,9 +66,20 @@ def newton(residual, jacobian, x, *args, **kwargs):
     return fixed_point(iteration(x), *args, **kwargs)
 
 
-def solve(A, b):
+def solve(A, b, *args, **kwargs):
+    '''solve the linear system A x = b
+
+    :param A: SciPy sparse matrix or numpy.ndarray of shape (n, n)
+
+    :param b: array-like of shape (n,)
+
+    Further positional and keyword arguments are passed on to
+    scipy.sparse.linalg.spsolve.
+
+    '''
+    
     try:
-        return spsolve(A, b)
+        return spsolve(A, b, *args, **kwargs)
     # except ValueError:
     #             return b / A
     except IndexError:
