@@ -93,6 +93,12 @@ class Newmark(DySys):
         rhs = -self.K.dot(xt)
         if self.f is not None:
             rhs += self.f(t + h, d)
+
+        try:
+            rhs += d['force']['new']
+        except KeyError:
+            pass
+        
         if self.C is not None:
             rhs -= self.C.dot(vt)
 
