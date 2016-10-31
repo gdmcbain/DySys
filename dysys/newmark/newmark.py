@@ -91,13 +91,21 @@ class Newmark(DySys):
         vt = self.v + (1 - self.gamma) * h * self.a
 
         rhs = -self.K.dot(xt)
-        if self.f is not None:
-            rhs += self.f(t + h, d)
 
         try:
-            rhs += d['force']['new']
-        except KeyError:
-            pass
+            ynew = d['master']['state'] = d['master']['system'].step(
+                t, h, d['master'].pop('state'), d['master'].get('d'))
+            fnew = d['master']['f'](t, ynew, d['master'].get('d'))
+        except (TypeError, KeyError):
+            try:
+                fnew = d['force']['new']
+            except (TypeError, KeyError):
+                if self.f is not None:
+                    fnew = self.f(t + h, d)
+                else:
+                    fnew = 0
+
+        rhs += fnew
         
         if self.C is not None:
             rhs -= self.C.dot(vt)
@@ -144,9 +152,13 @@ class Newmark(DySys):
 
         self.setA(h)
 
-        if 'f' not in kwargs:
-            # TRICKY gmcbain 2016-04-08: Return the rate of change of
-            # the solution too
+        # TRICKY gmcbain 2016-04-08: Return the rate of change of the
+        # solution too
+
+        try:
+            fnew = kwargs.pop('f')
+            kwargs['f'] = lambda x: fnew((x, self.v))
+        except KeyError:
             kwargs['f'] = lambda x: (x, self.v)
 
         return super(Newmark, self).march(h, x[0], d, *args, **kwargs)

@@ -174,7 +174,8 @@ class ScalarLinearDySys(LinearDySys):
             yold = d['master'].pop('state')
             ynew = d['master']['state'] = d['master']['system'].step(
                 t, h, yold, d['master'].get('d'))
-            fold, fnew = map(d['master']['f'], [yold, ynew])
+            fold, fnew = map(lambda y: d['master']['f'](t, y, d),
+                             [yold, ynew])
         except (TypeError, KeyError):
             fold, fnew = map(self.f, [t, t + h])
             
