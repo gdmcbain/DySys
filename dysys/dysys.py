@@ -153,12 +153,12 @@ class DySys(object):
         :param substeps: number of equal substeps to take to make up
         each time-step (default: 1)
 
-        :param f: if provided, this maps the states before output.
-        This can be used to reconstitute the results from a
-        constrained LinearDySys, or for postprocessing: "Usually, only
-        a small portion of data needs to be saved in order to
-        concisely record the pertinent features of the dynamics."
-        (PyDSTool Project overview)
+        :param f: optional (x -> anything).  If provided, this maps
+        the states x before output.  This can be used to reconstitute
+        the results from a constrained LinearDySys, or for
+        postprocessing: "Usually, only a small portion of data needs
+        to be saved in order to concisely record the pertinent
+        features of the dynamics."  (PyDSTool Project overview)
 
         :rtype: yield indefinitely triples (time, continuous state,
          discrete state) at ends of time-steps
