@@ -45,10 +45,10 @@ class SparseDySys(LinearDySys):
 
             self._memo = {'h': h, 'M': M}
 
+            M1 = M + self.D
             if self.definite:
-                self._memo['solve'] = cholesky(M + self.D)
+                self._memo['solve'] = cholesky(M1)
             else:
-                M1 = M + self.D
 
                 def solver(rhs):
                     x1, info = sla.lgmres(
