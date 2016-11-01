@@ -8,7 +8,7 @@ setup(
     packages=['dysys',
               'dysys.post'],
     scripts=[],
-    url='http://swiki/display/memjet/DySys',
+    url='http://wiki.memjet.local/display/memjet/DySys',
     license='LICENSE.txt',
     description='''some code for dynamical systems,
 particularly those of the descriptor type''',
