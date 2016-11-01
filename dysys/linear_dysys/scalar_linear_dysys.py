@@ -140,14 +140,7 @@ class ScalarLinearDySys(LinearDySys):
 
         '''
 
-        try:
-            yoo = d['master']['state'] = d['master']['system'].equilibrium(
-                d['master'].get('state'), d['master'].get('d'), **kwargs)
-            f = d['master']['f'](yoo)
-        except (TypeError, KeyError):
-            f = self.f(inf)
-            
-        return f / self.D
+        return self.forcing(0, inf, y0, d or {})[1] / self.D
 
     def step(self, t, h, x, d=None):
         '''estimate the next state using theta method
@@ -170,15 +163,7 @@ class ScalarLinearDySys(LinearDySys):
 
         '''
 
-        try:
-            yold = d['master'].pop('state')
-            ynew = d['master']['state'] = d['master']['system'].step(
-                t, h, yold, d['master'].get('d'))
-            fold, fnew = map(lambda y:
-                             d['master']['f'](t, y, d['master'].get('d')),
-                             [yold, ynew])
-        except (TypeError, KeyError):
-            fold, fnew = map(self.f, [t, t + h])
+        fold, fnew = self.forcing(t, h, x, d)
             
         return ((self.theta * fnew + (1 - self.theta) * fold +
                  (self.M / h - (1 - self.theta) * self.D) * x) /

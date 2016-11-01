@@ -69,12 +69,12 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
-    def equilibrium(self, _, d=None, **kwargs):
+    def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution
 
         using self.f(np.inf, d)
 
-        :param _: initial guess, ignored
+        :param x: initial guess, passed on to self.f, optional
 
         :param d: dict, passed on to self.f, optional
 
@@ -82,7 +82,11 @@ class Newmark(DySys):
 
         '''
 
-        return solve(self.K, self.f(np.inf, d), **kwargs)
+        # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
+        # slavish behaviour.
+        
+
+        return solve(self.K, self.f(np.inf, x, d), **kwargs)
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
@@ -90,23 +94,8 @@ class Newmark(DySys):
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        rhs = -self.K.dot(xt)
+        rhs = self.forcing(t, h, x, d)[1] - self.K.dot(xt)
 
-        try:
-            ynew = d['master']['state'] = d['master']['system'].step(
-                t, h, d['master'].pop('state'), d['master'].get('d'))
-            fnew = d['master']['f'](t, ynew, d['master'].get('d'))
-        except (TypeError, KeyError):
-            try:
-                fnew = d['force']['new']
-            except (TypeError, KeyError):
-                if self.f is not None:
-                    fnew = self.f(t + h, d)
-                else:
-                    fnew = 0
-
-        rhs += fnew
-        
         if self.C is not None:
             rhs -= self.C.dot(vt)
 

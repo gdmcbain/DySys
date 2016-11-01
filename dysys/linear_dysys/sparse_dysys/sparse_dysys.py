@@ -55,9 +55,9 @@ class SparseDySys(LinearDySys):
                     M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
 
         b = self._memo['M'].dot(x)
-        if self.f is not None:
-            b += (self.theta * self.f(t + h, d) +
-                  (1 - self.theta) * self.f(t, d))
+
+        fold, fnew = self.forcing(t, h, x, d)
+        b += self.theta * fnew + (1 - self.theta) * fold
 
         try:
             retval = self._memo['solve'](b)
@@ -78,19 +78,22 @@ class SparseDySys(LinearDySys):
                 else:
                     raise ValueError('info %d' % info)
 
-    def equilibrium(self, _, d=None, **kwargs):
+    def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution
 
-        :param _: initial condition, ignored
+        :param x: initial condition, optional, passed on to self.f
 
-        :param d: dict, discrete dynamical variables, passed on to
-        self.f
+        :param d: dict, discrete dynamical variables, optional, passed
+        on to self.f
 
         Further keyword arguments passed on to solve.
 
         '''
+
+        # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
+        # slavish behaviour.
         
-        return solve(self.D, self.f(np.inf, d), **kwargs)
+        return solve(self.D, self.f(np.inf, x, d), **kwargs)
 
     def harmonic(self, omega):
         '''return the complex harmonic solution

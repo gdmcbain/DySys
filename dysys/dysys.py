@@ -308,7 +308,45 @@ class DySys(object):
 
         return U.T.dot(x)
 
+    def forcing(self, t, h, x, d):
+        '''return forcing at start and end of time-step
+
+        :param t: float, time
+
+        :param h: float > 0, time-step
+
+        :param x: state
+
+        :param d: dict, discrete dynamical variables. If 'master' in
+        d, it should contain a 'system', 'state', and 'f' and the
+        forcing is calculated by mapping 'f' over the 'state' and what
+        'system' steps to at t + h from 'state' at t.  Otherwise, if
+        'force' in d, it should contain 'old' and 'new'.  Otherwise,
+        self.f is mapped over t and t + h, also passing x and d.
+
+        '''
+
+        d = d or {}
+
+        if 'master' in d:
+            yold = d['master'].pop('state')
+            ynew = d['master']['state'] = d['master']['system'].step(
+                t, h, yold, d['master'].get('d'))
+            fold, fnew = map(lambda y:
+                             d['master']['f'](t, y, d['master'].get('d')),
+                             [yold, ynew])
+        elif 'force' in d:
+            fold, fnew = d['force']['old'], d['force']['new']
+        elif self.f is not None:
+            fold, fnew = map(lambda t: self.f(t, x, d), [t, t + h])
+        else:
+            fold = fnew = 0
+
+        return fold, fnew
+
+
     def eig(self, *args, **kwargs):
+
         '''return the complete spectrum of the system
 
         Designed for small dense systems; see self.eigs for large
