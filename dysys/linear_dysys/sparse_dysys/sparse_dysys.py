@@ -8,7 +8,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-from functools import partial
 from warnings import warn
 
 import numpy as np
@@ -43,40 +42,34 @@ class SparseDySys(LinearDySys):
                 raise ZeroDivisionError
 
             M = self.M / h - (1 - self.theta) * self.D
-            M1 = M + self.D
 
             self._memo = {'h': h, 'M': M}
 
             if self.definite:
                 self._memo['solve'] = cholesky(M + self.D)
             else:
-                self._memo['solve'] = partial(
-                    sla.lgmres, M1, x0=x,
-                    M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
+                M1 = M + self.D
 
-        b = self._memo['M'].dot(x)
+                def solver(rhs):
+                    x1, info = sla.lgmres(
+                        M1, rhs, x0=x,
+                        M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
+                    if info == 0:
+                        return x1
+                    else:
+                        if info > 0:
+                            raise RuntimeError(
+                                'convergence to tolerance not achieved '
+                                'in %s iterations' % info)
+                        else:
+                            raise ValueError('info %d' % info)
 
-        fold, fnew = self.forcing(t, h, x, d)
-        b += self.theta * fnew + (1 - self.theta) * fold
+                self._memo['solve'] = solver
 
-        try:
-            retval = self._memo['solve'](b)
-        except ValueError:
-            raise ZeroDivisionError
-
-        if self.definite:
-            return retval
-        else:
-            x1, info = retval
-            if info == 0:
-                return x1
-            else:
-                if info > 0:
-                    raise RuntimeError(
-                        'convergence to tolerance not achieved '
-                        'in %s iterations' % info)
-                else:
-                    raise ValueError('info %d' % info)
+        return self._memo['solve'](
+            self._memo['M'].dot(x) +
+            np.array([1 - self.theta, self.theta]).dot(
+                self.forcing(t, h, x, d)))
 
     def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution
@@ -92,7 +85,7 @@ class SparseDySys(LinearDySys):
 
         # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
         # slavish behaviour.
-        
+
         return solve(self.D, self.f(np.inf, x, d), **kwargs)
 
     def harmonic(self, omega):
