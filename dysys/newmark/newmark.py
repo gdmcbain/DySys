@@ -45,9 +45,9 @@ class Newmark(DySys):
         :param C: damping scipy.sparse matrix, or None, in which case
         it is constructed as like M but with no nonzero entries
 
-        :param f: function of time and dict of discrete dynamical
-        variables, returning forcing vector, or None in which case a
-        null function is substituted
+        :param f: function of (time, state (typically ignored), dict
+        of discrete dynamical variables), returning forcing vector, or
+        None in which case a ternary zero-function is substituted
 
         :param beta: Newmark method parameter, default 0.25 (which,
         with gamma=0.5, is the implicit and unconditionally stable
@@ -62,7 +62,7 @@ class Newmark(DySys):
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = (lambda _, __: np.zeros(K.shape[0])) if f is None else f
+        self.f = f or (lambda _, __, ___: np.zeros(len(self)))
         self.beta, self.gamma = beta, gamma
         self.definite = definite
 
@@ -88,13 +88,20 @@ class Newmark(DySys):
 
         return solve(self.K, self.f(np.inf, x, d), **kwargs)
 
+    def forcing(self, t, h, x, d):
+
+        # TRICKY gmcbain 2016-11-01: Only use value at end of
+        # time-step.
+        
+        return super(Newmark, self).forcing(t, h, x, d)[1]
+
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
 
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        rhs = self.forcing(t, h, x, d)[1] - self.K.dot(xt)
+        rhs = self.forcing(t, h, x, d) - self.K.dot(xt)
 
         if self.C is not None:
             rhs -= self.C.dot(vt)
@@ -132,11 +139,11 @@ class Newmark(DySys):
         d = {} if d is None else d
 
         self.v = x[1]
-        rhs = -self.K.dot(x[0])
-        if self.f is not None:
-            rhs += self.f(0., d)
+        rhs = self.forcing(0., 0., x[0], d) - self.K.dot(x[0])
+
         if self.C is not None:
             rhs -= self.C.dot(x[1])
+
         self.a = solve(self.M, rhs)
 
         self.setA(h)
