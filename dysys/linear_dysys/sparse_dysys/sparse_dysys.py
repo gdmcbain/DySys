@@ -12,6 +12,7 @@ from warnings import warn
 
 import numpy as np
 
+from scipy.interpolate import interp1d
 from scipy.linalg import eig
 from scipy.sparse import identity, linalg as sla
 
@@ -78,8 +79,8 @@ class SparseDySys(LinearDySys):
 
         return self._memo['solve'](
             self._memo['M'].dot(x) +
-            np.array([1 - self.theta, self.theta]).dot(
-                self.forcing(t, h, x, d)))
+            interp1d([0, 1],
+                     np.vstack(self.forcing(t, h, x, d)).T)(self.theta))
 
     def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution

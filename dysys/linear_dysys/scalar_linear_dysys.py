@@ -16,7 +16,7 @@ from __future__ import absolute_import, division, print_function
 
 from .linear_dysys import LinearDySys
 
-from numpy import inf
+from numpy import inf, interp
 
 
 class ScalarLinearDySys(LinearDySys):
@@ -163,8 +163,6 @@ class ScalarLinearDySys(LinearDySys):
 
         '''
 
-        fold, fnew = self.forcing(t, h, x, d)
-            
-        return ((self.theta * fnew + (1 - self.theta) * fold +
+        return ((interp(self.theta, [0, 1], self.forcing(t, h, x, d)) +
                  (self.M / h - (1 - self.theta) * self.D) * x) /
                 (self.M / h + self.theta * self.D))
