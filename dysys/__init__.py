@@ -1,5 +1,6 @@
 from .dysys import DySys
-from .linear_dysys import SparseDySys, NonlinearSparseDySys, SparseNFDySys
+from .linear_dysys import (ScalarLinearDySys, SparseDySys,
+                           NonlinearSparseDySys, SparseNFDySys)
 from .odysys import ODySys
 from .uncoupled_dysys import UncoupledDySys
 from .newmark import Newmark, HilberHughesTaylor

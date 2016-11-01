@@ -330,8 +330,11 @@ class DySys(object):
 
         if 'master' in d:
             yold = d['master'].pop('state')
-            ynew = d['master']['state'] = d['master']['system'].step(
-                t, h, yold, d['master'].get('d'))
+            try:
+                ynew = d['master']['state'] = d['master']['system'].step(
+                    t, h, yold, d['master'].get('d'))
+            except ZeroDivisionError:
+                ynew = d['master']['state'] = yold
             fold, fnew = map(lambda y:
                              d['master']['f'](t, y, d['master'].get('d')),
                              [yold, ynew])
