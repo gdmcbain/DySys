@@ -32,8 +32,18 @@ class SparseDySys(LinearDySys):
     def step(self, t, h, x, d):
         '''estimate the next state using theta method
 
-        memoizing the incomplete-LU factors of the evolution matrix
-        for fast time-stepping
+        :param t: float, time
+
+        :param h: float > 0, time-step
+
+        :param x: numpy.ndarray, state
+
+        :param d: dict, passed to self.forcing, so entries 'master' or
+        'force' will be relevant
+
+        Attempt fast time-stepping, reusing factors if the time-step
+        is the same as on the previous call.  Use Cholesky if
+        self.definite; otherwise incomplete-LU and LGMRES.
 
         '''
 
