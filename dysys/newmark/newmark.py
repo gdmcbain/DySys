@@ -73,6 +73,13 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
+    def forcing(self, t, h, x, d):
+
+        # TRICKY gmcbain 2016-11-01: Only use value at end of
+        # time-step.
+        
+        return super(Newmark, self).forcing(t, h, x, d)[1]
+
     def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution
 
@@ -89,16 +96,8 @@ class Newmark(DySys):
 
         # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
         # slavish behaviour.
-        
 
         return solve(self.K, self.f(np.inf, x, d), **kwargs)
-
-    def forcing(self, t, h, x, d):
-
-        # TRICKY gmcbain 2016-11-01: Only use value at end of
-        # time-step.
-        
-        return super(Newmark, self).forcing(t, h, x, d)[1]
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'
