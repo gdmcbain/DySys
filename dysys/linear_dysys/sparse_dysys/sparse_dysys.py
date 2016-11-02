@@ -63,7 +63,7 @@ class SparseDySys(LinearDySys):
 
                 def solver(rhs):
                     x1, info = sla.lgmres(
-                        M1, rhs, x0=x,
+                        M1, rhs, x0=x, tol=1e-12,
                         M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
                     if info == 0:
                         return x1
