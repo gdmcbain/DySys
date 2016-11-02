@@ -53,13 +53,15 @@ class TestLumpedLine(TestCase):
         cls.D = bmat([[None, B],
                       [-B.T, np.array([cls.R])]])
         cls.sys = SparseDySys(cls.M, cls.D,
-                              lambda t, _: [0, cls.Q, 0])
+                              lambda _t, __, ___: [0, cls.Q, 0])
 
     def test_equilibrium(self):
-        '''the branch serial flow-rate absorbs the duty and the
-        pressure-drop is all across the resistance
+        '''pressure-drop is all across the resistance
+        
+        the branch serial flow-rate being absorbed by the duty
 
         '''
+        
         sys = self.sys.constrain([0], [self.pin])
         soln = sys.reconstitute(sys.equilibrium())
         p, q = soln[:2], soln[2]

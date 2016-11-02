@@ -17,7 +17,8 @@ from dysys import DySys
 
 class LinearDySys(DySys):
 
-    def __init__(self, M, D, f=None, theta=1.0, definite=False):
+    def __init__(self, M, D, f=None, theta=1.0, definite=False,
+                 **kwargs):
         '''a DySys defined by mass and damping operators
 
         and a time-dependent forcing function, according to (something
@@ -47,11 +48,15 @@ class LinearDySys(DySys):
 
         :param definite: bool, for if system is (positive-)definite
 
+        Further keyword parameters are passed on to DySys.__init__; in
+        particular: 'parameters' and 'master'.
+
         '''
 
         self.M, self.D, self.f = M, D, f
         self.theta = theta
         self.definite = definite
+        super(LinearDySys, self).__init__(**kwargs)
 
     def __len__(self):
         return self.D.shape[0]

@@ -37,7 +37,7 @@ class Newmark(DySys):
     '''
 
     def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
-                 definite=False):
+                 definite=False, **kwargs):
         ''':param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
@@ -59,12 +59,16 @@ class Newmark(DySys):
 
         :param definite: bool, for if system is (positive-)definite
 
+        Further keyword parameters are passed on to DySys.__init__; in
+        particular: 'parameters' and 'master'.
+
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = f or (lambda _, __, ___: self.zero)
+        self.f = f or (lambda _, __, ___, ____: self.zero)
         self.beta, self.gamma = beta, gamma
         self.definite = definite
+        super(Newmark, self).__init__(**kwargs)
 
     def __len__(self):
         return self.K.shape[0]

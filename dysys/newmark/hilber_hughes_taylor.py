@@ -27,7 +27,8 @@ class HilberHughesTaylor(Newmark):
 
     '''
 
-    def __init__(self, M, K, C=None, f=None, alpha=0., definite=False):
+    def __init__(self, M, K, C=None, f=None, alpha=0., definite=False,
+                 **kwargs):
         ''':param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
@@ -44,13 +45,15 @@ class HilberHughesTaylor(Newmark):
 
         :param definite: bool, for if system is (positive-)definite
 
+        Further keyword parameters are passed on to DySys.__init__; in
+        particular: 'parameters' and 'master'.
+
         '''
 
-        super(self.__class__, self).__init__(M, K, C, f,
-                                             (1 - alpha)**2 / 4.,
-                                             (1 - 2 * alpha) / 2.,
-                                             definite)
         self.alpha = alpha
+        super(HilberHughesTaylor, self).__init__(
+            M, K, C, f, (1 - alpha)**2 / 4., (1 - 2 * alpha) / 2., definite,
+            **kwargs)
 
     def step(self, t, h, x, d):
         'evolve from displacement x at time t to t+h'

@@ -44,10 +44,32 @@ class DySys(object):
 
     '''
 
+    def __init__(self, parameters=None, master=None):
+        self.parameters = {} if parameters is None else parameters
+        self.master = master
+
     @property
     def zero(self):
         '''return the zero element of the vector space'''
         return np.zeros(len(self))
+
+    def as_master(self, x=None, d=None, f=None):
+        '''return a dict representing self as a master-system
+
+        :param x: state, optional (default self.zero)
+
+        :param d: dict, discrete dynamical variables (default empty)
+
+        :param f: (DySys, t, x, d) -> ?
+
+        :rtype: dict
+
+        '''
+        
+        return {'system': self,
+                'state': self.zero if x is None else x,
+                'd': {} if d is None else d,
+                'f': f}
 
     def equilibrium(self, y0=None, d=None, **kwargs):
         '''return an eventual steady-state solution
@@ -335,20 +357,20 @@ class DySys(object):
 
         d = d or {}
 
-        if 'master' in d:
-            yold = d['master'].pop('state')
+        if self.master is not None:
+            yold = self.master.pop('state')
             try:
-                ynew = d['master']['state'] = d['master']['system'].step(
-                    t, h, yold, d['master'].get('d'))
+                ynew = self.master['state'] = self.master['system'].step(
+                    t, h, yold, self.master.get('d'))
             except ZeroDivisionError:
-                ynew = d['master']['state'] = yold
+                ynew = self.master['state'] = yold
             fold, fnew = map(lambda y:
-                             d['master']['f'](t, y, d['master'].get('d')),
+                             self.master['f'](self, t, y, self.master.get('d')),
                              [yold, ynew])
         elif 'force' in d:
             fold, fnew = d['force']['old'], d['force']['new']
         elif self.f is not None:
-            fold, fnew = map(lambda t: self.f(t, x, d), [t, t + h])
+            fold, fnew = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:
             fold = fnew = 0
 
