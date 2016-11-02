@@ -62,7 +62,7 @@ class Newmark(DySys):
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = f or (lambda _, __, ___: np.zeros(len(self)))
+        self.f = f or (lambda _, __, ___: self.zero)
         self.beta, self.gamma = beta, gamma
         self.definite = definite
 
@@ -74,7 +74,8 @@ class Newmark(DySys):
 
         using self.f(np.inf, d)
 
-        :param x: initial guess, passed on to self.f, optional
+        :param x: initial guess, passed on to self.f, where it should
+        be ignored, optional
 
         :param d: dict, passed on to self.f, optional
 
@@ -126,7 +127,7 @@ class Newmark(DySys):
             A += (1 + alpha) * h * self.gamma * self.C
         self.solve = cholesky(A) if self.definite else partial(solve, A)
 
-    def march(self, h, x, d=None, *args, **kwargs):
+    def march(self, h, x=None, d=None, *args, **kwargs):
         '''evolve from displacement x[0] and velocity x[1] with time-step h
 
         This involves setting the internal variables for velocity and
@@ -136,6 +137,7 @@ class Newmark(DySys):
 
         '''
 
+        x = (self.zero,) * 2 if x is None else x
         d = {} if d is None else d
 
         self.v = x[1]

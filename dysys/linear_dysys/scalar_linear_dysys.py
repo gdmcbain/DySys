@@ -29,6 +29,10 @@ class ScalarLinearDySys(LinearDySys):
     def __len__(self):
         return 1
 
+    @property
+    def zero(self):
+        return 0.
+
     def driven_step(self, t, tnew, y, f, fnew, theta=0.5):
         '''return the state at tnew given state y at t
 

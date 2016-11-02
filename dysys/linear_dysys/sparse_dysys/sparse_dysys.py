@@ -30,6 +30,9 @@ class SparseDySys(LinearDySys):
 
     '''
 
+    def __len__(self):
+        return self.D.shape[0]
+
     def step(self, t, h, x, d):
         '''estimate the next state using theta method
 

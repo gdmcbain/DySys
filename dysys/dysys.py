@@ -44,6 +44,11 @@ class DySys(object):
 
     '''
 
+    @property
+    def zero(self):
+        '''return the zero element of the vector space'''
+        return np.zeros(len(self))
+
     def equilibrium(self, y0=None, d=None, **kwargs):
         '''return an eventual steady-state solution
 
@@ -129,7 +134,7 @@ class DySys(object):
         
         return f(t, x, d)
 
-    def march(self, h, x, d=None, events=None, substeps=1, f=None):
+    def march(self, h, x=None, d=None, events=None, substeps=1, f=None):
         '''generate the evolution of the system in time,
 
         continuously according to the differential equation, but also
@@ -167,7 +172,9 @@ class DySys(object):
 
         '''
 
-        t, d = 0.0, {} if d is None else d
+        t = 0.
+        x = self.zero if x is None else x
+        d = {} if d is None else d
 
         # TRICKY gmcbain 2013-05-09: Append an event at infinite time
         # so that the events iterable is never exhausted.  The
@@ -175,7 +182,7 @@ class DySys(object):
         # chosen as it is near enough to an identity.
 
         for epoch, change in it.chain([] if events is None else events,
-                              [(np.inf, np.asarray)]):
+                                      [(np.inf, np.asarray)]):
             while True:
                 yield t, (x if f is None else f(x)), d
                 if t + h > epoch:
