@@ -140,7 +140,7 @@ class DySys(object):
     def handle_event(self, f, t, x, d):
         '''handle event
 
-        :param f: function of t, x, d that returns x, d, possibly
+        :param f: function of self, t, x, d that returns x, d, possibly
         modified
 
         :param t: float > 0, time
@@ -154,7 +154,7 @@ class DySys(object):
 
         '''
         
-        return f(t, x, d)
+        return f(self, t, x, d)
 
     def march(self, h, x=None, d=None, events=None, substeps=1, f=None):
         '''generate the evolution of the system in time,
@@ -346,12 +346,7 @@ class DySys(object):
 
         :param x: state
 
-        :param d: dict, discrete dynamical variables. If 'master' in
-        d, it should contain a 'system', 'state', and 'f' and the
-        forcing is calculated by mapping 'f' over the 'state' and what
-        'system' steps to at t + h from 'state' at t.  Otherwise, if
-        'force' in d, it should contain 'old' and 'new'.  Otherwise,
-        self.f is mapped over t and t + h, also passing x and d.
+        :param d: dict, discrete dynamical variables
 
         '''
 
@@ -367,8 +362,6 @@ class DySys(object):
             fold, fnew = map(lambda y:
                              self.master['f'](self, t, y, self.master.get('d')),
                              [yold, ynew])
-        elif 'force' in d:
-            fold, fnew = d['force']['old'], d['force']['new']
         elif self.f is not None:
             fold, fnew = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:

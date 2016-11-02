@@ -73,13 +73,6 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
-    def forcing(self, t, h, x, d):
-
-        # TRICKY gmcbain 2016-11-01: Only use value at end of
-        # time-step.
-        
-        return super(Newmark, self).forcing(t, h, x, d)[1]
-
     def equilibrium(self, x=None, d=None, **kwargs):
         '''return the eventual steady-state solution
 
@@ -105,7 +98,7 @@ class Newmark(DySys):
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        rhs = self.forcing(t, h, x, d) - self.K.dot(xt)
+        rhs = self.forcing(t, h, x, d)[1] - self.K.dot(xt)
 
         if self.C is not None:
             rhs -= self.C.dot(vt)
@@ -144,7 +137,7 @@ class Newmark(DySys):
         d = {} if d is None else d
 
         self.v = x[1]
-        rhs = self.forcing(0., 0., x[0], d) - self.K.dot(x[0])
+        rhs = self.forcing(0., 0., x[0], d)[1] - self.K.dot(x[0])
 
         if self.C is not None:
             rhs -= self.C.dot(x[1])

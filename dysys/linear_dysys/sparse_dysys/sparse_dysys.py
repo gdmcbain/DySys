@@ -40,10 +40,9 @@ class SparseDySys(LinearDySys):
 
         :param h: float > 0, time-step
 
-        :param x: numpy.ndarray, state
+        :param x: numpy.ndarray, state, initial condition
 
-        :param d: dict, passed to self.forcing, so entries 'master' or
-        'force' will be relevant
+        :param d: dict, passed to self.forcing
 
         Attempt fast time-stepping, reusing factors if the time-step
         is the same as on the previous call.  Use Cholesky if

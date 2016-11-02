@@ -17,6 +17,9 @@ from __future__ import absolute_import, division, print_function
 
 from functools import partial
 
+import numpy as np
+from scipy.interpolate import interp1d
+
 from .newmark import Newmark
 
 
@@ -61,27 +64,14 @@ class HilberHughesTaylor(Newmark):
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        rhs = -self.K.dot((1 + self.alpha) * xt - self.alpha * x)
+        rhs = -self.K.dot(interp1d([-1, 0], np.vstack([x, xt]).T)(self.alpha))
 
         if self.C is not None:
-            rhs -= self.C.dot((1 + self.alpha) * vt - self.alpha * self.v)
+            rhs -= self.C.dot(interp1d([-1, 0],
+                                       np.vstack([self.v, vt]).T)(self.alpha))
 
-        if self.f is not None:
-            rhs += ((1 + self.alpha) * self.f(t + h, d) -
-                    self.alpha * self.f(t, d))
-
-        # KLUDGE gmcbain 2016-07-27: For systems driven by other
-        # DySys, the forcing term is not a function of continuous
-        # time; therefore, it may be easier to pack it into the dict
-        # of discrete dynamical variables.
-
-        # TODO gmcbain 2016-07-28: Actually, this mechanism should be
-        # much more broadly available, possibly even to the DySys
-        # class.
-
-        if 'force' in d:
-            rhs += ((1 + self.alpha) * d['force']['new'] -
-                    self.alpha * d['force']['old'])
+        rhs += interp1d([-1, 0],
+                        np.vstack(self.forcing(t, h, x, d)).T)(self.alpha)
 
         self.a = self.solve(rhs)
         self.v = vt + self.gamma * h * self.a
