@@ -14,6 +14,7 @@ from __future__ import absolute_import, division, print_function
 import unittest
 
 import numpy as np
+from pandas import Series
 
 from dysys import ScalarLinearDySys
 
@@ -47,7 +48,8 @@ class TestScalar(unittest.TestCase):
         cls.R, cls.C = 2., 3.
         cls.p_in = 5.
         cls.sys = ScalarLinearDySys(cls.R * cls.C, 1.,
-                                    lambda *_: cls.p_in)
+                                    lambda *_: cls.p_in,
+                                    theta=0.5)
 
     def test_equilibrium(self):
         '''The exact solution is p[1] = p[0].'''
@@ -64,3 +66,17 @@ class TestScalar(unittest.TestCase):
         np.testing.assert_almost_equal(
             self.sys.harmonic(omega),
             self.p_in / (1 + 1j * omega * self.R * self.C))
+
+    def test_march(self):
+        '''See Roadstrum & Wolaver (1987)
+
+        (§6.2 'Differential equations').
+
+        '''
+
+        p = Series({t / self.R / self.C: x
+                    for t, x, _ in self.sys.march_till(5 * self.R * self.C,
+                                                       self.R * self.C / 1e3)})
+
+        np.testing.assert_array_almost_equal(
+            p, self.p_in * (1 - np.exp(-p.index)))
