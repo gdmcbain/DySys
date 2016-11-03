@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 '''Tests on a single branch.
 
 Based on corresponding test in Millihydraulics.
 
-:author: G. D. McBain <gmcbain>
+:author: gmcbain
 
 :created: 2014-05-08
 
@@ -22,7 +23,7 @@ from dysys import SparseDySys
 
 class TestLumpedLine(TestCase):
 
-    '''Consider a single lumped hydraulic conduit
+    '''Consider a single lumped hydraulic conduit (two-port network)
 
     with serial resistance R and inertance L, shunt compliance C and
     duty Q and fixed inlet pressure
@@ -57,11 +58,11 @@ class TestLumpedLine(TestCase):
 
     def test_equilibrium(self):
         '''pressure-drop is all across the resistance
-        
+
         the branch serial flow-rate being absorbed by the duty
 
         '''
-        
+
         sys = self.sys.constrain([0], [self.pin])
         soln = sys.reconstitute(sys.equilibrium())
         p, q = soln[:2], soln[2]
