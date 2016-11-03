@@ -94,3 +94,20 @@ class LinearDySys(DySys):
         sys.project = project
 
         return sys
+
+    def harmonic(self, omega):
+        '''return the complex harmonic solution
+
+        :param omega: sequence of floats (typically positive)
+
+        '''
+
+        # M x' + D x - f (t) = 0, with f(t) = F exp (j w t), X = s exp (j w t)
+
+        # (D + j w M) X - F = 0
+
+        return [self.__class__(None,
+                               self.D + 1j * w * self.M,
+                               self.f).equilibrium()
+                 for w in omega]
+

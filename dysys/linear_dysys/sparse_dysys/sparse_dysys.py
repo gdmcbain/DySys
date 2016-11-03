@@ -101,23 +101,6 @@ class SparseDySys(LinearDySys):
 
         return solve(self.D, self.f(np.inf, x, d), **kwargs)
 
-    def harmonic(self, omega):
-        '''return the complex harmonic solution
-
-        :param: omega, float (typically positive)
-
-        # TODO gmcbain 20140508: let omega be a sequence
-
-        '''
-
-        # M x' + D x - f (t) = 0, with f(t) = F exp (j w t), X = s exp (j w t)
-
-        # (D + j w M) X - F = 0
-
-        return [sys.equilibrium() for sys in
-                (self.__class__(None, self.D + 1j * w * self.M, self.f)
-                 for w in omega)]
-
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
 
