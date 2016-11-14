@@ -96,10 +96,7 @@ class SparseDySys(LinearDySys):
 
         '''
 
-        # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
-        # slavish behaviour.
-
-        return solve(self.D, self.f(np.inf, x, d), **kwargs)
+        return solve(self.D, self.forcing(0, np.inf, x, d)[1], **kwargs)
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system
