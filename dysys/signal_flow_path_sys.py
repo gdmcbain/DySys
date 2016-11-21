@@ -37,6 +37,10 @@ class SignalFlowPathSys(DySys):
     def __len__(self):
         return len(self.systems)
 
+    @property
+    def zero(self):
+        return [s.zero for s in self.systems]
+
     def step(self, t, h, x, d):
         '''estimate the state after a step in time
 
@@ -60,10 +64,10 @@ class SignalFlowPathSys(DySys):
 
         return xnew
 
-    def equilibrium(self, x, d=None, **kwargs):
+    def equilibrium(self, x=None, d=None, **kwargs):
         '''return an eventual steady-state solution
 
-        :param x: list of initial guess
+        :param x: list of initial guess, optional default self.zero
 
         :param d: dict, discrete dynamical variables; optional
 
@@ -71,6 +75,8 @@ class SignalFlowPathSys(DySys):
         methods of the subsystems.
 
         '''
+
+        x = x if x is not None else self.zero
 
         xoo = [self.systems[0].equilibrium(x[0], d, **kwargs)]
         for i in range(1, len(self)):
