@@ -47,7 +47,6 @@ class DySys(object):
     def __init__(self, parameters=None, master=None):
         self.parameters = {} if parameters is None else parameters
         self.master = master
-        self.predecessor = None
 
     @property
     def zero(self):
@@ -360,8 +359,6 @@ class DySys(object):
         if len(args) > 0:       # assume args[0] is (old, new)
             fold, fnew = map(lambda t, y: self.f(self, t, x, d, y),
                              [t, t + h], args[0])
-        elif getattr(self, 'predecessor', None) is not None:
-            fold, fnew = self.predecessor['fold'], self.predecessor['fnew']
         elif self.master is not None:
             yold = self.master.pop('state')
             try:
