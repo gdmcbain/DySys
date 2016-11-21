@@ -39,8 +39,11 @@ class LinearDySys(DySys):
 
         :param D: damping operator (abstract)
 
-        :param f: function of time and dict of discrete dynamical
-        variables, returning right-hand side (default zero function)
+        :param f: function of (system, time, state but should be
+        ignored, dict of discrete dynamical variables, optional pair
+        of old and new input), returning right-hand side (default zero
+        function); state should be ignored since the system is assumed
+        linear
 
         :param theta: float, parameter of theta time-stepping method,
         default 1.0 for backward Euler, 0.5 for trapezoidal, 0 for
