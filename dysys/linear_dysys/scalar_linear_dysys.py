@@ -129,7 +129,7 @@ class ScalarLinearDySys(LinearDySys):
             yield t, x, d
             t, x = t + h, self.forced_step(t, x, h, d, forcing, theta)
 
-    def equilibrium(self, y0=None, d=None, **kwargs):
+    def equilibrium(self, y0=None, d=None, *args, **kwargs):
         '''return eventual steady state
 
         :param y0: initial guess, ignored
@@ -139,14 +139,14 @@ class ScalarLinearDySys(LinearDySys):
         the equilibrium of its 'system', mapped through its 'f', is
         used as the right-hand side forcing function
 
-        Further keyword arguments are passed on to the equilibrium
-        method of d['master'], if used.
+        Further positional arguments are used to represent inputs.
+        Additional keyword arguments are ignored.
 
         '''
 
-        return self.forcing(0, inf, y0, d or {})[1] / self.D
+        return self.forcing(0, inf, y0, d or {}, *args)[1] / self.D
 
-    def step(self, t, h, x, d=None):
+    def step(self, t, h, x, d=None, *args):
         '''estimate the next state using theta method
 
         :param t: float, time
@@ -158,6 +158,9 @@ class ScalarLinearDySys(LinearDySys):
         :param d: dict, discrete dynamical variables, optional
         (default empty)
 
+        Further positional arguments may in future be used to
+        represent inputs.
+
         If 'master' in d, it should be a dict containing a DySys in
         'system', on the evolution of which the present step depends.
         The right-hand side self.f(t) is replaced by a generalized
@@ -167,6 +170,7 @@ class ScalarLinearDySys(LinearDySys):
 
         '''
 
-        return ((interp(self.theta, [0, 1], self.forcing(t, h, x, d)) +
+        return ((interp(self.theta, [0, 1],
+                        self.forcing(t, h, x, d, *args)) +
                  (self.M / h - (1 - self.theta) * self.D) * x) /
                 (self.M / h + self.theta * self.D))

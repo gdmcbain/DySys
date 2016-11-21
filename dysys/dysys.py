@@ -338,7 +338,7 @@ class DySys(object):
 
         return U.T.dot(x)
 
-    def forcing(self, t, h, x, d):
+    def forcing(self, t, h, x, d, *args):
         '''return forcing at start and end of time-step
 
         :param t: float, time
@@ -349,11 +349,18 @@ class DySys(object):
 
         :param d: dict, discrete dynamical variables
 
+        Further positional arguments may in future be used to
+        represent inputs. The first is assumed to be a pair of inputs
+        at the start and end of the step.
+
         '''
 
         d = d or {}
 
-        if getattr(self, 'predecessor', None) is not None:
+        if len(args) > 0:       # assume args[0] is (old, new)
+            fold, fnew = map(lambda t, y: self.f(self, t, x, d, y),
+                             [t, t + h], args[0])
+        elif getattr(self, 'predecessor', None) is not None:
             fold, fnew = self.predecessor['fold'], self.predecessor['fnew']
         elif self.master is not None:
             yold = self.master.pop('state')
