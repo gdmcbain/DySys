@@ -44,5 +44,3 @@ class TestSignalFlowPathSys(unittest.TestCase):
                           (1 - np.exp(-t/25)) -
                           4/5 * (1 - np.exp(-t/20))]).T
         np.testing.assert_allclose(trajectory, exact, atol=1e-3)
-
-    
