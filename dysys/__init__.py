@@ -1,4 +1,5 @@
 from .dysys import DySys
+from .signal_flow_path_sys import SignalFlowPathSys
 from .linear_dysys import (ScalarLinearDySys, SparseDySys,
                            NonlinearSparseDySys, SparseNFDySys)
 from .odysys import ODySys
