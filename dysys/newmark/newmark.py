@@ -70,6 +70,8 @@ class Newmark(DySys):
         self.definite = definite
         super(Newmark, self).__init__(**kwargs)
 
+        self.v = self.zero
+
     def __len__(self):
         return self.K.shape[0]
 
@@ -92,8 +94,6 @@ class Newmark(DySys):
 
     def prestep(self, t, h, x, d, *args):
         if not hasattr(self, '_memo') or self._memo['h'] != h:
-            if not hasattr(self, 'v'):
-                self.v = self.zero
             rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(x)
             if self.C is not None:
                 rhs -= self.C.dot(self.v)
