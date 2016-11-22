@@ -2,7 +2,7 @@ from distutils.core import setup, Command
 
 setup(
     name='DySys',
-    version='0.1.0',
+    version='0.2.0',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=['dysys',
