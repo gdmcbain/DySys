@@ -133,44 +133,6 @@ class Newmark(DySys):
             A += (1 + alpha) * h * self.gamma * self.C
         self.solve = cholesky(A) if self.definite else partial(solve, A)
 
-    # TODO gmcbain 2016-11-22: Check that removing march, leaving it
-    # to the method inherited from DySys, doesn't break too much.  The
-    # philosophy of DySys is to define step, not override march.
-
-    # def march(self, h, x=None, d=None, *args, **kwargs):
-    #     '''evolve from displacement x[0] and velocity x[1] with time-step h
-
-    #     This involves setting the internal variables for velocity and
-    #     acceleration (v and a, respectively), and, for convenience,
-    #     the evolution matrix A, and then deferring to the march method
-    #     of the super-class, DySys.
-
-    #     '''
-
-    #     x = (self.zero,) * 2 if x is None else x
-    #     d = {} if d is None else d
-
-    #     self.v = x[1]
-    #     rhs = self.forcing(0., 0., x[0], d)[1] - self.K.dot(x[0])
-
-    #     if self.C is not None:
-    #         rhs -= self.C.dot(x[1])
-
-    #     self.a = solve(self.M, rhs)
-
-    #     self.setA(h)
-
-    #     # TRICKY gmcbain 2016-04-08: Return the rate of change of the
-    #     # solution too
-
-    #     try:
-    #         fnew = kwargs.pop('f')
-    #         kwargs['f'] = lambda x: fnew((x, self.v))
-    #     except KeyError:
-    #         kwargs['f'] = lambda x: (x, self.v)
-
-    #     return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
-
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
         '''return a new DySys with constrained degrees of freedom
 
