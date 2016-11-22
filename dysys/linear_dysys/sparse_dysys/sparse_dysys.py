@@ -33,7 +33,7 @@ class SparseDySys(LinearDySys):
     def __len__(self):
         return self.D.shape[0]
 
-    def step(self, t, h, x, d):
+    def step(self, t, h, x, d=None, *args):
         '''estimate the next state using theta method
 
         :param t: float, time
@@ -82,21 +82,25 @@ class SparseDySys(LinearDySys):
         return self._memo['solve'](
             self._memo['M'].dot(x) +
             interp1d([0, 1],
-                     np.vstack(self.forcing(t, h, x, d)).T)(self.theta))
+                     np.vstack(self.forcing(t, h, x, d, *args)).T)(self.theta))
 
-    def equilibrium(self, x=None, d=None, **kwargs):
+    def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution
 
         :param x: initial condition, optional, passed on to self.f
 
         :param d: dict, discrete dynamical variables, optional, passed
-        on to self.f
+        on to self.forcing
+
+        Further positional arguments are also passed on to
+        self.forcing.
 
         Further keyword arguments passed on to solve.
 
         '''
 
-        return solve(self.D, self.forcing(0, np.inf, x, d)[1], **kwargs)
+        return solve(self.D, self.forcing(0, np.inf, x, d, *args)[1],
+                     **kwargs)
 
     def eig(self, *args, **kwargs):
         '''return the complete spectrum of the system

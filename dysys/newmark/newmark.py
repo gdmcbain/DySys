@@ -65,7 +65,7 @@ class Newmark(DySys):
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = f or (lambda _, __, ___, ____: self.zero)
+        self.f = f or (lambda *args: self.zero)
         self.beta, self.gamma = beta, gamma
         self.definite = definite
         super(Newmark, self).__init__(**kwargs)
@@ -73,7 +73,7 @@ class Newmark(DySys):
     def __len__(self):
         return self.K.shape[0]
 
-    def equilibrium(self, x=None, d=None, **kwargs):
+    def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution
 
         using self.f(np.inf, d)
@@ -83,22 +83,32 @@ class Newmark(DySys):
 
         :param d: dict, passed on to self.f, optional
 
-        Further keyword arguments are passed on to solve
+        Further positional arguments are passed on to self.forcing;
+        keyword arguments to solve.
 
         '''
 
-        # TODO gmcbain 2016-11-01: Adopt DySys.forcing to enable
-        # slavish behaviour.
+        return solve(self.K, self.forcing(0, np.inf, x, d, *args), **kwargs)
 
-        return solve(self.K, self.f(np.inf, x, d), **kwargs)
+    def prestep(self, t, h, x, d, *args):
+        if not hasattr(self, '_memo') or self._memo['h'] != h:
+            if not hasattr(self, 'v'):
+                self.v = self.zero
+            rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(x)
+            if self.C is not None:
+                rhs -= self.C.dot(self.v)
+            self.a = solve(self.M, rhs)
+            self.setA(h)
 
-    def step(self, t, h, x, d):
+    def step(self, t, h, x, d, *args):
         'evolve from displacement x at time t to t+h'
+
+        self.prestep(t, h, x, d, *args)
 
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
 
-        rhs = self.forcing(t, h, x, d)[1] - self.K.dot(xt)
+        rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(xt)
 
         if self.C is not None:
             rhs -= self.C.dot(vt)
@@ -123,39 +133,43 @@ class Newmark(DySys):
             A += (1 + alpha) * h * self.gamma * self.C
         self.solve = cholesky(A) if self.definite else partial(solve, A)
 
-    def march(self, h, x=None, d=None, *args, **kwargs):
-        '''evolve from displacement x[0] and velocity x[1] with time-step h
+    # TODO gmcbain 2016-11-22: Check that removing march, leaving it
+    # to the method inherited from DySys, doesn't break too much.  The
+    # philosophy of DySys is to define step, not override march.
 
-        This involves setting the internal variables for velocity and
-        acceleration (v and a, respectively), and, for convenience,
-        the evolution matrix A, and then deferring to the march method
-        of the super-class, DySys.
+    # def march(self, h, x=None, d=None, *args, **kwargs):
+    #     '''evolve from displacement x[0] and velocity x[1] with time-step h
 
-        '''
+    #     This involves setting the internal variables for velocity and
+    #     acceleration (v and a, respectively), and, for convenience,
+    #     the evolution matrix A, and then deferring to the march method
+    #     of the super-class, DySys.
 
-        x = (self.zero,) * 2 if x is None else x
-        d = {} if d is None else d
+    #     '''
 
-        self.v = x[1]
-        rhs = self.forcing(0., 0., x[0], d)[1] - self.K.dot(x[0])
+    #     x = (self.zero,) * 2 if x is None else x
+    #     d = {} if d is None else d
 
-        if self.C is not None:
-            rhs -= self.C.dot(x[1])
+    #     self.v = x[1]
+    #     rhs = self.forcing(0., 0., x[0], d)[1] - self.K.dot(x[0])
 
-        self.a = solve(self.M, rhs)
+    #     if self.C is not None:
+    #         rhs -= self.C.dot(x[1])
 
-        self.setA(h)
+    #     self.a = solve(self.M, rhs)
 
-        # TRICKY gmcbain 2016-04-08: Return the rate of change of the
-        # solution too
+    #     self.setA(h)
 
-        try:
-            fnew = kwargs.pop('f')
-            kwargs['f'] = lambda x: fnew((x, self.v))
-        except KeyError:
-            kwargs['f'] = lambda x: (x, self.v)
+    #     # TRICKY gmcbain 2016-04-08: Return the rate of change of the
+    #     # solution too
 
-        return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
+    #     try:
+    #         fnew = kwargs.pop('f')
+    #         kwargs['f'] = lambda x: fnew((x, self.v))
+    #     except KeyError:
+    #         kwargs['f'] = lambda x: (x, self.v)
+
+    #     return super(Newmark, self).march(h, x[0], d, *args, **kwargs)
 
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
         '''return a new DySys with constrained degrees of freedom

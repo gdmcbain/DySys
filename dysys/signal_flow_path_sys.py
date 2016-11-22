@@ -23,20 +23,28 @@ most of the methods of this class work with.
 
 from __future__ import absolute_import, division, print_function
 
+from numpy import inf
+
 from dysys import DySys
 
 
 class SignalFlowPathSys(DySys):
 
-    def __init__(self, systems, **kwargs):
+    def __init__(self, systems, functions=None, **kwargs):
         '''construct a SignalFlowPathSys
 
         :param systems: list of DySys
+
+        :param functions: list of functions, one shorter than systems,
+        being the mappings of (time, state) between systems along the
+        list
 
         '''
 
         super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
+        self.functions = (functions if functions is not None
+                          else [lambda _, x: x] * (len(self) - 1))
 
     def __len__(self):
         return len(self.systems)
@@ -64,7 +72,9 @@ class SignalFlowPathSys(DySys):
         xnew = [self.systems[0].step(t, h, x[0], d)]
         for i in range(1, len(self)):
             xnew.append(self.systems[i].step(t, h, x[i], d,
-                                             (x[i-1], xnew[-1])))
+                                             map(self.functions[i-1],
+                                                 (t, t + h),
+                                                 (x[i-1], xnew[-1]))))
 
         return xnew
 
@@ -84,7 +94,8 @@ class SignalFlowPathSys(DySys):
 
         xoo = [self.systems[0].equilibrium(x[0], d, **kwargs)]
         for i in range(1, len(self)):
-            xoo.append(self.systems[i].equilibrium(x[i], d, (x[i-1], xoo[-1]),
-                                                   **kwargs))
+            xoo.append(self.systems[i].equilibrium(
+                x[i], d, map(self.functions[i-1], (0, inf), (x[i-1], xoo[-1])),
+                **kwargs))
 
         return xoo

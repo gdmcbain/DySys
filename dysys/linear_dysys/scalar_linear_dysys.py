@@ -158,15 +158,9 @@ class ScalarLinearDySys(LinearDySys):
         :param d: dict, discrete dynamical variables, optional
         (default empty)
 
-        Further positional arguments may in future be used to
-        represent inputs.
+        The first optional positional arguments can be the (old, new)
+        pair of values of an input signal.
 
-        If 'master' in d, it should be a dict containing a DySys in
-        'system', on the evolution of which the present step depends.
-        The right-hand side self.f(t) is replaced by a generalized
-        trapezoidal sum of the values of
-        d['master']['system']['state'] and where that steps to, both
-        mapped with d['master']['f'].
 
         '''
 

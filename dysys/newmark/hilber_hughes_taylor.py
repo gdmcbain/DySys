@@ -58,8 +58,10 @@ class HilberHughesTaylor(Newmark):
             M, K, C, f, (1 - alpha)**2 / 4., (1 - 2 * alpha) / 2., definite,
             **kwargs)
 
-    def step(self, t, h, x, d):
+    def step(self, t, h, x, d, *args):
         'evolve from displacement x at time t to t+h'
+
+        self.prestep(t, h, x, d, *args)
 
         xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
         vt = self.v + (1 - self.gamma) * h * self.a
@@ -71,7 +73,8 @@ class HilberHughesTaylor(Newmark):
                                        np.vstack([self.v, vt]).T)(self.alpha))
 
         rhs += interp1d([-1, 0],
-                        np.vstack(self.forcing(t, h, x, d)).T)(self.alpha)
+                        np.vstack(self.forcing(
+                            t, h, x, d, *args)).T)(self.alpha)
 
         self.a = self.solve(rhs)
         self.v = vt + self.gamma * h * self.a
