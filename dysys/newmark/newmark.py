@@ -36,6 +36,9 @@ class Newmark(DySys):
 
     '''
 
+    # TODO gmcbain 2016-11-24: Include the velocity in the state
+    # rather than use an attibute.
+
     def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
                  definite=False, **kwargs):
         ''':param M: mass scipy.sparse matrix
