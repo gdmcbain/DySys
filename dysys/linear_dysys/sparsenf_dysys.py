@@ -9,6 +9,8 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
+
 import numpy as np
 
 from scipy.optimize import root
@@ -121,8 +123,15 @@ class SparseNFDySys(LinearDySys):
         return (root(residual, x0, **kwargs).x if self.f1 is None
                 else newton(residual, jacobian, x0, **kwargs))
 
-    def constrain(self, *args, **kwargs):
-        '''extends the method from the super-class
+    def constrain(self, known, xknown=None, vknown=None):
+        '''return a new SparseNFDySys with constrained degrees of freedom
+
+        :param known: sequence of indices of known degrees of freedom
+
+        :param xknown: corresponding sequence of their values
+        (default: zeros)
+
+        :param vknown: corresponding sequence of their rates of change
 
         Say we have the residual
 
@@ -156,16 +165,23 @@ class SparseNFDySys(LinearDySys):
 
         '''
 
-        sys = super(SparseNFDySys, self).constrain(*args, **kwargs)
+        U, K = self.node_maps(known)
+        project = partial(self.projector, U)
 
-        # KLUDGE gmcbain 2014-04-30: Because the U map has been
-        # encapsulated now, it's not accessible here for mapping f1
-        # and so needs to be recalculated.  Yuck.  This should go away
-        # when this class is deprecated in favour of
-        # NonlinearSparseDySys.
+        M, D = [None if A is None else project(A * U)
+                for A in [self.M, self.D]]
+        sys = self.__class__(
+            M,
+            D,
+            lambda *args: project(
+                (0 if self.f is None else self.f(*args)) -
+                (0 if xknown is None else self.D.dot(K.dot(xknown))) -
+                (0 if vknown is None else self.M.dot(K.dot(vknown)))),
+            None if self.f1 is None else
+            (lambda t, x, d: U.T.dot(
+                self.f1(t, sys.reconstitute(x), d).dot(U))))
 
-        U, _ = self.node_maps(args[0])
-        sys.f1 = (None if self.f1 is None else
-                  (lambda t, x, d: U.T.dot(
-                      self.f1(t, sys.reconstitute(x), d).dot(U))))
+        sys.reconstitute = partial(self.reconstituter, U, K, xknown)
+        sys.project = project
+
         return sys

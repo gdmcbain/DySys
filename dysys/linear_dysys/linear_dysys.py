@@ -66,9 +66,7 @@ class LinearDySys(DySys):
         return self.D.shape[0]
 
     def constrain(self, known, xknown=None, vknown=None):
-        '''return a new DySys with constrained degrees of freedom
-
-        having the same class as self.
+        '''return a new LinearDySys with constrained degrees of freedom
 
         :param known: sequence of indices of known degrees of freedom
 
