@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 '''dysys.post: postprocessing utilities for DySys
 
@@ -10,7 +11,7 @@
 
 from __future__ import absolute_import, division, print_function
 
-import itertools as it
+from toolz import partitionby
 
 
 def segment(history, period):
@@ -25,5 +26,6 @@ def segment(history, period):
 
     '''
 
-    for _, group in it.groupby(history, lambda ev: int(ev[0] / period)):
-        yield group
+    # TODO gmcbain 2017-02-24: Reverse order of arguments.
+
+    return partitionby(lambda ev: int(ev[0] / period), history)
