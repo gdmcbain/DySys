@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Deprecated class to extract last item of a sequence.
+'''Class to wrap a sequence to enable extracting its last item.
 
-Prefer toolz.itertoolz.last.
+Often this can be replaced with toolz.itertoolz.last, but not if the
+earlier terms are required too.
 
 :author: G. D. McBain <gmcbain>, based on code read 2013-06-11
 http://www.dabeaz.com/generators-uk/storelast.py, Copyright (C) 2008
@@ -20,7 +21,6 @@ class StoreLast(object):
     'wrap an iterable to remember the last item generated'
 
     def __init__(self, source):
-        raise DeprecationWarning('Just use toolz.itertoolz.last.')
         self.source = source
 
     def __next__(self):
