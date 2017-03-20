@@ -16,6 +16,8 @@ from scipy.interpolate import interp1d
 from scipy.linalg import eig
 from scipy.sparse import identity, linalg as sla
 
+from toolz import dissoc
+
 from ...cholesky import cholesky
 from ...fixed_point import solve
 from ..linear_dysys import LinearDySys
@@ -110,7 +112,8 @@ class SparseDySys(LinearDySys):
 
         '''
 
-        return eig(-self.D.todense(), self.M.todense(), *args, **kwargs)
+        return eig(-self.D.todense(), self.M.todense(),
+                   *args, **(dissoc(kwargs, 'sigma')))
 
     def eigs(self, *args, **kwargs):
         '''return the first few modes of the system,
