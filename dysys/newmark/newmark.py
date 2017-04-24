@@ -184,9 +184,13 @@ class Newmark(DySys):
             if 'sigma' not in kwargs:  # inverse iteration
                 kwargs['sigma'] = 0.   # Hughes (2000, §10.5.2)
             try:
-                w, v = ((sla.eigsh if self.definite else sla.eigs)
+                retval = ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
-                return np.sqrt(-w), v
+                if ('return_eigenvectors' in kwargs and
+                    kwargs['return_eigenvectors'] is False):
+                    return np.sqrt(-retval)
+                else:
+                    return np.sqrt(-retval[0]), retval[1]
             except ValueError:
                 warn('system too small, converting to dense', UserWarning)
                 for k in ['k', 'M', 'which']:
