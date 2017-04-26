@@ -142,14 +142,11 @@ class SparseDySys(LinearDySys):
         conjugate pairs together), defaulting to 6 (the current
         default of scipy.sparse.linalg.eigs)
 
-        :rtype: pair, being np.array of (generally complex)
-        eigenvalues
-
+        :rtype: as per scipy.sparse.linalg.eigs or self.eig, if self
+        is too small to be treated by the former
 
         '''
 
-        if 'return_eigenvectors' not in kwargs:
-            kwargs['return_eigenvectors'] = False
         kwargs['M'] = self.M
 
         try:
