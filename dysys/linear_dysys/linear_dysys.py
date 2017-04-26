@@ -111,5 +111,4 @@ class LinearDySys(DySys):
         return [self.__class__(None,
                                self.D + 1j * w * self.M,
                                self.f).equilibrium()
-                 for w in omega]
-
+                for w in omega]

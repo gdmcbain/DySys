@@ -99,7 +99,7 @@ class ScalarLinearDySys(LinearDySys):
         backward Euler
 
         '''
-        
+
         if h == 0:
             raise ZeroDivisionError
         return (((theta * f(t + h) + (1 - theta) * f(t)) +
@@ -121,7 +121,7 @@ class ScalarLinearDySys(LinearDySys):
         theta method; default 0.5 for Crank-Nicolson, use 1.0 for
         backward Euler
 
-        '''        
+        '''
 
         t, d = 0., d or {}
 
