@@ -1,8 +1,8 @@
-from distutils.core import setup, Command
+from distutils.core import setup
 
 setup(
     name='DySys',
-    version='0.2.1',
+    version='0.2.2',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=['dysys',

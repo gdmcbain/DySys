@@ -77,7 +77,7 @@ def solve(A, b, *args, **kwargs):
     scipy.sparse.linalg.spsolve.
 
     '''
-    
+
     try:
         return spsolve(A, b, *args, **kwargs)
     # except ValueError:

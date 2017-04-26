@@ -71,5 +71,6 @@ class TestLadder(TestCase):
         V = sys.reconstitute(sys.equilibrium())
         np.testing.assert_array_almost_equal(V[[4, 1]], [-1, -5 / 3])
 
+
 if __name__ == '__main__':
     main()

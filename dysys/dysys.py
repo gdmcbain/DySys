@@ -65,7 +65,7 @@ class DySys(object):
         :rtype: dict
 
         '''
-        
+
         return {'system': self,
                 'state': self.zero if x is None else x,
                 'd': {} if d is None else d,
@@ -153,7 +153,7 @@ class DySys(object):
         super to re-call this.
 
         '''
-        
+
         return f(self, t, x, d)
 
     def march(self, h, x=None, d=None, events=None, substeps=1, f=None):
@@ -366,16 +366,15 @@ class DySys(object):
                     t, h, yold, self.master.get('d'))
             except ZeroDivisionError:
                 ynew = self.master['state'] = yold
-            fold, fnew = map(lambda y:
-                             self.master['f'](self, t, y, self.master.get('d')),
-                             [yold, ynew])
+            fold, fnew = map(
+                lambda y: self.master['f'](self, t, y, self.master.get('d')),
+                [yold, ynew])
         elif self.f is not None:
             fold, fnew = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:
             fold = fnew = 0
 
         return fold, fnew
-
 
     def eig(self, *args, **kwargs):
 
