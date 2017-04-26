@@ -185,9 +185,8 @@ class Newmark(DySys):
             kwargs['M'] = self.M
             try:
                 retval = ((sla.eigsh if self.definite else sla.eigs)
-                        (-self.K, *args, **kwargs))
-                if ('return_eigenvectors' in kwargs and
-                    kwargs['return_eigenvectors'] is False):
+                          (-self.K, *args, **kwargs))
+                if kwargs.get('return_eigenvectors', False):
                     return np.sqrt(-retval)
                 else:
                     return np.sqrt(-retval[0]), retval[1]
