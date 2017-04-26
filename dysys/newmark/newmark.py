@@ -179,10 +179,10 @@ class Newmark(DySys):
     def eigs(self, *args, **kwargs):
         '''return the first few modes of the system'''
 
+        if 'sigma' not in kwargs:  # inverse iteration
+            kwargs['sigma'] = 0.   # Hughes (2000, §10.5.2)
         if self.C is None:
             kwargs['M'] = self.M
-            if 'sigma' not in kwargs:  # inverse iteration
-                kwargs['sigma'] = 0.   # Hughes (2000, §10.5.2)
             try:
                 retval = ((sla.eigsh if self.definite else sla.eigs)
                         (-self.K, *args, **kwargs))
