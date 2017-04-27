@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d
 from scipy.linalg import eig
 from scipy.sparse import identity, linalg as sla
 
-from toolz import dissoc
+from toolz import assoc, dissoc, keymap
 
 from ...cholesky import cholesky
 from ...fixed_point import solve
@@ -147,17 +147,15 @@ class SparseDySys(LinearDySys):
 
         '''
 
-        kwargs['M'] = self.M
-
         try:
-            return sla.eigs(-self.D.tocsc(), *args, **kwargs)
+            return sla.eigs(-self.D.tocsc(), *args,
+                            **assoc(kwargs, 'M', self.M))
         except ValueError:
             warn('system too small, converting to dense', UserWarning)
-            for k in ['k', 'M', 'which']:
-                if k in kwargs:
-                    del kwargs[k]
-            kwargs['right'] = kwargs.pop('return_eigenvectors')
-            return self.eig(*args, **kwargs)
+            return self.eig(
+                *args, **keymap(
+                    lambda k: 'right' if k == 'return_eigenvectors' else k,
+                    dissoc(kwargs, 'k', 'M', 'which')))
 
 
 def demo():
