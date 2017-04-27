@@ -39,7 +39,7 @@ class ODySys(DySys):
         arguments for jac
 
         '''
-        
+
         self.f, self.jac = f, jac
         self._ode = ode(self.f, self.jac)
         self.set_f_params(*(f_args or []))
@@ -61,7 +61,7 @@ class ODySys(DySys):
 
         if h == 0:
             raise ZeroDivisionError
-        
+
         xnext = self.integrate(self.t + h)
         if self.successful():
             return xnext

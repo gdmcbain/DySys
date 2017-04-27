@@ -40,6 +40,7 @@ def dense_cholesky(a):
     return partial(cho_solve,
                    cho_factor(a.toarray() if issparse(a) else a))
 
+
 try:
     from sksparse.cholmod import cholesky as sparse_cholesky
 except ImportError:
