@@ -187,9 +187,9 @@ class Newmark(DySys):
                 retval = ((sla.eigsh if self.definite else sla.eigs)
                           (-self.K, *args, **kwargs))
                 if kwargs.get('return_eigenvectors', False):
-                    return np.sqrt(-retval)
-                else:
                     return np.sqrt(-retval[0]), retval[1]
+                else:
+                    return np.sqrt(-retval)
             except ValueError:
                 warn('system too small, converting to dense', UserWarning)
                 for k in ['k', 'M', 'which']:
