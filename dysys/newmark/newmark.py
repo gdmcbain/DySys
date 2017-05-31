@@ -102,6 +102,7 @@ class Newmark(DySys):
                 rhs -= self.C.dot(self.v)
             self.a = solve(self.M, rhs)
             self.setA(h)
+            self._memo = {'h': h}
 
     def step(self, t, h, x, d, *args):
         'evolve from displacement x at time t to t+h'
