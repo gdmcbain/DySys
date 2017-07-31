@@ -72,9 +72,9 @@ class SignalFlowPathSys(DySys):
         xnew = [self.systems[0].step(t, h, x[0], d)]
         for i in range(1, len(self)):
             xnew.append(self.systems[i].step(t, h, x[i], d,
-                                             map(self.functions[i-1],
-                                                 (t, t + h),
-                                                 (x[i-1], xnew[-1]))))
+                                             tuple(map(self.functions[i-1],
+                                                       (t, t + h),
+                                                       (x[i-1], xnew[-1])))))
 
         return xnew
 

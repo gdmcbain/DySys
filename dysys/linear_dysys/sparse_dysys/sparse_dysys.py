@@ -35,7 +35,7 @@ class SparseDySys(LinearDySys):
     def __len__(self):
         return self.D.shape[0]
 
-    def step(self, t, h, x, d=None, *args):
+    def step(self, t, h, x, d=None, inputs=None):
         '''estimate the next state using theta method
 
         :param t: float, time
@@ -45,6 +45,9 @@ class SparseDySys(LinearDySys):
         :param x: numpy.ndarray, state, initial condition
 
         :param d: dict, passed to self.forcing
+
+        :param inputs: optional pair, being inputs at t and t + h
+        [default: None]
 
         Attempt fast time-stepping, reusing factors if the time-step
         is the same as on the previous call.  Use Cholesky if
@@ -84,7 +87,7 @@ class SparseDySys(LinearDySys):
         return self._memo['solve'](
             self._memo['M'].dot(x) +
             interp1d([0, 1],
-                     np.vstack(self.forcing(t, h, x, d, *args)).T)(self.theta))
+                     np.vstack(self.forcing(t, h, x, d, inputs)).T)(self.theta))
 
     def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution

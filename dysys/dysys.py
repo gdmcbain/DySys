@@ -337,7 +337,7 @@ class DySys(object):
 
         return U.T.dot(x)
 
-    def forcing(self, t, h, x, d, *args):
+    def forcing(self, t, h, x, d, inputs=None):
         '''return forcing at start and end of time-step
 
         :param t: float, time
@@ -348,17 +348,16 @@ class DySys(object):
 
         :param d: dict, discrete dynamical variables
 
-        Further positional arguments may in future be used to
-        represent inputs. The first is assumed to be a pair of inputs
-        at the start and end of the step.
+        :param inputs: pair, inputs at the start and end of step
+        [optional: default None]
 
         '''
 
         d = d or {}
 
-        if len(args) > 0:       # assume args[0] is (old, new)
-            fold, fnew = map(lambda t, y: self.f(self, t, x, d, y),
-                             [t, t + h], args[0])
+        if inputs:
+            [fold, fnew] = map(lambda t, y: self.f(self, t, x, d, y),
+                               [t, t + h], inputs)
         elif self.master is not None:
             yold = self.master.pop('state')
             try:
@@ -366,15 +365,15 @@ class DySys(object):
                     t, h, yold, self.master.get('d'))
             except ZeroDivisionError:
                 ynew = self.master['state'] = yold
-            fold, fnew = map(
+            [fold, fnew] = map(
                 lambda y: self.master['f'](self, t, y, self.master.get('d')),
                 [yold, ynew])
         elif self.f is not None:
-            fold, fnew = map(lambda t: self.f(self, t, x, d), [t, t + h])
+            [fold, fnew] = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:
             fold = fnew = 0
 
-        return fold, fnew
+        return [fold, fnew]
 
     def eig(self, *args, **kwargs):
 
