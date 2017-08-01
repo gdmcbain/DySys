@@ -93,7 +93,9 @@ class Newmark(DySys):
 
         '''
 
-        return solve(self.K, self.forcing(0, np.inf, x, d, *args), **kwargs)
+        return solve(self.K,
+                     self.forcing(np.inf, np.inf, x, d, *args)[1],
+                     **kwargs)
 
     def prestep(self, t, h, x, d, *args):
         if not hasattr(self, '_memo') or self._memo['h'] != h:
