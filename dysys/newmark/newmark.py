@@ -81,12 +81,13 @@ class Newmark(DySys):
     def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution
 
-        using self.f(np.inf, d)
+        using self.forcing(np.inf, np.inf, x, d)
 
-        :param x: initial guess, passed on to self.f, where it should
-        be ignored, optional
+        :param x: optional initial guess, passed on to self.forcing,
+        where it should be ignored [default: None]
 
-        :param d: dict, passed on to self.f, optional
+        :param d: optional dict, passed on to self.forcing [default:
+        None]
 
         Further positional arguments are passed on to self.forcing;
         keyword arguments to solve.
