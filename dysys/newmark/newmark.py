@@ -34,10 +34,11 @@ class Newmark(DySys):
     velocity and acceleration, the former being required as the
     system is of second order while the latter is merely convenient.
 
-    '''
+    The state variable x is a pair of numpy.ndarrays, being
+    displacement and velocity; the acceleration is kept in an
+    attribute Newmark.a.
 
-    # TODO gmcbain 2016-11-24: Include the velocity in the state
-    # rather than use an attibute.
+    '''
 
     def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
                  definite=False, **kwargs):
@@ -68,15 +69,17 @@ class Newmark(DySys):
         '''
 
         self.M, self.K, self.C = M, K, C
-        self.f = f or (lambda *args: self.zero)
+        self.f = f or (lambda *args: self.zero[0])
         self.beta, self.gamma = beta, gamma
         self.definite = definite
         super(Newmark, self).__init__(**kwargs)
 
-        self.v = self.zero
-
     def __len__(self):
         return self.K.shape[0]
+
+    @property
+    def zero(self):
+        return (np.zeros(len(self)),)*2
 
     def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution
@@ -100,9 +103,9 @@ class Newmark(DySys):
 
     def prestep(self, t, h, x, d, *args):
         if not hasattr(self, '_memo') or self._memo['h'] != h:
-            rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(x)
+            rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(x[0])
             if self.C is not None:
-                rhs -= self.C.dot(self.v)
+                rhs -= self.C.dot(x[1])
             self.a = solve(self.M, rhs)
             self.setA(h)
             self._memo = {'h': h}
@@ -112,17 +115,17 @@ class Newmark(DySys):
 
         self.prestep(t, h, x, d, *args)
 
-        xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
-        vt = self.v + (1 - self.gamma) * h * self.a
+        xt = (x[0] + h * (x[1] + h * (.5 - self.beta) * self.a),
+              x[1] + (1 - self.gamma) * h * self.a)
 
-        rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(xt)
+        rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(xt[0])
 
         if self.C is not None:
-            rhs -= self.C.dot(vt)
+            rhs -= self.C.dot(xt[1])
 
         self.a = self.solve(rhs)
-        self.v = vt + self.gamma * h * self.a
-        return xt + self.beta * h**2 * self.a
+        return (xt[0] + self.beta * h**2 * self.a,
+                xt[1] + self.gamma * h * self.a)
 
     def setA(self, h, alpha=0.):
         '''set the acceleration evolution matrix

@@ -63,22 +63,23 @@ class HilberHughesTaylor(Newmark):
 
         self.prestep(t, h, x, d, *args)
 
-        xt = x + h * (self.v + h * (.5 - self.beta) * self.a)
-        vt = self.v + (1 - self.gamma) * h * self.a
+        xt = (x[0] + h * (x[1] + h * (.5 - self.beta) * self.a),
+              x[1] + (1 - self.gamma) * h * self.a)
 
-        rhs = -self.K.dot(interp1d([-1, 0], np.vstack([x, xt]).T)(self.alpha))
+        rhs = -self.K.dot(interp1d([-1, 0],
+                                   np.vstack([x[0], xt[0]]).T)(self.alpha))
 
         if self.C is not None:
             rhs -= self.C.dot(interp1d([-1, 0],
-                                       np.vstack([self.v, vt]).T)(self.alpha))
+                                       np.vstack([x[1], xt[1]]).T)(self.alpha))
 
         rhs += interp1d([-1, 0],
                         np.vstack(self.forcing(
                             t, h, x, d, *args)).T)(self.alpha)
 
         self.a = self.solve(rhs)
-        self.v = vt + self.gamma * h * self.a
-        return xt + self.beta * h**2 * self.a
+        return (xt[0] + self.beta * h**2 * self.a,
+                xt[1] + self.gamma * h * self.a)
 
     def setA(self, h):
         super(HilberHughesTaylor, self).setA(h, self.alpha)
