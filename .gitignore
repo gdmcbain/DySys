@@ -1,2 +1,4 @@
-DySys.egg-info
+*.egg-info
+*.pyc
+__pycache__
 *~
