@@ -15,7 +15,7 @@ from functools import partial
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import block_diag, bmat, identity, linalg as sla
+from scipy.sparse import block_diag, bmat, linalg as sla
 
 from ..cholesky import cholesky
 from ..dysys import DySys
@@ -217,9 +217,9 @@ class Newmark(DySys):
 
         # TODO gmcbain 2016-10-11: Add f etc.
 
-        return SparseDySys(block_diag([identity(self.M.shape[0]),
+        return SparseDySys(block_diag([self.identity,
                                        self.M]),
-                           bmat([[None, -identity(self.M.shape[0])],
+                           bmat([[None, -self.identity],
                                  [self.K, self.C]]))
 
 
