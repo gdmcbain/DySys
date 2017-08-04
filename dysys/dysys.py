@@ -53,6 +53,19 @@ class DySys(object):
         '''return the zero element of the vector space'''
         return np.zeros(len(self))
 
+    @property
+    def identity(self):
+        '''return the (CSR sparse) identity matrix
+
+        :rtype: scipy.sparse.csr_matrix
+
+
+        '''
+        
+        return identity(len(self), format='csr')
+
+        
+
     def as_master(self, x=None, d=None, f=None):
         '''return a dict representing self as a master-system
 
@@ -297,7 +310,7 @@ class DySys(object):
         # attribute __getitem__)
 
         size = len(self)
-        I = identity(size, format='csr')
+        I = self.identity
 
         return ((I, np.zeros((size, 0))) if len(known) == 0
                 else

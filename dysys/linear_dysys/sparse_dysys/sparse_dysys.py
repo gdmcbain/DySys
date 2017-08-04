@@ -14,7 +14,7 @@ import numpy as np
 
 from scipy.interpolate import interp1d
 from scipy.linalg import eig
-from scipy.sparse import identity, linalg as sla
+from scipy.sparse import linalg as sla
 
 from toolz import assoc, dissoc, keymap
 
@@ -165,6 +165,7 @@ def demo():
     # see msmdir.003774 for an archived run
 
     import pandas as pd
+    from scipy.sparse import identity
 
     class Decay(SparseDySys):
 
