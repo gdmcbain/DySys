@@ -9,7 +9,7 @@ which cannot be simulated by `scipy.integrate.odeint
 Installation
 ------------
 
-DySys is maintained at <https://gitlab.memjet.local/msm/DySys>.
+DySys is maintained at https://gitlab.memjet.local/msm/DySys.
 
 
 Installation under Windows
