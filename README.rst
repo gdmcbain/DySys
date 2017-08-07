@@ -26,6 +26,8 @@ Call it, e.g., 'DySys'.  Add the packages:
 
   * toolz
 
+  * flake8
+
 
 Open a terminal in the DySys Anaconda environment and issue::
 
