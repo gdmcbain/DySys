@@ -62,4 +62,3 @@ Install the local GitLab packages
 Open a terminal in the DySys Anaconda environment and issue::
 
     pip install -e git+http://gitlab.memjet.local/msm/DySys#egg=DySys
-
