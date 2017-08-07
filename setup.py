@@ -14,6 +14,5 @@ setup(
 particularly those of the descriptor type''',
     long_description=open('README.rst').read(),
     install_requires=['scipy',
-                      'toolz',
-                      'scikit-sparse'],
+                      'toolz'],
 )
