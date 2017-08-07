@@ -32,4 +32,5 @@ Install
 -------
 
 ::
+   pip install scikit-sparse
    pip install -e git+http://gitlab.memjet.local/msm/DySys#egg=DySys

@@ -45,14 +45,15 @@ try:
 
     # TRICKY gmcbain 2017-07-31: sksparse.cholmod is not available for
     # Microsoft Windows.
-    
+
     from sksparse.cholmod import cholesky as sparse_cholesky
 except ImportError:
 
     # TODO gmcbain 2017-07-31: Consider adopting the pure Python
     # implementation from msmdir.010831/cholesky.py.
-    
+
     warn('could not import cholesky from sksparse.cholmod,'
+         'available from PyPI in scikit-sparse (but not under Windows),'
          ' falling back on scipy.linalg, which is dense', UserWarning)
     sparse_cholesky = dense_cholesky
 
