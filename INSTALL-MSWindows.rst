@@ -43,10 +43,8 @@ On creation, DySys should have been appended to the list of
 environments, which by default consisted of just root.  Click on DySys
 to select it in the list of environments.
 
-In the ‘search packages’ box, type and install:
-
-
-Add the packages:
+In the package menu, change the filter from 'Installed' to 'All' and
+then in the ‘search packages’ box, type:
 
   * SciPy
 
@@ -56,6 +54,10 @@ Add the packages:
 
   * flake8
 
+checking each and then installing them all together.
+
+Install the local GitLab packages
+.................................
 
 Open a terminal in the DySys Anaconda environment and issue::
 
