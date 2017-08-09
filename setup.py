@@ -16,6 +16,5 @@ particularly those of the descriptor type''',
     install_requires=['scipy',
                       'toolz',
                       'scikit-sparse;platform_system!="Windows"',
-                      'toolz'],
->>>>>>> e5c557e5fdf58f9ede79b1afad322230b8635c49
+                      'toolz']
 )
