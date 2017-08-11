@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='DySys',
-    version='0.3.4',
+    version='0.3.5',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=['dysys',
@@ -13,6 +13,7 @@ setup(
     description='''some code for dynamical systems,
 particularly those of the descriptor type''',
     long_description=open('README.rst').read(),
+    setup_requires=['numpy'],
     install_requires=['numpy',
                       'scipy',
                       'scikit-sparse;platform_system!="Windows"',
