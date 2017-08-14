@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='DySys',
-    version='0.3.5',
+    version='0.3.6',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=['dysys',
@@ -16,6 +16,7 @@ particularly those of the descriptor type''',
     setup_requires=['numpy'],
     install_requires=['numpy',
                       'scipy',
+                      'pandas',
                       'scikit-sparse;platform_system!="Windows"',
                       'toolz']
 )
