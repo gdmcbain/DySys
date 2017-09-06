@@ -119,7 +119,12 @@ class HilberHughesTaylor(Newmark):
                 (0 if aknown is None else self.M.dot(Kn.dot(aknown)))),
             self.alpha, self.definite)
 
-        sys.reconstitute = partial(self.reconstituter, U, Kn, xknown)
+        reconstituter = partial(self.reconstituter, U, Kn)
+        def reconstitute(xv):
+            return (reconstituter(xknown, xv[0]),
+                    reconstituter(vknown, xv[1]))
+            
+        sys.reconstitute = reconstitute
         sys.project = project
 
         return sys
