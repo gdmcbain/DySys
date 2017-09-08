@@ -81,7 +81,11 @@ class Newmark(DySys):
     def zero(self):
         return (np.zeros(len(self)),)*2
 
-    def equilibrium(self, x=None, d=None, *args, **kwargs):
+    def equilibrium(self,
+                    x: np.ndarray=None,
+                    d: np.ndarray=None,
+                    *args, **kwargs) -> (np.ndarray,
+                                         np.ndarray):
         '''return the eventual steady-state solution
 
         using self.forcing(np.inf, np.inf, x, d)
@@ -97,9 +101,10 @@ class Newmark(DySys):
 
         '''
 
-        return solve(self.K,
-                     self.forcing(np.inf, np.inf, x, d, *args)[1],
-                     **kwargs)
+        return (solve(self.K,
+                      self.forcing(np.inf, np.inf, x, d, *args)[1],
+                      **kwargs),
+                self.zero[1])
 
     def prestep(self, t, h, x, d, *args):
         if not hasattr(self, '_memo') or self._memo['h'] != h:
