@@ -218,7 +218,7 @@ class Newmark(DySys):
 
             return self.to_sparse_dysys().eigs(*args, **kwargs)
 
-    def to_sparse_dysys(self):
+    def to_sparse_dysys(self) -> SparseDySys:
         '''return an equivalent SparseDySys
 
         by introducing the rate of change as an auxiliary variable
