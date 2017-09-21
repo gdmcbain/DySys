@@ -120,10 +120,11 @@ class HilberHughesTaylor(Newmark):
             self.alpha, self.definite)
 
         reconstituter = partial(self.reconstituter, U, Kn)
+
         def reconstitute(xv):
             return (reconstituter(xknown, xv[0]),
                     reconstituter(vknown, xv[1]))
-            
+
         sys.reconstitute = reconstitute
         sys.project = project
 
