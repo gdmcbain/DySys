@@ -11,6 +11,7 @@ from __future__ import absolute_import, division, print_function
 import itertools as it
 
 import numpy as np
+from scipy.sparse import issparse, spmatrix
 from scipy.sparse.linalg import spsolve
 
 
@@ -66,21 +67,23 @@ def newton(residual, jacobian, x, *args, **kwargs):
     return fixed_point(iteration(x), *args, **kwargs)
 
 
-def solve(A, b, *args, **kwargs):
+def solve(A: spmatrix,
+          b: np.ndarray,
+          *args, **kwargs) -> np.ndarray:
     '''solve the linear system A x = b
 
-    :param A: SciPy sparse matrix or numpy.ndarray of shape (n, n)
-
-    :param b: array-like of shape (n,)
-
     Further positional and keyword arguments are passed on to
-    scipy.sparse.linalg.spsolve.
+    scipy.sparse.linalg.spsolve or numpy.linalg.solve depending on
+    whether scipy.sparse.issparse(A).
 
     '''
 
-    try:
-        return spsolve(A, b, *args, **kwargs)
-    # except ValueError:
-    #             return b / A
-    except IndexError:
-        return b / A.toarray()[0, 0]
+    if issparse(A):
+        try:
+            return spsolve(A, b, *args, **kwargs)
+        # except ValueError:
+        #             return b / A
+        except IndexError:
+            return b / A.toarray()[0, 0]
+    else:
+        return np.linalg.solve(A, b, *args, **kwargs)
