@@ -218,19 +218,20 @@ class Newmark(DySys):
 
             return self.to_sparse_dysys().eigs(*args, **kwargs)
 
-    def to_sparse_dysys(self) -> SparseDySys:
+    def to_sparse_dysys(self, theta: float=0.5) -> SparseDySys:
         '''return an equivalent SparseDySys
 
         by introducing the rate of change as an auxiliary variable
 
         '''
 
-        # TODO gmcbain 2016-10-11: Add f etc.
-
         return SparseDySys(block_diag([self.identity,
-                                       self.M]),
+                                       self.M]).tocsc(),
                            bmat([[None, -self.identity],
-                                 [self.K, self.C]]))
+                                 [self.K, self.C]]),
+                           lambda *fargs: np.concatenate([self.zero[0],
+                                                          self.f(*fargs)]),
+                           theta)
 
 
 # Define special cases, as per Hughes (2000, Table 9.1.1, p. 493)
