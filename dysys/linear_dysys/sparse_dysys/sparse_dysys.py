@@ -16,7 +16,7 @@ from scipy.interpolate import interp1d
 from scipy.linalg import eig
 from scipy.sparse import linalg as sla
 
-from toolz import assoc, dissoc, keymap
+from toolz import dissoc, keymap, merge
 
 from ...cholesky import cholesky
 from ...fixed_point import solve
@@ -118,11 +118,11 @@ class SparseDySys(LinearDySys):
         return eig(-self.D.todense(), self.M.todense(),
                    *args, **(dissoc(kwargs, 'sigma')))
 
-    def eigs(self, *args, **kwargs):
+    def eigs(self, *args, **kwargs) -> np.ndarray:
         '''return the first few modes of the system,
 
         being the modes with temporal eigenvalues of least magnitude.
-        This is achieved using scipy.sparse.linalg.eigs by
+        This is achieved using :function scipy.sparse.linalg.eigs: by
         shift-inverting on sigma=0 and then seeking the eigenvalues of
         largest magnitude, since apparently ARPACK is better at
         seeking large eigenvalues than small.
@@ -152,7 +152,8 @@ class SparseDySys(LinearDySys):
 
         try:
             return sla.eigs(-self.D.tocsc(), *args,
-                            **assoc(kwargs, 'M', self.M))
+                            **merge(kwargs, {'M': self.M,
+                                             'sigma': 0.}))
         except ValueError:
             warn('system too small, converting to dense', UserWarning)
             return self.eig(
