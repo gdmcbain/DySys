@@ -8,6 +8,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+from functools import partial
 from warnings import warn
 
 import numpy as np
@@ -68,21 +69,22 @@ class SparseDySys(LinearDySys):
                 self._memo['solve'] = cholesky(M1)
             else:
 
-                def solver(rhs):
-                    x1, info = sla.lgmres(
-                        M1, rhs, x0=x, tol=1e-12,
-                        M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
-                    if info == 0:
-                        return x1
-                    else:
-                        if info > 0:
-                            raise RuntimeError(
-                                'convergence to tolerance not achieved '
-                                'in %s iterations' % info)
-                        else:
-                            raise ValueError('info %d' % info)
+                # def solver(rhs):
+                #     x1, info = sla.lgmres(
+                #         M1, rhs, x0=x, tol=1e-12,
+                #         M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
+                #     if info == 0:
+                #         return x1
+                #     else:
+                #         if info > 0:
+                #             warn('convergence to tolerance not achieved '
+                #                  'in %s iterations' % info, RuntimeWarning)
+                #             return solve(M1, rhs)                        
+                #         else:
+                #             raise ValueError('info %d' % info)
 
-                self._memo['solve'] = solver
+                # self._memo['solve'] = solver
+                self._memo['solve'] = partial(solve, M1)
 
         return self._memo['solve'](
             self._memo['M'].dot(x) +
