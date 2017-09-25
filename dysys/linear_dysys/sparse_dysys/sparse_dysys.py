@@ -154,8 +154,7 @@ class SparseDySys(LinearDySys):
 
         try:
             return sla.eigs(-self.D.tocsc(), *args,
-                            **merge(kwargs, {'M': self.M,
-                                             'sigma': 0.}))
+                            **merge({'M': self.M, 'sigma': 0.}, kwargs))
         except ValueError:
             warn('system too small, converting to dense', UserWarning)
             return self.eig(
