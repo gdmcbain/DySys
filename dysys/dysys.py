@@ -61,10 +61,8 @@ class DySys(object):
 
 
         '''
-        
-        return identity(len(self), format='csr')
 
-        
+        return identity(len(self), format='csr')
 
     def as_master(self, x=None, d=None, f=None):
         '''return a dict representing self as a master-system
