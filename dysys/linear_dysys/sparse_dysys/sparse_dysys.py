@@ -79,7 +79,7 @@ class SparseDySys(LinearDySys):
                 #         if info > 0:
                 #             warn('convergence to tolerance not achieved '
                 #                  'in %s iterations' % info, RuntimeWarning)
-                #             return solve(M1, rhs)                        
+                #             return solve(M1, rhs)
                 #         else:
                 #             raise ValueError('info %d' % info)
 
@@ -89,7 +89,8 @@ class SparseDySys(LinearDySys):
         return self._memo['solve'](
             self._memo['M'].dot(x) +
             interp1d([0, 1],
-                     np.vstack(self.forcing(t, h, x, d, inputs)).T)(self.theta))
+                     np.vstack(
+                         self.forcing(t, h, x, d, inputs)).T)(self.theta))
 
     def equilibrium(self, x=None, d=None, *args, **kwargs):
         '''return the eventual steady-state solution
