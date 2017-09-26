@@ -23,14 +23,19 @@ most of the methods of this class work with.
 
 from __future__ import absolute_import, division, print_function
 
-from numpy import inf
+from typing import Dict, List
+
+import numpy as np
 
 from dysys import DySys
 
 
 class SignalFlowPathSys(DySys):
 
-    def __init__(self, systems, functions=None, **kwargs):
+    def __init__(self,
+                 systems: List[DySys],
+                 functions=None,
+                 **kwargs):
         '''construct a SignalFlowPathSys
 
         :param systems: list of DySys
@@ -53,7 +58,11 @@ class SignalFlowPathSys(DySys):
     def zero(self):
         return [s.zero for s in self.systems]
 
-    def step(self, t, h, x, d):
+    def step(self,
+             t: float,
+             h: float,
+             x: List[np.ndarray],
+             d: Dict):
         '''estimate the state after a step in time
 
         :param t: float, time
@@ -95,7 +104,8 @@ class SignalFlowPathSys(DySys):
         xoo = [self.systems[0].equilibrium(x[0], d, **kwargs)]
         for i in range(1, len(self)):
             xoo.append(self.systems[i].equilibrium(
-                x[i], d, map(self.functions[i-1], (0, inf), (x[i-1], xoo[-1])),
+                x[i], d, map(self.functions[i-1],
+                             (0, np.inf), (x[i-1], xoo[-1])),
                 **kwargs))
 
         return xoo
