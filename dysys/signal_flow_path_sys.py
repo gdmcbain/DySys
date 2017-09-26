@@ -62,23 +62,16 @@ class SignalFlowPathSys(DySys):
              t: float,
              h: float,
              x: List[np.ndarray],
-             d: Dict):
+             d: Dict,
+             inputs=None):
         '''estimate the state after a step in time
-
-        :param t: float, time
-
-        :param h: float > 0, time-step
-
-        :param x: state
-
-        :param d: dict, discrete dynamical variables
 
         '''
 
         # TODO gmcbain 2016-11-21: Could this be expressed with
         # itertools.accumulate?
 
-        xnew = [self.systems[0].step(t, h, x[0], d)]
+        xnew = [self.systems[0].step(t, h, x[0], d, inputs)]
         for i in range(1, len(self)):
             xnew.append(self.systems[i].step(t, h, x[i], d,
                                              tuple(map(self.functions[i-1],
