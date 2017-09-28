@@ -369,6 +369,8 @@ class DySys(object):
         if inputs:
             [fold, fnew] = map(lambda t, y: self.f(self, t, x, d, y),
                                [t, t + h], inputs)
+        elif self.f is not None:
+            [fold, fnew] = map(lambda t: self.f(self, t, x, d), [t, t + h])
         elif self.master is not None:
             yold = self.master.pop('state')
             try:
@@ -379,8 +381,6 @@ class DySys(object):
             [fold, fnew] = map(
                 lambda y: self.master['f'](self, t, y, self.master.get('d')),
                 [yold, ynew])
-        elif self.f is not None:
-            [fold, fnew] = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:
             fold = fnew = self.zero
 
