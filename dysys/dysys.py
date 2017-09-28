@@ -382,7 +382,7 @@ class DySys(object):
         elif self.f is not None:
             [fold, fnew] = map(lambda t: self.f(self, t, x, d), [t, t + h])
         else:
-            fold = fnew = 0
+            fold = fnew = self.zero
 
         return [fold, fnew]
 
