@@ -33,7 +33,7 @@
   Mathematics. Cambridge University Press
 
 * Mason, S. J. (1953). Feedback Theory-Some properties of signal flow
-  graphs. *Proceedings of the IRE* **41**(9):1144–1156
+  graphs. *Proceedings of the IRE* **41** (9):1144–1156
   (`doi:10.1109/jrproc.1953.274449
   <http://dx.doi.org/10.1109/jrproc.1953.274449>`_)
 
