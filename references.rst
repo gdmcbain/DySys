@@ -22,8 +22,8 @@
 * Hilber, H. M., T. J. R. Hughes, & R. L. Taylor (1977). Improved
   numerical dissipation for time integration algorithms in structural
   dynamics. *Earthquake Engineering & Structural Dynamics* **5** (3),
-  283-292 (unsighted, cited by Cook, Malkus, & Plesha 1989, p. 409;
-  Hughes 2000, p. 532)
+  283-292 (`doi:10.1002/eqe.4290050306
+  <http://dx.doi.org/10.1002/eqe.4290050306>`_)
 
 * Hughes, T. J. R. (2000). *The Finite Element Method*. Mineola, New
   York: Dover
