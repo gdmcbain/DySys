@@ -71,6 +71,8 @@ class SignalFlowPathSys(DySys):
         # TODO gmcbain 2016-11-21: Could this be expressed with
         # itertools.accumulate?
 
+        # TOOD gmcbain 2017-10-03: …or toolz.itertoolz.accumulate?
+
         xnew = [self.systems[0].step(t, h, x[0], d, inputs)]
         for i in range(1, len(self)):
             xnew.append(self.systems[i].step(t, h, x[i], d,
