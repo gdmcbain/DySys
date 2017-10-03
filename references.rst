@@ -32,6 +32,11 @@
   Differential Equations*. Cambridge Texts in Applied
   Mathematics. Cambridge University Press
 
+* Mason, S. J. (1953). Feedback Theory-Some properties of signal flow
+  graphs. *Proceedings of the IRE* **41**(9):1144–1156
+  (`doi:10.1109/jrproc.1953.274449
+  <http://dx.doi.org/10.1109/jrproc.1953.274449>`_)
+
 * Roadstrum, W. H., & D. H. Wolaver (1987). *Electrical Engineering
   for all Engineers.* New York: Harper & Row
 
