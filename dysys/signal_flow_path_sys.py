@@ -92,7 +92,7 @@ class SignalFlowPathSys(DySys):
 
         '''
 
-        x = x if x is not None else self.zero
+        x = x or self.zero
 
         xoo = [self.systems[0].equilibrium(x[0], d, **kwargs)]
         for i in range(1, len(self)):
