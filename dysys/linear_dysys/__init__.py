@@ -1,3 +1,4 @@
+# flake8: noqa F401
 from .linear_dysys import LinearDySys
 from .scalar_linear_dysys import ScalarLinearDySys
 from .sparse_dysys import SparseDySys
