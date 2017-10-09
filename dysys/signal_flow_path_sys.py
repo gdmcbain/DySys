@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 '''A path of dependent dynamical systems.
 
@@ -21,13 +20,12 @@ most of the methods of this class work with.
 
 '''
 
-from __future__ import absolute_import, division, print_function
-
 from typing import Dict, List
 
 import numpy as np
 
-from dysys import DySys
+from .dysys import DySys
+from .util import autonomous
 
 
 class SignalFlowPathSys(DySys):
@@ -48,8 +46,7 @@ class SignalFlowPathSys(DySys):
 
         super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
-        self.functions = (functions if functions is not None
-                          else [lambda _, x: x] * (len(self) - 1))
+        self.functions = (functions or ([autonomous()] * (len(self) - 1)))
 
     def __len__(self):
         return len(self.systems)
