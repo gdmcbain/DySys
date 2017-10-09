@@ -3,20 +3,6 @@
 from toolz import compose, curry, flip
 
 
-@curry
-def const(x, *_, **__):
-    '''like in Haskell 
-
-    but taking and ignoring any further positional or keywords
-    arguments.  Oddly missing from toolz.functoolz.
-
-    See also funcy.constantly.
-
-    '''
-    
-    return x
-
-
 def autonomous(*funcs):
     '''return a function which ignores its first argument
 
@@ -26,4 +12,4 @@ def autonomous(*funcs):
 
     '''
 
-    return compose(*funcs, flip(const))
+    return compose(*funcs, lambda _, x, *args, **kwargs: x)
