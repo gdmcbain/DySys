@@ -29,7 +29,7 @@ class AlgebraicDySys(DySys):
         self._zero = zero       
 
     def __len__(self):
-        return len(self._zero)
+        return 1 if np.isscalar(self._zero) else len(self._zero)
 
     @property
     def zero(self):
