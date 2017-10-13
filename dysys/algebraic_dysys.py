@@ -28,6 +28,9 @@ class AlgebraicDySys(DySys):
         
         self._zero = zero       
 
+    def __len__(self):
+        return len(self._zero)
+
     @property
     def zero(self):
         return self._zero
