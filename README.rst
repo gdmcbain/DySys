@@ -11,7 +11,7 @@ Installation
 
 Under GNU/Linux, install DySys using Git with::
 
-  pip install --user -e git+http://gitlab.memjet.local/msm/DySys#egg=DySys
+  pip install --user -e git+git@gitlab.memjet.local/msm/DySys#egg=DySys
 
 for Microsoft Windows, see `INSTALL-MSWindows.rst
 <./INSTALL-MSWindows.rst>`_.
