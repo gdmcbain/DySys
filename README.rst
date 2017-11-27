@@ -55,5 +55,5 @@ different directory.
 Installation under GNU/Linux
 ````````````````````````````
 
-For Microsoft Windows, see `INSTALL-MSWindows.rst
-<./INSTALL-MSWindows.rst>`_.
+For Microsoft Windows, see `Intallation/Microsoft-Windows
+<https://gitlab.memjet.local/msm/DySys/wikis/installation/Microsoft-Windows>`_.
