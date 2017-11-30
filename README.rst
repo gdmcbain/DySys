@@ -34,13 +34,9 @@ called whatever and placed wherever.::
 
 To test (optional)::
 
-   pip install nose
-   nosetests dysys
+   pip install nose2
+   nose2 dysys
 
-(Running `nose` before before activating the virtualenv can confuse
-bash; if this happens, try `hash -r`.  See `nose-devs#973
-<https://github.com/nose-devs/nose/issues/973>`_.)
-   
 When finished::
 
    deactivate
