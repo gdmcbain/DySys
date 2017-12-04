@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from toolz import compose, curry, flip
+from toolz import compose
 
 
 def autonomous(*funcs):
