@@ -25,8 +25,8 @@ class AlgebraicDySys(DySys):
 
         # KLUDGE gmcbain 2017-09-28: To avoid "AttributeError: can't
         # set ttribute" [sic]
-        
-        self._zero = zero       
+
+        self._zero = zero
 
     def __len__(self):
         return 1 if np.isscalar(self._zero) else len(self._zero)
