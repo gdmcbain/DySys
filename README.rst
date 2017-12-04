@@ -14,18 +14,15 @@ Installation
 Installation under GNU/Linux
 ````````````````````````````
 
-It is recommended to install pyMMJ in a virtualenv, as for its prerequisites
+It is recommended to install DySys in a virtualenv.
 
-* `DySys <https://gitlab.memjet.local/msm/DySys>`_ and 
-* `Beamel <https://gitlab.memjet.local/msm/Beamel>`_.
-
-pyMMJ requires Python 3; Python 2 is no longer supported.  It isn't necessary to
+DySys requires Python 3; Python 2 is no longer supported.  It isn't necessary to
 use exactly version 3.6; that's just for the example instructions.
 
-Also the directory for the virtualenv needn't be called `pyMMJ`; it can be
+Also the directory for the virtualenv needn't be called `DySys`; it can be
 called whatever and placed wherever.::
 
-   python3.6 -m venv --without-pip pyMMJ
+   python3.6 -m venv --without-pip DySys
    . $_/bin/activate
    wget https://bootstrap.pypa.io/get-pip.py
    python get-pip.py
@@ -43,9 +40,9 @@ When finished::
    
 To recommence::
 
-   . pyMMJ/bin/activate 
+   . DySys/bin/activate 
    
-prepending the path to `pyMMJ` if required because of having changed to a
+prepending the path to `DySys` if required because of having changed to a
 different directory.
 
 Installation under GNU/Linux
