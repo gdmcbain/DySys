@@ -308,7 +308,7 @@ class DySys(object):
         # attribute __getitem__)
 
         size = len(self)
-        I = self.identity
+        I = self.identity       # noqa E741
 
         return ((I, np.zeros((size, 0))) if len(known) == 0
                 else
