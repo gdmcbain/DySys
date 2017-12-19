@@ -65,8 +65,8 @@ class SparseNFDySys(LinearDySys):
             raise ZeroDivisionError
 
         def residual(x):
-            return ((self.M / h + self.D).dot(x) -
-                    self.f(t, x, d) - self.M.dot(xold) / h)
+            return ((self.M / h + self.D) @ x -
+                    self.f(t, x, d) - self.M @ xold / h)
 
         def jacobian(x):
             return (self.M / h + self.D) - self.f1(t, x, d)
@@ -115,7 +115,7 @@ class SparseNFDySys(LinearDySys):
         kwargs.setdefault('tol', 1e-3)
 
         def residual(x):
-            return self.D.dot(x) - self.f(np.inf, x, d)  # t -> np.inf
+            return self.D @ x - self.f(np.inf, x, d)  # t -> np.inf
 
         def jacobian(x):
             return self.D - self.f1(np.inf, x, d)
@@ -175,11 +175,10 @@ class SparseNFDySys(LinearDySys):
             D,
             lambda *args: project(
                 (0 if self.f is None else self.f(*args)) -
-                (0 if xknown is None else self.D.dot(K.dot(xknown))) -
-                (0 if vknown is None else self.M.dot(K.dot(vknown)))),
+                (0 if xknown is None else self.D @ K @ xknown) -
+                (0 if vknown is None else self.M @ K @ vknown)),
             None if self.f1 is None else
-            (lambda t, x, d: U.T.dot(
-                self.f1(t, sys.reconstitute(x), d).dot(U))))
+            (lambda t, x, d: U.T @ (self.f1(t, sys.reconstitute(x), d) @ U)))
 
         sys.reconstitute = partial(self.reconstituter, U, K, xknown)
         sys.project = project

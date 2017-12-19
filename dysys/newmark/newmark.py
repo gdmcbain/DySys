@@ -108,9 +108,9 @@ class Newmark(DySys):
 
     def prestep(self, t, h, x, d, *args):
         if not hasattr(self, '_memo') or self._memo['h'] != h:
-            rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(x[0])
+            rhs = self.forcing(t, h, x, d, *args)[1] - self.K @ x[0]
             if self.C is not None:
-                rhs -= self.C.dot(x[1])
+                rhs -= self.C @ x[1]
             self.a = solve(self.M, rhs)
             self.setA(h)
             self._memo = {'h': h}
@@ -123,10 +123,10 @@ class Newmark(DySys):
         xt = (x[0] + h * (x[1] + h * (.5 - self.beta) * self.a),
               x[1] + (1 - self.gamma) * h * self.a)
 
-        rhs = self.forcing(t, h, x, d, *args)[1] - self.K.dot(xt[0])
+        rhs = self.forcing(t, h, x, d, *args)[1] - self.K @ xt[0]
 
         if self.C is not None:
-            rhs -= self.C.dot(xt[1])
+            rhs -= self.C @ xt[1]
 
         self.a = self.solve(rhs)
         return (xt[0] + self.beta * h**2 * self.a,
@@ -178,9 +178,9 @@ class Newmark(DySys):
             C,
             lambda *args: project(
                 (0 if self.f is None else self.f(*args)) -
-                (0 if xknown is None else self.K.dot(Kn.dot(xknown))) -
-                (0 if vknown is None else self.C.dot(Kn.dot(vknown))) -
-                (0 if aknown is None else self.M.dot(Kn.dot(aknown)))),
+                (0 if xknown is None else self.K @ Kn @ xknown) -
+                (0 if vknown is None else self.C @ Kn @ vknown) -
+                (0 if aknown is None else self.M @ Kn @ aknown)),
             self.beta, self.gamma, self.definite)
 
         reconstituter = partial(self.reconstituter, U, Kn)

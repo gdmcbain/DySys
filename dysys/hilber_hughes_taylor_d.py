@@ -59,16 +59,16 @@ class HilberHughesTaylor_d(DySys):
         x1 = solve(self.Keff,
                    (1 + self.alpha) * self.f(t + h, d) -
                    self.alpha * self.f(t, d) +
-                   self.M.dot(x / self.beta / h**2 +
-                              self.v / self.beta / h +
-                              (1 - 2 * self.beta) / 2. / self.beta * self.a) +
-                   self.C.dot((1 + self.alpha) * self.gamma /
-                              self.beta / h * x +
-                              ((1 + self.alpha) * self.gamma / self.beta - 1) *
-                              self.v -
-                              (1 + self.alpha) *
-                              (1 - self.gamma / 2. / self.beta) * h * self.a) +
-                   self.K.dot(self.alpha * x))
+                   self.M @ (x / self.beta / h**2 +
+                             self.v / self.beta / h +
+                             (1 - 2 * self.beta) / 2. / self.beta * self.a) +
+                   self.C @ ((1 + self.alpha) * self.gamma /
+                             self.beta / h * x +
+                             ((1 + self.alpha) * self.gamma / self.beta - 1) *
+                             self.v -
+                             (1 + self.alpha) *
+                             (1 - self.gamma / 2. / self.beta) * h * self.a) +
+                   self.K @ (self.alpha * x))
 
         self.v, self.a = ((self.gamma / self.beta / h * (x1 - x) +
                            (1 - self.gamma / self.beta) * self.v +
@@ -85,7 +85,7 @@ class HilberHughesTaylor_d(DySys):
         self.v = x[1]
 
         self.a = solve(self.M,
-                       self.f(0., d) - self.C.dot(x[1]) - self.K.dot(x[0]))
+                       self.f(0., d) - self.C @ x[1] - self.K @ x[0])
 
         self.setKeff(h)
 

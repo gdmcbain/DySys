@@ -66,12 +66,12 @@ class HilberHughesTaylor(Newmark):
         xt = (x[0] + h * (x[1] + h * (.5 - self.beta) * self.a),
               x[1] + (1 - self.gamma) * h * self.a)
 
-        rhs = -self.K.dot(interp1d([-1, 0],
-                                   np.vstack([x[0], xt[0]]).T)(self.alpha))
+        rhs = -self.K @ (interp1d([-1, 0],
+                                  np.vstack([x[0], xt[0]]).T)(self.alpha))
 
         if self.C is not None:
-            rhs -= self.C.dot(interp1d([-1, 0],
-                                       np.vstack([x[1], xt[1]]).T)(self.alpha))
+            rhs -= self.C @ (interp1d([-1, 0],
+                                      np.vstack([x[1], xt[1]]).T)(self.alpha))
 
         rhs += interp1d([-1, 0],
                         np.vstack(self.forcing(
@@ -114,9 +114,9 @@ class HilberHughesTaylor(Newmark):
             C,
             lambda *args: project(
                 (0 if self.f is None else self.f(*args)) -
-                (0 if xknown is None else self.K.dot(Kn.dot(xknown))) -
-                (0 if vknown is None else self.C.dot(Kn.dot(vknown))) -
-                (0 if aknown is None else self.M.dot(Kn.dot(aknown)))),
+                (0 if xknown is None else self.K @ Kn @ xknown) -
+                (0 if vknown is None else self.C @ Kn @ vknown) -
+                (0 if aknown is None else self.M @ Kn @ aknown)),
             self.alpha, self.definite)
 
         reconstituter = partial(self.reconstituter, U, Kn)
