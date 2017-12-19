@@ -28,7 +28,7 @@ def dense_cholesky(a):
     '''Compute the Cholesky decomposition of a
 
     with the property that calling it on a right-hand side vector
-    b returns the solution x of a.dot(x) = b.
+    b returns the solution x of a @ x = b.
 
     :param a: np.ndarray, ndim==2, symmetric, positive-definite
 

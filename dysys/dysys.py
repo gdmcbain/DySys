@@ -325,7 +325,7 @@ class DySys(object):
 
         '''
 
-        return U.dot(u) + (0 if x is None else K.dot(x))
+        return U @ u + (0 if x is None else K @ x)
 
     @staticmethod
     def projector(U, x):
@@ -338,15 +338,15 @@ class DySys(object):
 
         :param x: vector in total space
 
-        The idea is that if x = U.dot(u) + K.dot(k), then U.T.dot(x) =
-        (U.T.dot(U)).dot(u), assuming U.T.dot(K) = 0.
+        The idea is that if x = U @ u + K @ k, then U.T @ x =
+        (U.T @ U) @ u, assuming U.T @ K = 0.
 
         Further assuming that U is orthogonal in the sense that
-        U.T.dot(U) is the identity, we have u = U.T.dot(x).
+        U.T @ U is the identity, we have u = U.T @ x.
 
         '''
 
-        return U.T.dot(x)
+        return U.T @ x
 
     def forcing(self, t, h, x, d, inputs=None):
         '''return forcing at start and end of time-step

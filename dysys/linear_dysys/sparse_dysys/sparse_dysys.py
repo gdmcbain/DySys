@@ -87,7 +87,7 @@ class SparseDySys(LinearDySys):
                 self._memo['solve'] = partial(solve, M1)
 
         return self._memo['solve'](
-            self._memo['M'].dot(x) +
+            self._memo['M'] @ x +
             interp1d([0, 1],
                      np.vstack(
                          self.forcing(t, h, x, d, inputs)).T)(self.theta))
