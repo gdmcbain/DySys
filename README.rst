@@ -32,8 +32,8 @@ called whatever and placed wherever.::
 
 To test (optional)::
 
-   pip install nose2
-   nose2 dysys
+   pip install pytest
+   pytest --pyargs dysys
 
 When finished::
 
