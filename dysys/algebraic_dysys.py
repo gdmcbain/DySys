@@ -45,4 +45,7 @@ class AlgebraicDySys(DySys):
                       inputs[1] if inputs else None)
 
     def equilibrium(self, x=None, d=None, **kwargs):
-        return self.f(self, np.inf, x or self.zero, d, **kwargs)
+        'return the eventual steady state'
+        return self.f(self, np.inf,
+                      self.zero if x is None else x,
+                      d, **kwargs)
