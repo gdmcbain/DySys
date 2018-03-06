@@ -9,6 +9,7 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import partial
+from typing import Dict, Optional, Tuple
 from warnings import warn
 
 import numpy as np
@@ -36,7 +37,13 @@ class SparseDySys(LinearDySys):
     def __len__(self):
         return self.D.shape[0]
 
-    def step(self, t, h, x, d=None, inputs=None):
+    def step(self,
+             t: float,
+             h: float,
+             x: np.ndarray,
+             d: Optional[Dict]=None,
+             inputs: Optional[Tuple[np.ndarray, np.ndarray]]=None
+             ) -> np.ndarray:
         '''estimate the next state using theta method
 
         :param t: float, time
