@@ -348,7 +348,7 @@ class DySys(object):
 
         return U.T @ x
 
-    def forcing(self, t, h, x, d, inputs=None):
+    def forcing(self, t: float, h: float, x, d: Dict, inputs=None):
         '''return forcing at start and end of time-step
 
         :param t: float, time
