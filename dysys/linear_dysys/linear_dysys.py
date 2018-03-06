@@ -12,20 +12,25 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import partial
+from typing import Any, Callable, Dict, Optional
 
 from dysys import DySys
 
 
 class LinearDySys(DySys):
 
-    def __init__(self, M, D, f=None, theta=1.0, definite=False,
+    def __init__(self, M, D,
+                 f: Optional[Callable[[float, Any, Dict, Optional[Any]],
+                                      Any]]=None,
+                 theta: float=1.0,
+                 definite: bool=False,
                  **kwargs):
         '''a DySys defined by mass and damping operators
 
         and a time-dependent forcing function, according to (something
         like)
 
-            M * x' + D * x = f (t, d)
+            M * x' + D * x = f (t, x, d, [y])
 
         though this class is still virtual since it depends on:
 

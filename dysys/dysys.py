@@ -15,6 +15,7 @@ taking approximate discrete steps in continuous time
 from __future__ import absolute_import, division, print_function
 
 import itertools as it
+from typing import Dict
 
 import numpy as np
 from scipy.sparse import identity
