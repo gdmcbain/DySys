@@ -12,7 +12,7 @@
 from __future__ import absolute_import, division, print_function
 
 from functools import partial
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from dysys import DySys
 
@@ -70,7 +70,10 @@ class LinearDySys(DySys):
     def __len__(self):
         return self.D.shape[0]
 
-    def constrain(self, known, xknown=None, vknown=None):
+    def constrain(self,
+                  known: List[int],
+                  xknown: Optional[List[float]]=None,
+                  vknown: Optional[List[float]]=None):
         '''return a new LinearDySys with constrained degrees of freedom
 
         :param known: sequence of indices of known degrees of freedom
