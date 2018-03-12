@@ -30,7 +30,7 @@ class LinearDySys(DySys):
         and a time-dependent forcing function, according to (something
         like)
 
-            M * x' + D * x = f (t, x, d, [inputs])
+            M * x' + D * x = f (t, x, d, [y])
 
         though this class is still virtual since it depends on:
 
