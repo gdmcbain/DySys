@@ -15,7 +15,7 @@ taking approximate discrete steps in continuous time
 from __future__ import absolute_import, division, print_function
 
 import itertools as it
-from typing import Dict
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 from scipy.sparse import identity
@@ -349,21 +349,25 @@ class DySys(object):
 
         return U.T @ x
 
-    def forcing(self, t: float, h: float, x, d: Dict, inputs=None):
-        '''return forcing at start and end of time-step
+    def forcing(self,
+                t: float,
+                h: float,
+                x: Any,
+                d: Any,
+                inputs: Optional[Tuple[Any, Any]]=None):
+        """return forcing at start `t` and end `t + h` of time-step
 
-        :param t: float, time
+        `x` stores the continuous dynamical variables; it is usually a
+        numpy.ndarray with ndim==1.
 
-        :param h: float > 0, time-step
+        `d` stores the discrete dynamical variables.  Originally it was
+        always a dict, but an object like a typing.NamedTuple or
+        attr.s might be more suitable.
 
-        :param x: state
-
-        :param d: dict, discrete dynamical variables
-
-        :param inputs: pair, inputs at the start and end of step
+        `inputs` is pair, inputs at the start and end of step
         [optional: default None]
 
-        '''
+        """
 
         d = d or {}
 
