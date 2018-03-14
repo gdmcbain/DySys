@@ -1,8 +1,6 @@
-#!/usr/bin/python
-# -*- coding: latin-1 -*-
+#!/usr/bin/env python
 
-
-'''A dynamical system
+"""A dynamical system
 
 taking approximate discrete steps in continuous time
 
@@ -10,9 +8,7 @@ taking approximate discrete steps in continuous time
 
 :created: 2012-10-11
 
-'''
-
-from __future__ import absolute_import, division, print_function
+"""
 
 import itertools as it
 from typing import Any, Dict, Optional, Tuple
