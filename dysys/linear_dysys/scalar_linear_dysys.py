@@ -14,6 +14,8 @@ set up sparse matrices of shape (1, 1).
 
 from __future__ import absolute_import, division, print_function
 
+from typing import Any, Callable
+
 from .linear_dysys import LinearDySys
 
 from numpy import inf, interp
@@ -81,7 +83,13 @@ class ScalarLinearDySys(LinearDySys):
             told, fold = t, f
             yield t, x
 
-    def forced_step(self, t, x, h, d, f, theta=0.5):
+    def forced_step(self,
+                    t: float,
+                    x: float,
+                    h: float,
+                    d: Any,
+                    f: Callable[[float], float],
+                    theta: float=0.5) -> float:
         '''return the state at t + h given x at t
 
         :param t: float, time
@@ -106,7 +114,10 @@ class ScalarLinearDySys(LinearDySys):
                  (self.M / h - (1 - theta) * self.D) * x) /
                 (self.M / h + theta * self.D))
 
-    def forced_march(self, h, x, forcing, d=None, theta=0.5):
+    def forced_march(self,
+                     h: float,
+                     x: float,
+                     forcing: Callable, d=None, theta=0.5):
         '''generate evolution from x due to forcing
 
         :param h: float > 0, time-step
