@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''A class for scalar linear 'descriptor' systems.
+"""A class for scalar linear 'descriptor' systems.
 
 Useful for keeping simple demonstrations simple, rather than having to
 set up sparse matrices of shape (1, 1).
@@ -10,7 +10,7 @@ set up sparse matrices of shape (1, 1).
 
 :created: 2016-10-26
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -22,11 +22,11 @@ from numpy import inf, interp
 
 
 class ScalarLinearDySys(LinearDySys):
-    '''a LinearDySys with scalar mass and damping
+    """a LinearDySys with scalar mass and damping
 
     and a force which is a function of time
 
-    '''
+    """
 
     def __len__(self):
         return 1
@@ -36,7 +36,7 @@ class ScalarLinearDySys(LinearDySys):
         return 0.
 
     def driven_step(self, t, tnew, y, f, fnew, theta=0.5):
-        '''return the state at tnew given state y at t
+        """return the state at tnew given state y at t
 
         :param t: float, time
 
@@ -53,7 +53,7 @@ class ScalarLinearDySys(LinearDySys):
 
         :rtype: float
 
-        '''
+        """
 
         h = tnew - t
         return ((theta * fnew + (1 - theta) * f +
@@ -61,7 +61,7 @@ class ScalarLinearDySys(LinearDySys):
                 (self.M / h + theta * self.D))
 
     def drive(self, x, driver, theta=0.5):
-        '''generate the evolution of the system in time
+        """generate the evolution of the system in time
 
         :param x: float, initial condition
 
@@ -73,7 +73,7 @@ class ScalarLinearDySys(LinearDySys):
 
         :rtype: sequence of pairs (float, float), being (time, state)
 
-        '''
+        """
 
         told, fold = next(driver)
         yield told, x
@@ -90,7 +90,7 @@ class ScalarLinearDySys(LinearDySys):
                     d: Any,
                     f: Callable[[float], float],
                     theta: float=0.5) -> float:
-        '''return the state at t + h given x at t
+        """return the state at t + h given x at t
 
         :param t: float, time
 
@@ -106,7 +106,7 @@ class ScalarLinearDySys(LinearDySys):
         theta method; default 0.5 for Crank-Nicolson, use 1.0 for
         backward Euler
 
-        '''
+        """
 
         if h == 0:
             raise ZeroDivisionError
@@ -118,7 +118,7 @@ class ScalarLinearDySys(LinearDySys):
                      h: float,
                      x: float,
                      forcing: Callable, d=None, theta=0.5):
-        '''generate evolution from x due to forcing
+        """generate evolution from x due to forcing
 
         :param h: float > 0, time-step
 
@@ -132,7 +132,7 @@ class ScalarLinearDySys(LinearDySys):
         theta method; default 0.5 for Crank-Nicolson, use 1.0 for
         backward Euler
 
-        '''
+        """
 
         t, d = 0., d or {}
 
@@ -141,7 +141,7 @@ class ScalarLinearDySys(LinearDySys):
             t, x = t + h, self.forced_step(t, x, h, d, forcing, theta)
 
     def equilibrium(self, y0=None, d=None, *args, **kwargs):
-        '''return eventual steady state
+        """return eventual steady state
 
         :param y0: initial guess, ignored
 
@@ -153,12 +153,12 @@ class ScalarLinearDySys(LinearDySys):
         Further positional arguments are used to represent inputs.
         Additional keyword arguments are ignored.
 
-        '''
+        """
 
         return self.forcing(0, inf, y0, d or {}, *args)[1] / self.D
 
     def step(self, t, h, x, d=None, *args):
-        '''estimate the next state using theta method
+        """estimate the next state using theta method
 
         :param t: float, time
 
@@ -173,7 +173,7 @@ class ScalarLinearDySys(LinearDySys):
         pair of values of an input signal.
 
 
-        '''
+        """
 
         return ((interp(self.theta, [0, 1],
                         self.forcing(t, h, x, d, *args)) +
