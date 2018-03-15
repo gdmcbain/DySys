@@ -14,7 +14,7 @@ set up sparse matrices of shape (1, 1).
 
 from __future__ import absolute_import, division, print_function
 
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from .linear_dysys import LinearDySys
 
@@ -117,8 +117,10 @@ class ScalarLinearDySys(LinearDySys):
     def forced_march(self,
                      h: float,
                      x: float,
-                     forcing: Callable, d=None, theta=0.5):
-        """generate evolution from x due to forcing
+                     forcing: Callable[[float], float],
+                     d: Optional[Any]=None,
+                     theta: Optional[float]=0.5):
+        """generate evolution from `x` due to forcing
 
         :param h: float > 0, time-step
 
@@ -134,30 +136,39 @@ class ScalarLinearDySys(LinearDySys):
 
         """
 
-        t, d = 0., d or {}
+        t = 0.
 
         while True:
             yield t, x, d
             t, x = t + h, self.forced_step(t, x, h, d, forcing, theta)
 
-    def equilibrium(self, y0=None, d=None, *args, **kwargs):
+    def equilibrium(self,
+                    y0: Optional[float]=None,
+                    d: Optional[Any]=None,
+                    *args, **kwargs) -> float:
         """return eventual steady state
 
         :param y0: initial guess, ignored
 
-        :param d: dict, discrete dynamical variables, currently
-        ignored unless it contains 'master', a DySys, in which case
-        the equilibrium of its 'system', mapped through its 'f', is
-        used as the right-hand side forcing function
+        :param d: container (object or dict) discrete dynamical
+        variables, currently ignored unless it contains 'master', a
+        DySys, in which case the equilibrium of its 'system', mapped
+        through its 'f', is used as the right-hand side forcing
+        function
 
         Further positional arguments are used to represent inputs.
         Additional keyword arguments are ignored.
 
         """
 
-        return self.forcing(0, inf, y0, d or {}, *args)[1] / self.D
+        return self.forcing(0, inf, y0, d, *args)[1] / self.D
 
-    def step(self, t, h, x, d=None, *args):
+    def step(self,
+             t: float,
+             h: float,
+             x: float,
+             d: Optional[Any]=None,
+             *args) -> float:
         """estimate the next state using theta method
 
         :param t: float, time
