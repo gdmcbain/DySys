@@ -212,7 +212,7 @@ class DySys(object):
 
         t = 0.
         x = self.zero if x is None else x
-        d = {} if d is None else d
+        d = object() if d is None else d
 
         # TRICKY gmcbain 2013-05-09: Append an event at infinite time
         # so that the events iterable is never exhausted.  The
@@ -358,7 +358,7 @@ class DySys(object):
                 t: float,
                 h: float,
                 x: Any,
-                d: Any,
+                d: Optional[Any]=None,
                 inputs: Optional[Tuple[Any, Any]]=None):
         """return forcing at start `t` and end `t + h` of time-step
 
@@ -373,8 +373,6 @@ class DySys(object):
         [optional: default None]
 
         """
-
-        d = d or {}
 
         if inputs:
             [fold, fnew] = map(lambda t, y: self.f(self, t, x, d, y),
