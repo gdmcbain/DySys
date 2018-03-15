@@ -11,7 +11,7 @@ taking approximate discrete steps in continuous time
 """
 
 import itertools as it
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple
 
 import numpy as np
 from scipy.sparse import identity
@@ -151,7 +151,11 @@ class DySys(object):
     #         yield t, x
     #         t, x = t + h, self.step(t, h, x)
 
-    def handle_event(self, f, t, x, d):
+    def handle_event(self,
+                     f: Callable[[Any, float, Any, Any], Tuple[Any, Any]],
+                     t: float,
+                     x: Any,
+                     d: Any) -> Tuple[Any, Any]:
         '''handle event
 
         :param f: function of self, t, x, d that returns x, d, possibly
@@ -170,7 +174,13 @@ class DySys(object):
 
         return f(self, t, x, d)
 
-    def march(self, h, x=None, d=None, events=None, substeps=1, f=None):
+    def march(self,
+              h: float,
+              x: Optional[Any]=None,
+              d: Optional[Any]=None,
+              events: Optional[Iterable]=None,
+              substeps: int=1,
+              f: Callable=None):
         '''generate the evolution of the system in time,
 
         continuously according to the differential equation, but also
