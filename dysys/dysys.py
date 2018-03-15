@@ -178,9 +178,12 @@ class DySys(object):
               h: float,
               x: Optional[Any]=None,
               d: Optional[Any]=None,
-              events: Optional[Iterable]=None,
+              events: Optional[Iterable[Tuple[
+                  float,
+                  Callable[[Any, float, Any, Any],
+                           Tuple[Any, Any]]]]]=None,
               substeps: int=1,
-              f: Callable=None):
+              f: Optional[Callable[[Any], Any]]=None):
         """generate the evolution of the system in time,
 
         continuously according to the differential equation, but also
