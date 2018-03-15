@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Unittests for SignalFlowPathSys.
+"""Unittests for SignalFlowPathSys.
 
 :author: gmcbain
 
 :created: 2016-11-14
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -31,7 +31,7 @@ class TestSignalFlowPathSys(unittest.TestCase):
         cls.eqm = np.array([0.25, 0.2])
 
     def test_equilibrium(self):
-        '''The exact solution is (0.25, 0.2).'''
+        """The exact solution is (0.25, 0.2)."""
         np.testing.assert_almost_equal(self.sys.equilibrium(),
                                        self.eqm)
 

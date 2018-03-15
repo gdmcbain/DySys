@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''Test the equilibrium method of SparseDySys.
+"""Test the equilibrium method of SparseDySys.
 
 Derived from msmdir.005291.
 
@@ -10,7 +10,7 @@ Derived from msmdir.005291.
 
 :keywords: hydraulics, analytic circuit theory
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -24,7 +24,7 @@ from dysys import SparseDySys
 
 class TestLadder(TestCase):
 
-    ''' Consider the three-cell ladder network with (8) nodes and [10]
+    """ Consider the three-cell ladder network with (8) nodes and [10]
     equal branches, with one corner node (0) vented and the one
     diagonally opposite (7) at a constant suction of -5 kPa.
 
@@ -51,7 +51,7 @@ class TestLadder(TestCase):
     In the exact solution, nodes (4) and (1) have pressures -1 and -5
     / 3.
 
-    '''
+    """
 
     @classmethod
     def setUpClass(cls):

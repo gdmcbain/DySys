@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Tests on a single branch.
+"""Tests on a single branch.
 
 Based on corresponding test in Millihydraulics.
 
@@ -9,7 +9,7 @@ Based on corresponding test in Millihydraulics.
 
 :created: 2014-05-08
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -23,7 +23,7 @@ from dysys import SparseDySys
 
 class TestLumpedLine(TestCase):
 
-    '''Consider a single lumped hydraulic conduit (two-port network)
+    """Consider a single lumped hydraulic conduit (two-port network)
 
     with serial resistance R and inertance L, shunt compliance C and
     duty Q and fixed inlet pressure
@@ -39,7 +39,7 @@ class TestLumpedLine(TestCase):
                                .    .
 
 
-    '''
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -57,11 +57,11 @@ class TestLumpedLine(TestCase):
                               lambda *_: [0, cls.Q, 0])
 
     def test_equilibrium(self):
-        '''pressure-drop is all across the resistance
+        """pressure-drop is all across the resistance
 
         the branch serial flow-rate being absorbed by the duty
 
-        '''
+        """
 
         sys = self.sys.constrain([0], [self.pin])
         soln = sys.reconstitute(sys.equilibrium())

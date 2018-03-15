@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-'''
+"""
 :author: gmcbain
 
 :created: 2013-08-26
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -21,7 +21,7 @@ class TestNewton(TestCase):
 
     def test_sqrt(self, x=np.array([[1, 2]]), decimals=5):
 
-        '''r(y) = y**2 - x
+        """r(y) = y**2 - x
 
         r(y + s) = (y + s)**2 - 2 = y**2 + 2 * y * s + O(s**2) - x
 
@@ -29,7 +29,7 @@ class TestNewton(TestCase):
 
         J(y) = 2 * y
 
-        '''
+        """
 
         def res(y):
             return y[0]**2 - x[0]

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''Tests on a single lump.
+"""Tests on a single lump.
 
 :author: gmcbain
 
 :created: 2016-11-03
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -21,7 +21,7 @@ from dysys import ScalarLinearDySys
 
 class TestScalar(unittest.TestCase):
 
-    '''Consider a single lumped hydraulic conduit (two-port network)
+    """Consider a single lumped hydraulic conduit (two-port network)
 
     with serial resistance R and inertance L, shunt compliance C and
     duty Q and fixed inlet pressure
@@ -41,7 +41,7 @@ class TestScalar(unittest.TestCase):
 
     This is described by ScalarLinearDySys(RC, 1, lambda *_: p[0]).
 
-    '''
+    """
 
     @classmethod
     def setUpClass(cls):
@@ -52,15 +52,15 @@ class TestScalar(unittest.TestCase):
                                     theta=0.5)
 
     def test_equilibrium(self):
-        '''The exact solution is p[1] = p[0].'''
+        """The exact solution is p[1] = p[0]."""
         np.testing.assert_almost_equal(self.sys.equilibrium(), self.p_in)
 
     def test_harmonic(self):
-        '''See Roadstrum & Wolaver (1987)
+        """See Roadstrum & Wolaver (1987)
 
         (§5.5 'Frequency response of first-order circuits').
 
-        '''
+        """
 
         omega = np.linspace(0, 5 / self.R / self.C)
         np.testing.assert_almost_equal(
@@ -68,11 +68,11 @@ class TestScalar(unittest.TestCase):
             self.p_in / (1 + 1j * omega * self.R * self.C))
 
     def test_march(self):
-        '''See Roadstrum & Wolaver (1987)
+        """See Roadstrum & Wolaver (1987)
 
         (§6.2 'Differential equations').
 
-        '''
+        """
 
         p = Series({t / self.R / self.C: x
                     for t, x, _ in self.sys.march_till(5 * self.R * self.C,
