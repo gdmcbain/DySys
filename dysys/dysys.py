@@ -79,7 +79,9 @@ class DySys(object):
                 'd': {} if d is None else d,
                 'f': f}
 
-    def equilibrium(self, y0=None, d=None, **kwargs):
+    def equilibrium(self,
+                    y0: Optional[Any]=None,
+                    d: Optional[Any]=None, **kwargs):
         '''return an eventual steady-state solution
 
         :param y0: initial guess, maybe optional, maybe ignored
@@ -93,25 +95,29 @@ class DySys(object):
 
         raise NotImplementedError
 
-    def step(self, t, h, y, d):
-        '''abstract method to be overridden by subclasses
+    def step(self,
+             t: float,
+             h: float,
+             y: Any,
+             d: Optional[Any]=None):
+        """abstract method to be overridden by subclasses
 
-        which should return the state at time t+h given the initial
-        condition y at time t; d is an optional object containing
+        which should return the state at time `t+h` given the initial
+        condition `y` at time `t`; `d` is an optional object containing
         discrete dynamical parameters
 
         Note that d is not to be returned; it is only modified by
-        'events' during self.march.
+        ‘events’ during self.march.
 
-        The basic idea is that: '...the nature of time-stepping is
-        inherently sequential or local; given the "state" y(t), the
+        The basic idea is that: ‘…the nature of time-stepping is
+        inherently sequential or local; given the “state” y(t), the
         method is a procedure for computing an approximation to y(t+h)
         a time-step h>0 ahead.  The size of h is used to trade
         accuracy for efficiency and vice versa, and is therefore the
-        principal _internal_ means of controlling the error'
-        (S�derlind 2002, S. 1)
+        principal _internal_ means of controlling the error’
+        (Söderlind 2002, §1)
 
-        '''
+        """
 
         raise NotImplementedError
 
