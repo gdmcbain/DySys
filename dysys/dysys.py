@@ -18,12 +18,12 @@ from scipy.sparse import identity
 
 
 def stepper(stepping_function):
-    '''decorator to do nothing for steps of zero length
+    """decorator to do nothing for steps of zero length
 
     i.e. instead of returning a new state, return the old one, which
     is argument 2, following the DySys object and the time
 
-    '''
+    """
 
     def wrapper(*args, **kwargs):
         try:
@@ -34,12 +34,12 @@ def stepper(stepping_function):
 
 
 class DySys(object):
-    '''virtual base class for dynamical systems
+    """virtual base class for dynamical systems
 
     which can be marched in time, generating an infinite sequence of
     states
 
-    '''
+    """
 
     def __init__(self, parameters=None, master=None):
         self.parameters = {} if parameters is None else parameters
@@ -47,22 +47,22 @@ class DySys(object):
 
     @property
     def zero(self):
-        '''return the zero element of the vector space'''
+        """return the zero element of the vector space"""
         return np.zeros(len(self))
 
     @property
     def identity(self):
-        '''return the (CSR sparse) identity matrix
+        """return the (CSR sparse) identity matrix
 
         :rtype: scipy.sparse.csr_matrix
 
 
-        '''
+        """
 
         return identity(len(self), format='csr')
 
     def as_master(self, x=None, d=None, f=None):
-        '''return a dict representing self as a master-system
+        """return a dict representing self as a master-system
 
         :param x: state, optional (default self.zero)
 
@@ -72,7 +72,7 @@ class DySys(object):
 
         :rtype: dict
 
-        '''
+        """
 
         return {'system': self,
                 'state': self.zero if x is None else x,
@@ -82,7 +82,7 @@ class DySys(object):
     def equilibrium(self,
                     y0: Optional[Any]=None,
                     d: Optional[Any]=None, **kwargs):
-        '''return an eventual steady-state solution
+        """return an eventual steady-state solution
 
         :param y0: initial guess, maybe optional, maybe ignored
 
@@ -91,7 +91,7 @@ class DySys(object):
         Further keyword-arguments may be passed on to the back-end
         solver.
 
-        '''
+        """
 
         raise NotImplementedError
 
@@ -139,12 +139,12 @@ class DySys(object):
         return y
 
     # def simple_march(self, x0, h):
-    #     '''generate the sequence of pairs of times and states
+    #     """generate the sequence of pairs of times and states
 
     #     from the initial condition x0 at time 0.0 with constant
     #     time-step h, using the step method
 
-    #     '''
+    #     """
 
     #     t, x = 0.0, x0
     #     while True:
@@ -156,7 +156,7 @@ class DySys(object):
                      t: float,
                      x: Any,
                      d: Any) -> Tuple[Any, Any]:
-        '''handle event
+        """handle event
 
         :param f: function of self, t, x, d that returns x, d, possibly
         modified
@@ -170,7 +170,7 @@ class DySys(object):
         Subclass designers: Override if more needs to be done, using
         super to re-call this.
 
-        '''
+        """
 
         return f(self, t, x, d)
 
@@ -181,7 +181,7 @@ class DySys(object):
               events: Optional[Iterable]=None,
               substeps: int=1,
               f: Callable=None):
-        '''generate the evolution of the system in time,
+        """generate the evolution of the system in time,
 
         continuously according to the differential equation, but also
         punctated by a sorted iterable of events
@@ -216,7 +216,7 @@ class DySys(object):
 
         See also: march_till, march_while
 
-        '''
+        """
 
         t = 0.
         x = self.zero if x is None else x
@@ -244,7 +244,7 @@ class DySys(object):
                     t, x = t + h, self._step(t, h, x, d, substeps)
 
     def march_truncated(self, condition, *args, **kwargs):
-        '''truncate a march when condition fails
+        """truncate a march when condition fails
 
         :param condition: a predicate on triples of time, continuous
         state, and dict of discrete dynamical variables
@@ -257,12 +257,12 @@ class DySys(object):
 
         See also: march_till, march_while
 
-        '''
+        """
 
         return it.takewhile(condition, self.march(*args, **kwargs))
 
     def march_till(self, endtime, *args, **kwargs):
-        '''march until the time passes endtime
+        """march until the time passes endtime
 
         :param endtime: float
 
@@ -270,13 +270,13 @@ class DySys(object):
 
         See also: march, march_while, march_truncated
 
-        '''
+        """
 
         return self.march_truncated(lambda event: event[0] < endtime,
                                     *args, **kwargs)
 
     def march_while(self, predicate, *args, **kwargs):
-        '''march until the state fails the predicate
+        """march until the state fails the predicate
 
         :param predicate: boolean function of continuous state and
         discrete state
@@ -285,14 +285,14 @@ class DySys(object):
 
         See also: march, march_till, march_truncated
 
-        '''
+        """
 
         return self.march_truncated(
             lambda event: predicate(event[1], event[2]), *args, **kwargs)
 
     def node_maps(self, known):
 
-        '''return the matrices mapping the unknown and knowns
+        """return the matrices mapping the unknown and knowns
 
         to the global nodes
 
@@ -305,7 +305,7 @@ class DySys(object):
         that of x and U and K are rectangular matrices, typically
         columns of the identity.
 
-        '''
+        """
 
         # KLUDGE: gmcbain 2013-01-29: I don't know how to deal with
         # arrays with zero rows or columns in scipy.sparse, so I need
@@ -330,19 +330,19 @@ class DySys(object):
 
     @staticmethod
     def reconstituter(U, K, x, u):
-        '''reinsert the known degrees of freedom stripped out by constrain
+        """reinsert the known degrees of freedom stripped out by constrain
 
         This is an identity mapping if the system is not constrained
         (determined by assuming that the system will only have the
         attribute U if its constrain method has been called).
 
-        '''
+        """
 
         return U @ u + (0 if x is None else K @ x)
 
     @staticmethod
     def projector(U, x):
-        '''map to constrained space
+        """map to constrained space
 
         using the left-inverse of U from self.node_maps
 
@@ -357,7 +357,7 @@ class DySys(object):
         Further assuming that U is orthogonal in the sense that
         U.T @ U is the identity, we have u = U.T @ x.
 
-        '''
+        """
 
         return U.T @ x
 
@@ -405,28 +405,28 @@ class DySys(object):
 
     def eig(self, *args, **kwargs):
 
-        '''return the complete spectrum of the system
+        """return the complete spectrum of the system
 
         Designed for small dense systems; see self.eigs for large
         sparse systems.
 
-        '''
+        """
 
         return NotImplemented
 
     def eigs(self, *args, **kwargs):
-        '''return the first few modes of the system
+        """return the first few modes of the system
 
         Designed for large sparse systems; default to self.eig, converting
         to dense, if the system is too small.
 
-        '''
+        """
 
         return NotImplemented
 
 
 # def node_maps(known, size):
-#     '''return the matrices mapping the unknown and knowns
+#     """return the matrices mapping the unknown and knowns
 
 #     to the global nodes.
 
@@ -439,7 +439,7 @@ class DySys(object):
 #     that of x and U and K are rectangular matrices, typically
 #     columns of the identity.
 
-#     '''
+#     """
 
 #     # KLUDGE: gmcbain 2013-01-29: I don't know how to deal with
 #     # arrays with zero rows or columns in scipy.sparse, so I need
