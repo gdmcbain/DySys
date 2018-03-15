@@ -220,7 +220,8 @@ class DySys(object):
         # chosen as it is near enough to an identity.
 
         for epoch, change in it.chain([] if events is None else events,
-                                      [(np.inf, np.asarray)]):
+                                      [(np.inf,
+                                        lambda _, __, x, d: (x, d))]):
             while True:
                 yield t, (x if f is None else f(x)), d
                 if t + h > epoch:
