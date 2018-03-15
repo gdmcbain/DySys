@@ -124,7 +124,7 @@ class DySys(object):
               h: float,
               y: Any,
               d: Optional[Any]=None,
-              substeps: Optional[int]=1):
+              substeps: Optional[int]=1) -> Any:
         """wrap the step method as universally required"""
 
         # TODO 2013-04-11 gmcbain: The option of substeps here does
