@@ -122,8 +122,13 @@ class DySys(object):
         raise NotImplementedError
 
     @stepper
-    def _step(self, t, h, y, d=None, substeps=1):
-        'wrap the step method as universally required'
+    def _step(self,
+              t: float,
+              h: float,
+              y: Any,
+              d: Optional[Any]=None,
+              substeps: Optional[int]=1):
+        """wrap the step method as universally required"""
 
         # TODO 2013-04-11 gmcbain: The option of substeps here does
         # not do much except suppress output for the intermediate
@@ -212,7 +217,6 @@ class DySys(object):
 
         t = 0.
         x = self.zero if x is None else x
-        d = object() if d is None else d
 
         # TRICKY gmcbain 2013-05-09: Append an event at infinite time
         # so that the events iterable is never exhausted.  The
