@@ -182,27 +182,16 @@ class DySys(object):
                   float,
                   Callable[[Any, float, Any, Any],
                            Tuple[Any, Any]]]]]=None,
-              substeps: int=1,
-              f: Optional[Callable[[Any], Any]]=None):
+              substeps: Optional[int]=1,
+              f: Optional[Callable[[Any], Any]]=None
+              ) -> Tuple[float, Any, Any]:
         """generate the evolution of the system in time,
 
-        continuously according to the differential equation, but also
-        punctated by a sorted iterable of events
-
-        each of which is a pair of the time at which it is scheduled
-        and its mapping of the old state to the new
-
-        :param h: time-step (float)
-
-        :param x: initial condition, typically a one-dimensional
-        numpy.ndarray, but may vary with subclass
-
-        :param d: dict, for discrete dynamical variables, e.g. to be
-        accessed by the functions in events
-
-        :param events: iterable of pairs of time and mapping on time,
-        x and d; the second term may be None for the identity mapping,
-        if it is just desired to force a step at that time
+        continuously with time-step `h` according to the differential
+        equation from initial condition `x`, but also punctated by a
+        sorted iterable of `events` at programmed times which can
+        abruptly change both `x` and the container `d` of discrete
+        dynamical variables
 
         :param substeps: number of equal substeps to take to make up
         each time-step (default: 1)
@@ -217,7 +206,7 @@ class DySys(object):
         :rtype: yield indefinitely triples (time, continuous state,
          discrete state) at ends of time-steps
 
-        See also: march_till, march_while
+        See also: `march_till`, `march_while`
 
         """
 
