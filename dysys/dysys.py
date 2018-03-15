@@ -14,7 +14,7 @@ import itertools as it
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple
 
 import numpy as np
-from scipy.sparse import identity
+from scipy.sparse import csr_matrix, identity
 
 
 def stepper(stepping_function):
@@ -46,16 +46,13 @@ class DySys(object):
         self.master = master
 
     @property
-    def zero(self):
+    def zero(self) -> np.ndarray:
         """return the zero element of the vector space"""
         return np.zeros(len(self))
 
     @property
-    def identity(self):
+    def identity(self) -> csr_matrix:
         """return the (CSR sparse) identity matrix
-
-        :rtype: scipy.sparse.csr_matrix
-
 
         """
 
@@ -81,7 +78,7 @@ class DySys(object):
 
     def equilibrium(self,
                     y0: Optional[Any]=None,
-                    d: Optional[Any]=None, **kwargs):
+                    d: Optional[Any]=None, **kwargs) -> Any:
         """return an eventual steady-state solution
 
         :param y0: initial guess, maybe optional, maybe ignored
@@ -99,7 +96,7 @@ class DySys(object):
              t: float,
              h: float,
              y: Any,
-             d: Optional[Any]=None):
+             d: Optional[Any]=None) -> Any:
         """abstract method to be overridden by subclasses
 
         which should return the state at time `t+h` given the initial
@@ -287,7 +284,8 @@ class DySys(object):
         return self.march_truncated(
             lambda event: predicate(event[1], event[2]), *args, **kwargs)
 
-    def node_maps(self, known):
+    def node_maps(self,
+                  known: Iterable[int]) -> Tuple[csr_matrix, csr_matrix]:
 
         """return the matrices mapping the unknown and knowns
 
