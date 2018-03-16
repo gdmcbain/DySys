@@ -13,6 +13,8 @@ Developed under DySys#44
 
 from typing import Any, Optional
 
+import numpy as np
+
 from dysys import DySys
 
 
@@ -21,17 +23,12 @@ class TrivialSys(DySys):
     def __init__(self):
         pass
 
-    @property
-    def zero(self):
-        return None
-
-    @property
     def __len__(self):
         return 0
 
     def step(self,
              t: float,
              h: float,
-             y: None,
-             d: Optional[Any]=None) -> None:
+             y: np.ndarray,
+             d: Optional[Any]=None) -> np.ndarray:
         return self.zero
