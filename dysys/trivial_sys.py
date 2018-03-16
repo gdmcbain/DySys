@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 """trivial dynamical system
 
-having no continuous degrees of freedom but arbitrary discrete state
+having no continuous degrees of freedom but arbitrary discrete state.
+
+The continuous state is then a numpy.ndarray with shape == (0,).
 
 Developed under DySys#44
 
