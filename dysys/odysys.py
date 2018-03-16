@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
+"""
 
 :author: gmcbain
 
 :created: 2015-02-09
 
-'''
+"""
 
 from __future__ import absolute_import, division, print_function
 
@@ -24,7 +24,7 @@ class ODySys(DySys):
 
     def __init__(self, f, jac=None, f_args=None, jac_args=None):
 
-        '''Encapsulate scipy.integrate.ode for DySys
+        """Encapsulate scipy.integrate.ode for DySys
 
         :param f: function of time, state, and possibly other
         arguments, listed in f_args
@@ -38,7 +38,7 @@ class ODySys(DySys):
         :param jac_args: optional list of additional positional
         arguments for jac
 
-        '''
+        """
 
         self.f, self.jac = f, jac
         self._ode = ode(self.f, self.jac)
@@ -46,7 +46,7 @@ class ODySys(DySys):
         self.set_jac_params(*(jac_args or []))
 
     def __getattr__(self, name):
-        '''delegate to ode'''
+        """delegate to ode"""
         return getattr(self._ode, name)
 
     def handle_event(self, f, t, x, d):
@@ -56,7 +56,7 @@ class ODySys(DySys):
         return x, d
 
     def step(self, t, h, x, d):
-        '''estimate the next state'''
+        """estimate the next state"""
         self.set_initial_value(x, t)
 
         if h == 0:
@@ -69,7 +69,7 @@ class ODySys(DySys):
             raise RuntimeError
 
     def equilibrium(self, y0, d=None, **kwargs):
-        '''return a steady-state solution
+        """return a steady-state solution
 
         :param y0: one-dimensional numpy.ndarray, initial guess
 
@@ -78,7 +78,7 @@ class ODySys(DySys):
 
         Further keyword-arguments passed on to scipy.optimize.root.
 
-        '''
+        """
 
         return root(partial(self.f, np.inf),
                     y0,
