@@ -46,12 +46,12 @@ class DySys(object):
         self.master = master
 
     @property
-    def zero(self) -> np.ndarray:
+    def zero(self):
         """return the zero element of the vector space"""
         return np.zeros(len(self))
 
     @property
-    def identity(self) -> csr_matrix:
+    def identity(self):
         """return the (CSR sparse) identity matrix
 
         """
@@ -90,7 +90,8 @@ class DySys(object):
 
         """
 
-        raise NotImplementedError
+        return self.step(np.inf, np.inf, y0 or self.zero, d, **kwargs)
+    
 
     def step(self,
              t: float,
