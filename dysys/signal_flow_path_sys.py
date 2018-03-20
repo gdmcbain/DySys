@@ -47,7 +47,7 @@ class SignalFlowPathSys(DySys):
         super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
         self.functions = (functions if functions is not None
-                          or ([autonomous()] * (len(self) - 1)))
+                          else ([autonomous()] * (len(self) - 1)))
 
     def __len__(self):
         return len(self.systems)
@@ -80,19 +80,23 @@ class SignalFlowPathSys(DySys):
 
         return xnew
 
-    def equilibrium(self, x=None, d=None, **kwargs):
+    def equilibrium(self,
+                    x: Optional[Sequence[Any]]=None,
+                    d: Optional[Any]=None,
+                    **kwargs) -> List[Any]:
         '''return an eventual steady-state solution
 
-        :param x: list of initial guess, optional default self.zero
+        :param x: sequence of initial guess, optional default self.zero
 
-        :param d: dict, discrete dynamical variables; optional
+        :param d: discrete dynamical variables, as stored in an object
+        or dict; optional
 
         Additional keyword arguments are passed on to the equilibrium
         methods of the subsystems.
 
         '''
 
-        x = x or self.zero
+        x = x if x is not None else self.zero
 
         xoo = [self.systems[0].equilibrium(x[0], d, **kwargs)]
         for i in range(1, len(self)):
