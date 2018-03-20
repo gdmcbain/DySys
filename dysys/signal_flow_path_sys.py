@@ -36,9 +36,9 @@ class SignalFlowPathSys(DySys):
                  **kwargs):
         '''construct a SignalFlowPathSys
 
-        :param systems: list of DySys
+        :param systems: sequence of DySys
 
-        :param functions: list of functions, one shorter than systems,
+        :param functions: sequence of functions, one shorter than systems,
         being the mappings of (time, state) between systems along the
         list
 
@@ -46,7 +46,8 @@ class SignalFlowPathSys(DySys):
 
         super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
-        self.functions = (functions or ([autonomous()] * (len(self) - 1)))
+        self.functions = (functions if functions is not None
+                          or ([autonomous()] * (len(self) - 1)))
 
     def __len__(self):
         return len(self.systems)
