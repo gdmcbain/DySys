@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''A path of dependent dynamical systems.
+"""A path of dependent dynamical systems.
 
 This is a first step towards more general networks of interdependent
 dynamical systems.  The approach is inspired by Mason (1953, §II).
@@ -18,9 +18,9 @@ most of the methods of this class work with.
 
 :created: 2016-11-14
 
-'''
+"""
 
-from typing import Any, Optional, Sequence
+from typing import Any, Callable, List, Optional, Sequence
 
 import numpy as np
 
@@ -34,7 +34,7 @@ class SignalFlowPathSys(DySys):
                  systems: Sequence[DySys],
                  functions: Optional[Sequence[Callable[..., Any]]]=None,
                  **kwargs):
-        '''construct a SignalFlowPathSys
+        """construct a SignalFlowPathSys
 
         :param systems: sequence of DySys
 
@@ -42,7 +42,7 @@ class SignalFlowPathSys(DySys):
         being the mappings of (time, state) between systems along the
         list
 
-        '''
+        """
 
         super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
@@ -62,9 +62,9 @@ class SignalFlowPathSys(DySys):
              x: Sequence[Any],
              d: Any,
              inputs: Optional[Any]=None) -> List[Any]:
-        '''estimate the state after a step in time
+        """estimate the state after a step in time
 
-        '''
+        """
 
         # TODO gmcbain 2016-11-21: Could this be expressed with
         # itertools.accumulate?
@@ -84,7 +84,7 @@ class SignalFlowPathSys(DySys):
                     x: Optional[Sequence[Any]]=None,
                     d: Optional[Any]=None,
                     **kwargs) -> List[Any]:
-        '''return an eventual steady-state solution
+        """return an eventual steady-state solution
 
         :param x: sequence of initial guess, optional default self.zero
 
@@ -94,7 +94,7 @@ class SignalFlowPathSys(DySys):
         Additional keyword arguments are passed on to the equilibrium
         methods of the subsystems.
 
-        '''
+        """
 
         x = x if x is not None else self.zero
 
