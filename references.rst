@@ -1,3 +1,6 @@
+* Baker, G. L., & J. P. Gollub (1990). *Chaotic Dynamics.* Cambridge
+  University Press
+
 * Brenan, K. E., S. L. Campbell, & L. R. Petzold 1996 Numerical
   solution of initial-value problems in differential-algebraic
   equations.  *Classics in Applied Mathematics* **14**.  Philadelphia:
@@ -37,6 +40,10 @@
   (`doi:10.1109/jrproc.1953.274449
   <http://dx.doi.org/10.1109/jrproc.1953.274449>`_)
 
+* May, R. M. (1976). Simple mathematical models with very complicated
+  dynamics. *Nature* **261** (5560):459–467 (`doi:10.1038/261459a0
+  <http://dx.doi.org/10.1038/261459a0>`_)
+  
 * Roadstrum, W. H., & D. H. Wolaver (1987). *Electrical Engineering
   for all Engineers.* New York: Harper & Row
 
