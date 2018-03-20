@@ -20,7 +20,7 @@ most of the methods of this class work with.
 
 '''
 
-from typing import Dict, List
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -31,8 +31,8 @@ from .util import autonomous
 class SignalFlowPathSys(DySys):
 
     def __init__(self,
-                 systems: List[DySys],
-                 functions=None,
+                 systems: Sequence[DySys],
+                 functions: Optional[Sequence[Callable[..., Any]]]=None,
                  **kwargs):
         '''construct a SignalFlowPathSys
 
@@ -58,9 +58,9 @@ class SignalFlowPathSys(DySys):
     def step(self,
              t: float,
              h: float,
-             x: List[np.ndarray],
-             d: Dict,
-             inputs=None):
+             x: Sequence[Any],
+             d: Any,
+             inputs: Optional[Any]=None) -> List[Any]:
         '''estimate the state after a step in time
 
         '''
