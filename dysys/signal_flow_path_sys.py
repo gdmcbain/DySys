@@ -20,7 +20,7 @@ most of the methods of this class work with.
 
 '''
 
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 
 import numpy as np
 
