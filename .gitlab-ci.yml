@@ -1,9 +1,0 @@
-before_script:
-  - python3.6 -m venv --without-pip .pyenv
-  - . .pyenv/bin/activate
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - python get-pip.py
-
-pytest:
-  script:
-    - pytest --pyargs dysys
