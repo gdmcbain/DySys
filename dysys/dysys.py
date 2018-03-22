@@ -11,7 +11,7 @@ taking approximate discrete steps in continuous time
 """
 
 import itertools as it
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple
+from typing import Any, Callable, Iterable, Optional, Tuple
 
 import numpy as np
 from scipy.sparse import csr_matrix, identity
@@ -33,7 +33,7 @@ def stepper(stepping_function):
     return wrapper
 
 
-class DySys(object):
+class DySys():
     """virtual base class for dynamical systems
 
     which can be marched in time, generating an infinite sequence of
@@ -41,9 +41,8 @@ class DySys(object):
 
     """
 
-    def __init__(self, parameters=None, master=None):
-        self.parameters = {} if parameters is None else parameters
-        self.master = master
+    def __init__(self):
+        pass
 
     @property
     def zero(self):
@@ -91,7 +90,6 @@ class DySys(object):
         """
 
         return self.step(np.inf, np.inf, y0 or self.zero, d, **kwargs)
-    
 
     def step(self,
              t: float,
