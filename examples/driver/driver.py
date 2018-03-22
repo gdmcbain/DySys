@@ -56,8 +56,8 @@ def main(name: str,
 
     fig, ax = subplots()
     fig.suptitle("Driver's example 1 delay differential equation")
-    history.plot(ax=ax, linestyle='None', marker='o', label='DySys')
     ax.plot(history.index, np.sin(history.index), label='exact')
+    history.plot(ax=ax, linestyle='None', marker='o', label='DySys')
     ax.legend()
     ax.set_xlabel('$t$')
     ax.set_ylabel('$x$')
