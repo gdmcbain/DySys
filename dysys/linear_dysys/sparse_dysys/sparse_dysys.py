@@ -184,7 +184,7 @@ def demo():
         def __init__(self, tau=0.7):
             self.tau = tau
             D = identity(1, format='csr')
-            super(Decay, self).__init__(tau * D, D)
+            super().__init__(tau * D, D)
 
         def exact(self, t, ic):
             return ic * np.exp(-t / self.tau)

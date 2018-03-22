@@ -42,7 +42,7 @@ class DySys():
     """
 
     def __init__(self):
-        pass
+        raise NotImplementedError
 
     @property
     def zero(self):

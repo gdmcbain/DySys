@@ -1,15 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-'''a module for linear 'descriptor' systems
+"""a module for linear 'descriptor' systems
 
 :author: G. D. McBain <gmcbain>
 
 :created: 2013-01-11
 
-'''
-
-from __future__ import absolute_import, division, print_function
+"""
 
 from functools import partial
 from typing import Any, Callable, Dict, List, Optional
@@ -26,7 +23,7 @@ class LinearDySys(DySys):
             theta: float=1.0,
             definite: bool=False,
             **kwargs):
-        '''a DySys defined by mass and damping operators
+        """a DySys defined by mass and damping operators
 
         and a time-dependent forcing function, according to (something
         like)
@@ -60,12 +57,11 @@ class LinearDySys(DySys):
         Further keyword parameters are passed on to DySys.__init__; in
         particular: 'parameters' and 'master'.
 
-        '''
+        """
 
         self.M, self.D, self.f = M, D, f
         self.theta = theta
         self.definite = definite
-        super(LinearDySys, self).__init__(**kwargs)
 
     def __len__(self):
         return self.D.shape[0]
@@ -74,7 +70,7 @@ class LinearDySys(DySys):
                   known: List[int],
                   xknown: Optional[List[float]]=None,
                   vknown: Optional[List[float]]=None):
-        '''return a new LinearDySys with constrained degrees of freedom
+        """return a new LinearDySys with constrained degrees of freedom
 
         :param known: sequence of indices of known degrees of freedom
 
@@ -83,7 +79,7 @@ class LinearDySys(DySys):
 
         :param vknown: corresponding sequence of their rates of change
 
-        '''
+        """
 
         U, K = self.node_maps(known)
         project = partial(self.projector, U)
@@ -106,11 +102,11 @@ class LinearDySys(DySys):
         return sys
 
     def harmonic(self, omega):
-        '''return the complex harmonic solution
+        """return the complex harmonic solution
 
         :param omega: sequence of floats (typically positive)
 
-        '''
+        """
 
         # M x' + D x - f (t) = 0, with f(t) = F exp (j w t), X = s exp (j w t)
 

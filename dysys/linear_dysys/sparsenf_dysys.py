@@ -50,7 +50,7 @@ class SparseNFDySys(LinearDySys):
         '''
 
         self.f1 = f1
-        super(SparseNFDySys, self).__init__(M, D, f)
+        super().__init__(M, D, f)
 
     def step(self, t, h, xold, d, tol=1e-3):
 

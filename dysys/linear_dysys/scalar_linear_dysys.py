@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """A class for scalar linear 'descriptor' systems.
 
@@ -12,11 +11,9 @@ set up sparse matrices of shape (1, 1).
 
 """
 
-from __future__ import absolute_import, division, print_function
-
 from typing import Any, Callable, Optional
 
-from .linear_dysys import LinearDySys
+from dysys.linear_dysys import LinearDySys
 
 from numpy import inf, interp
 

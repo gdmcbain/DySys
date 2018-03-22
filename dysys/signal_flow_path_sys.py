@@ -32,8 +32,7 @@ class SignalFlowPathSys(DySys):
 
     def __init__(self,
                  systems: Sequence[DySys],
-                 functions: Optional[Sequence[Callable[..., Any]]]=None,
-                 **kwargs):
+                 functions: Optional[Sequence[Callable[..., Any]]]=None):
         """construct a SignalFlowPathSys
 
         :param systems: sequence of DySys
@@ -44,7 +43,6 @@ class SignalFlowPathSys(DySys):
 
         """
 
-        super(SignalFlowPathSys, self).__init__(self, **kwargs)
         self.systems = systems
         self.functions = (functions if functions is not None
                           else ([autonomous()] * (len(self) - 1)))

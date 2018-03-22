@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 """Unittests for SignalFlowPathSys.
 
@@ -9,15 +8,12 @@
 
 """
 
-from __future__ import absolute_import, division, print_function
-
 import unittest
 
 import numpy as np
 from pandas import DataFrame
 
-from ..signal_flow_path_sys import SignalFlowPathSys
-from .. import ScalarLinearDySys
+from dysys import SignalFlowPathSys, ScalarLinearDySys
 
 
 class TestSignalFlowPathSys(unittest.TestCase):
