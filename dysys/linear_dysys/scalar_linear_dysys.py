@@ -142,7 +142,7 @@ class ScalarLinearDySys(LinearDySys):
     def equilibrium(self,
                     y0: Optional[float]=None,
                     d: Optional[Any]=None,
-                    *args, **kwargs) -> float:
+                    *args, **_) -> float:
         """return eventual steady state
 
         :param y0: initial guess, ignored

@@ -54,9 +54,6 @@ class LinearDySys(DySys):
 
         :param definite: bool, for if system is (positive-)definite
 
-        Further keyword parameters are passed on to DySys.__init__; in
-        particular: 'parameters' and 'master'.
-
         """
 
         self.M, self.D, self.f = M, D, f
