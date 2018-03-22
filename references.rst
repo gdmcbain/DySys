@@ -13,6 +13,9 @@
 * Craveur, J.-C. (2008). *Modélisation par éléments finis* (Third
   ed.). Paris: Dunod
 
+* Driver, R. D. (1978). Delay differential equations. In *Introduction
+  to Ordinary Differential Equations,* Chapter 6. Harper & Row.
+
 * Fulford, G., P. Forrester, & A. Jones (1997). *Modelling with
   Differential and Difference Equations,* Volume 10 of *Australian
   Mathematical Society Lecture Series*. Cambridge University Press
