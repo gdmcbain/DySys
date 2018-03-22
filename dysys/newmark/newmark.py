@@ -1,15 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-'''
+"""
 
 :author: G. D. McBain <gmcbain>
 
 :created: 2013-02-08
 
-'''
-
-from __future__ import absolute_import, division, print_function
+"""
 
 from functools import partial
 from warnings import warn
@@ -24,7 +21,7 @@ from ..linear_dysys import SparseDySys
 
 
 class Newmark(DySys):
-    '''a dynamical system advancing with a Newmark method
+    """a dynamical system advancing with a Newmark method
 
     having constant sparse mass, damping, and stiffness matrices and a
     forcing function depending on time
@@ -38,11 +35,11 @@ class Newmark(DySys):
     displacement and velocity; the acceleration is kept in an
     attribute Newmark.a.
 
-    '''
+    """
 
     def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
                  definite=False, **kwargs):
-        ''':param M: mass scipy.sparse matrix
+        """:param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
 
@@ -66,7 +63,7 @@ class Newmark(DySys):
         Further keyword parameters are passed on to DySys.__init__; in
         particular: 'parameters' and 'master'.
 
-        '''
+        """
 
         self.M, self.K, self.C = M, K, C
         self.f = f or (lambda *args: self.zero[0])
@@ -86,7 +83,7 @@ class Newmark(DySys):
                     d: np.ndarray=None,
                     *args, **kwargs) -> (np.ndarray,
                                          np.ndarray):
-        '''return the eventual steady-state solution
+        """return the eventual steady-state solution
 
         using self.forcing(np.inf, np.inf, x, d)
 
@@ -99,7 +96,7 @@ class Newmark(DySys):
         Further positional arguments are passed on to self.forcing;
         keyword arguments to solve.
 
-        '''
+        """
 
         return (solve(self.K,
                       self.forcing(np.inf, np.inf, x, d, *args)[1],
@@ -133,7 +130,7 @@ class Newmark(DySys):
                 xt[1] + self.gamma * h * self.a)
 
     def setA(self, h, alpha=0.):
-        '''set the acceleration evolution matrix
+        """set the acceleration evolution matrix
 
         :param h: float > 0, time-step
 
@@ -141,7 +138,7 @@ class Newmark(DySys):
         HilberHughesTaylor subclass, defaulting to 0., in which case
         Hilber, Hughes, & Taylor's alpha-method degenerates to Newmark
 
-        '''
+        """
 
         A = self.M + (1 + alpha) * h**2 * self.beta * self.K
         if self.C is not None:
@@ -149,7 +146,7 @@ class Newmark(DySys):
         self.solve = cholesky(A) if self.definite else partial(solve, A)
 
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
-        '''return a new DySys with constrained degrees of freedom
+        """return a new DySys with constrained degrees of freedom
 
         having the same class as self.
 
@@ -163,7 +160,7 @@ class Newmark(DySys):
         :param aknown: corresponding sequence of their second
         derivatives
 
-        '''
+        """
 
         # TODO gmcbain 2016-07-27: Refactor!
 
@@ -195,7 +192,7 @@ class Newmark(DySys):
         return sys
 
     def eigs(self, *args, **kwargs):
-        '''return the first few modes of the system'''
+        """return the first few modes of the system"""
 
         if 'sigma' not in kwargs:  # inverse iteration
             kwargs['sigma'] = 0.   # Hughes (2000, §10.5.2)
@@ -220,11 +217,11 @@ class Newmark(DySys):
             return self.to_sparse_dysys().eigs(*args, **kwargs)
 
     def to_sparse_dysys(self, theta: float=0.5) -> SparseDySys:
-        '''return an equivalent SparseDySys
+        """return an equivalent SparseDySys
 
         by introducing the rate of change as an auxiliary variable
 
-        '''
+        """
 
         return SparseDySys(block_diag([self.identity,
                                        self.M]).tocsc(),
