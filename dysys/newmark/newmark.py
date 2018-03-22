@@ -9,15 +9,16 @@
 """
 
 from functools import partial
+from typing import Callable, Optional
 from warnings import warn
 
 import numpy as np
-from scipy.sparse import block_diag, bmat, linalg as sla
+from scipy.sparse import block_diag, bmat, linalg as sla, spmatrix
 
-from ..cholesky import cholesky
-from ..dysys import DySys
-from ..fixed_point import solve
-from ..linear_dysys import SparseDySys
+from dysys.cholesky import cholesky
+from dysys.dysys import DySys
+from dysys.fixed_point import solve
+from dysys.linear_dysys import SparseDySys
 
 
 class Newmark(DySys):
@@ -37,8 +38,14 @@ class Newmark(DySys):
 
     """
 
-    def __init__(self, M, K, C=None, f=None, beta=0.25, gamma=0.5,
-                 definite=False, **kwargs):
+    def __init__(self,
+                 M: spmatrix,
+                 K: spmatrix,
+                 C: Optional[spmatrix]=None,
+                 f: Optional[Callable]=None,
+                 beta: float=0.25,
+                 gamma: float=0.5,
+                 definite: bool=False):
         """:param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
@@ -60,16 +67,12 @@ class Newmark(DySys):
 
         :param definite: bool, for if system is (positive-)definite
 
-        Further keyword parameters are passed on to DySys.__init__; in
-        particular: 'parameters' and 'master'.
-
         """
 
         self.M, self.K, self.C = M, K, C
         self.f = f or (lambda *args: self.zero[0])
         self.beta, self.gamma = beta, gamma
         self.definite = definite
-        super(Newmark, self).__init__(**kwargs)
 
     def __len__(self):
         return self.K.shape[0]
