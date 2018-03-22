@@ -13,6 +13,10 @@
 * Craveur, J.-C. (2008). *Modélisation par éléments finis* (Third
   ed.). Paris: Dunod
 
+* Fulford, G., P. Forrester, & A. Jones (1997). *Modelling with
+  Differential and Difference Equations,* Volume 10 of *Australian
+  Mathematical Society Lecture Series*. Cambridge University Press
+
 * Hairer, E., C. Lubich, & M. Roche 1989 The numerical solution of
   differential-algebraic systems by Runge-Kutta methods.  *Lecture
   Notes in Mathematics* **1409**.  Berlin: Springer
