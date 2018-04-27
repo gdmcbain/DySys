@@ -33,8 +33,12 @@ wherever.::
 
 To test (optional)::
 
-   pip install pytest
-   pytest --pyargs dysys
+   pip install pytest-xdist
+   pytest --pyargs dysys -n auto
+
+(Actually thus far the test suite is quite small so distributing the
+tests amongst the local numprocessors is slower, but this is left here
+to document the use of xdist for other packages.)
 
 When finished::
 
