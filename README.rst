@@ -31,6 +31,9 @@ wherever.::
    pip install numpy  # Shouldn't really need this but do
    pip install -e git+ssh://git@gitlab.memjet.local/msm/DySys#egg=DySys
 
+Testing
++++++++
+
 To test (optional)::
 
    pip install pytest-xdist
@@ -39,6 +42,9 @@ To test (optional)::
 (Actually thus far the test suite is quite small so distributing the
 tests amongst the local numprocessors is slower, but this is left here
 to document the use of xdist for other packages.)
+
+Deactivation & reactivation
++++++++++++++++++++++++++++
 
 When finished::
 
