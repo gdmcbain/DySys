@@ -57,8 +57,8 @@ To recommence::
 prepending the path to `DySys` if required because of having changed to a
 different directory.
 
-Installation under GNU/Linux
-````````````````````````````
+Installation under Microsoft Windows
+````````````````````````````````````
 
 For Microsoft Windows, see `Installation/Microsoft-Windows
 <https://gitlab.memjet.local/msm/DySys/wikis/installation/Microsoft-Windows>`_.
