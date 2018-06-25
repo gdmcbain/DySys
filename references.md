@@ -32,8 +32,8 @@
 * Hilber, H. M., T. J. R. Hughes, & R. L. Taylor (1977). Improved
   numerical dissipation for time integration algorithms in structural
   dynamics. *Earthquake Engineering & Structural Dynamics* **5** (3),
-  283-292 (`doi:10.1002/eqe.4290050306
-  <http://dx.doi.org/10.1002/eqe.4290050306>`_)
+  283-292
+  ([doi:10.1002/eqe.4290050306](http://dx.doi.org/10.1002/eqe.4290050306))
 
 * Hughes, T. J. R. (2000). *The Finite Element Method*. Mineola, New
   York: Dover
@@ -44,12 +44,11 @@
 
 * Mason, S. J. (1953). Feedback Theory-Some properties of signal flow
   graphs. *Proceedings of the IRE* **41** (9):1144–1156
-  (`doi:10.1109/jrproc.1953.274449
-  <http://dx.doi.org/10.1109/jrproc.1953.274449>`_)
+  ([doi:10.1109/jrproc.1953.274449](http://dx.doi.org/10.1109/jrproc.1953.274449))
 
 * May, R. M. (1976). Simple mathematical models with very complicated
-  dynamics. *Nature* **261** (5560):459–467 (`doi:10.1038/261459a0
-  <http://dx.doi.org/10.1038/261459a0>`_)
+  dynamics. *Nature* **261** (5560):459–467
+  ([doi:10.1038/261459a0](http://dx.doi.org/10.1038/261459a0))
   
 * Roadstrum, W. H., & D. H. Wolaver (1987). *Electrical Engineering
   for all Engineers.* New York: Harper & Row
