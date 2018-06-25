@@ -23,11 +23,8 @@ Also the directory for the virtualenv needn't be called `DySys` and it
 needed be kept in `$HOME/.py3.6`; it can be called whatever and placed
 wherever.::
 
-   python3.6 -m venv --without-pip ~/.py3.6/DySys  # or wherever
+   python3.6 -m venv ~/.py3.6/DySys  # or wherever
    . $_/bin/activate
-   wget https://bootstrap.pypa.io/get-pip.py
-   python get-pip.py
-   rm get-pip.py
    pip install numpy  # Shouldn't really need this but do
    pip install -e git+ssh://git@gitlab.memjet.local/msm/DySys#egg=DySys
 
