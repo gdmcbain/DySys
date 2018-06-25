@@ -31,7 +31,7 @@ To test (optional)
 
 ```shell
 pip install pytest-xdist
-pytest --pyargs dysys -n auto
+pytest -n auto tests
 ```
 
 (Actually thus far the test suite is quite small so distributing the
