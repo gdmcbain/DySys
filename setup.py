@@ -12,7 +12,7 @@ setup(
     license='LICENSE.txt',
     description='''some code for dynamical systems,
 particularly those of the descriptor type''',
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     setup_requires=['numpy'],
     install_requires=['numpy',
                       'scipy',
