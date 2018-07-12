@@ -61,9 +61,12 @@ triangular ‘play’ symbol in the Navigator) and in it issue::
 pip install -e git+http://gitlab.memjet.local/msm/DySys#egg=DySys
 ```
 
-## Testing with nose2
+## Testing with pytest
+
+**TODO:—** These instructions for testing are themselves untested and
+surely need some modification!
 
 ```shell
-pip install nose2
-nose2 dysys
+conda install pytest-xdist
+pytest -n auto tests
 ```
