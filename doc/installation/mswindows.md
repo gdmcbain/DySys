@@ -22,9 +22,15 @@ git config --global http.sslVerify false
 
 # Installing Anaconda
 
-Installing DySys under Microsoft Windows with [Anaconda3](https://www.anaconda.com/download/#windows) is straightforward.  It is not implied that DySys won't work on Microsoft Windows under other
-Python distributions, but only Anaconda has been tested to date.  The latest tested is [Anaconda3-5.0.1-Windows-x86_64.exe](
-https://repo.continuum.io/archive/Anaconda3-5.0.1-Windows-x86_64.exe).   The latest seen but not yet tested is [Anaconda3-5.2.0-Windows-x86_64.exe](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe).
+Installing DySys under Microsoft Windows with
+[Anaconda3](https://www.anaconda.com/download/#windows) is
+straightforward.  It is not implied that DySys won't work on Microsoft
+Windows under other Python distributions, but only Anaconda has been
+tested to date.  The latest tested is
+[Anaconda3-5.0.1-Windows-x86_64.exe](
+https://repo.continuum.io/archive/Anaconda3-5.0.1-Windows-x86_64.exe).
+The latest seen but not yet tested is
+[Anaconda3-5.2.0-Windows-x86_64.exe](https://repo.anaconda.com/archive/Anaconda3-5.2.0-Windows-x86_64.exe).
 
 After installing Anaconda, launch the *Anaconda Navigator* desktop
 application.  This can be done by hitting the Windows-symbol key and
