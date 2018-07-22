@@ -64,15 +64,5 @@ Open a terminal in the DySys Anaconda environment (by clicking on the
 triangular ‘play’ symbol in the Navigator) and in it issue::
 
 ```shell
-pip install -e git+http://gitlab.memjet.local/msm/DySys#egg=DySys
-```
-
-## Testing with pytest
-
-**TODO:—** These instructions for testing are themselves untested and
-surely need some modification!
-
-```shell
-conda install pytest-xdist
-pytest -n auto tests
+pip install git+http://gitlab.memjet.local/msm/DySys#egg=DySys
 ```
