@@ -1,12 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='DySys',
-    version='0.4.0',
+    version='0.5.0',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
-    packages=['dysys',
-              'dysys.post'],
+    packages=find_packages(),
     scripts=[],
     url='https://gitlab.memjet.local/msm/DySys',
     license='LICENSE.txt',
