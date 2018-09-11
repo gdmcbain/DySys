@@ -1,13 +1,5 @@
 #!/usr/bin/env python
 
-'''
-:author: G. D. McBain <gmcbain>
-:created: 2013-01-11
-
-'''
-
-from __future__ import absolute_import, division, print_function
-
 from functools import partial
 from typing import Dict, Optional, Tuple
 from warnings import warn
