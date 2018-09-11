@@ -18,13 +18,13 @@ from ..linear_dysys import LinearDySys
 
 
 class SparseDySys(LinearDySys):
-    '''a LinearDySys using sparse matrices and backward Euler
+    """a LinearDySys using sparse matrices and backward Euler
 
     The matrices might be individually singular, but the pencil should
     be regular (see Yip & Sincovec 1981); i.e. M/h+D should be
     invertible for positive time-step h.
 
-    '''
+    """
 
     def __len__(self):
         return self.D.shape[0]
@@ -36,7 +36,7 @@ class SparseDySys(LinearDySys):
              d: Optional[Dict]=None,
              inputs: Optional[Tuple[np.ndarray, np.ndarray]]=None
              ) -> np.ndarray:
-        '''estimate the next state using theta method
+        """estimate the next state using theta method
 
         :param t: float, time
 
@@ -53,7 +53,7 @@ class SparseDySys(LinearDySys):
         is the same as on the previous call.  Use Cholesky if
         self.definite; otherwise incomplete-LU and LGMRES.
 
-        '''
+        """
 
         if not hasattr(self, '_memo') or h != self._memo['h']:
             if h == 0.:
@@ -92,7 +92,7 @@ class SparseDySys(LinearDySys):
                          self.forcing(t, h, x, d, inputs)).T)(self.theta))
 
     def equilibrium(self, x=None, d=None, *args, **kwargs):
-        '''return the eventual steady-state solution
+        """return the eventual steady-state solution
 
         :param x: initial condition, optional, passed on to self.f
 
@@ -104,24 +104,24 @@ class SparseDySys(LinearDySys):
 
         Further keyword arguments passed on to solve.
 
-        '''
+        """
 
         return solve(self.D, self.forcing(0, np.inf, x, d, *args)[1],
                      **kwargs)
 
     def eig(self, *args, **kwargs):
-        '''return the complete spectrum of the system
+        """return the complete spectrum of the system
 
         Any positional and keyword arguments are passed on to
         scipy.linalg.eig.
 
-        '''
+        """
 
         return eig(-self.D.todense(), self.M.todense(),
                    *args, **(dissoc(kwargs, 'sigma')))
 
     def eigs(self, *args, **kwargs) -> np.ndarray:
-        '''return the first few modes of the system,
+        """return the first few modes of the system,
 
         being the modes with temporal eigenvalues of least magnitude.
         This is achieved using :function scipy.sparse.linalg.eigs: by
@@ -150,7 +150,7 @@ class SparseDySys(LinearDySys):
         :rtype: as per scipy.sparse.linalg.eigs or self.eig, if self
         is too small to be treated by the former
 
-        '''
+        """
 
         try:
             return sla.eigs(-self.D.tocsc(), *args,
