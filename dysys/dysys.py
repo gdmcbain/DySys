@@ -4,10 +4,6 @@
 
 taking approximate discrete steps in continuous time
 
-:author: G. D. McBain <gmcbain>
-
-:created: 2012-10-11
-
 """
 
 import itertools as it
