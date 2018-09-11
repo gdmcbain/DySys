@@ -375,7 +375,7 @@ class DySys():
 
         """
 
-        if inputs:
+        if inputs is not None:
             [fold, fnew] = map(lambda t, y: self.f(self, t, x, d, y),
                                [t, t + h], inputs)
         elif self.f is not None:
