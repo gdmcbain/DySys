@@ -250,10 +250,8 @@ class DySys():
 
         return it.takewhile(condition, self.march(*args, **kwargs))
 
-    def march_till(self, endtime, *args, **kwargs):
+    def march_till(self, endtime: float, *args, **kwargs):
         """march until the time passes endtime
-
-        :param endtime: float
 
         :rtype: like march_truncated
 
