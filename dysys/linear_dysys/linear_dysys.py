@@ -2,10 +2,6 @@
 
 """a module for linear 'descriptor' systems
 
-:author: G. D. McBain <gmcbain>
-
-:created: 2013-01-11
-
 """
 
 from functools import partial
