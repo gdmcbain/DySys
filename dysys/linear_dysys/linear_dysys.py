@@ -83,7 +83,7 @@ class LinearDySys(DySys):
             M,
             D,
             lambda *args: project(
-                (0 if self.f is None else self.f(*args)) -
+                (self.zero if self.f is None else self.f(*args)) -
                 (0 if xknown is None else self.D @ K @ xknown) -
                 (0 if vknown is None else self.M @ K @ vknown)),
             self.theta,
