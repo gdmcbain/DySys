@@ -6,7 +6,7 @@ These instructions are just for Microsoft Windows; see also the
 DySys is maintained on [GitLab](https://gitlab.memjet.local/msm/DySys)
 using [Git](https://git-scm.com).  Install Git from
 <https://git-scm.com/download/win>;
-e.g. [Git-2.18.0-64-bit.exe](https://github.com/git-for-windows/git/releases/download/v2.18.0.windows.1/Git-2.18.0-64-bit.exe).
+e.g. [Git-2.21.0-64-bit.exe](https://github.com/git-for-windows/git/releases/download/v2.18.0.windows.1/Git-2.21.0-64-bit.exe).
 
 ## Configuring Git
 
