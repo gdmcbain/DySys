@@ -10,7 +10,7 @@ which just react instantaneously to time and inputs.
 
 '''
 
-from typing import Dict
+from typing import Dict, Union, Callable, Tuple
 
 import numpy as np
 
@@ -19,7 +19,15 @@ from .dysys import DySys
 
 class AlgebraicDySys(DySys):
 
-    def __init__(self, zero, f):
+    def __init__(self,
+                 zero: Union[float, np.ndarray],
+                 f: Callable[[DySys,
+                              float,
+                              Union[float, np.ndarray],
+                              Dict,
+                              Tuple[Union[float, np.ndarray],
+                                    Union[float, np.ndarray]]],
+                             Union[float, np.ndarray]]):
 
         self.f = f              # f(self, t, x, d, inputs)
 
