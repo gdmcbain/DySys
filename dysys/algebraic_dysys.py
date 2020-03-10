@@ -1,14 +1,8 @@
-#!/usr/bin/env python
-
-'''A class for algebraic (pseudo) dynamical systems
+"""A class for algebraic (pseudo) dynamical systems
 
 which just react instantaneously to time and inputs.
 
-:author: G. D. McBain <gmcbain>
-
-:created: 2017-09-26
-
-'''
+"""
 
 from typing import Dict, Union, Callable, Tuple
 
