@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DySys',
-    version='0.5.0',
+    version='0.6.0',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=find_packages(),
@@ -20,6 +20,5 @@ particularly those of the descriptor type''',
                       'numpy',
                       'scipy',
                       'pandas',
-                      'scikit-sparse;platform_system!="Windows"',
     ]
 )
