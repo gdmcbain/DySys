@@ -6,14 +6,13 @@ Like Anaconda/Miniconda, they should work on either GNU/Linux or Microsoft Windo
 This installation is to be done in an activated conda environment.  If already in one, skip this step.
 
 ```shell
-conda create -n dysys # or whatever
+conda create -n dysys numpy # or whatever
 conda activate dysys
 ```
 
 Then:
 
 ```shell
-conda install numpy pip
 cd  # so that sources go in ~/src
 pip install -e git+git@gitlab.memjet.local:msm/dysys.git#egg=dysys
 ```
