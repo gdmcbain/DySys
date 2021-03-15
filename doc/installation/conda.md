@@ -10,10 +10,18 @@ conda create -n dysys numpy # or whatever
 conda activate dysys
 ```
 
-Then:
+Then change to the usual `src` directory.  This can be wherever you like but I
+put it in `$HOME` on Linux and `$env:userprofile` under MS-Windows; thus either
 
 ```shell
-cd  # so that sources go in ~/src
+cd ~/src
+```
+or
+```shell
+cd $env:userprofile\src
+```
+Then
+```shell
 git clone git@gitlab.memjet.local:msm/dysys
 pip install -e ./dysys
 ```
