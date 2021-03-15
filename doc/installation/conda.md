@@ -23,5 +23,5 @@ cd $env:userprofile\src
 Then
 ```shell
 git clone git@gitlab.memjet.local:msm/dysys
-pip install -e ./dysys
+pip install -e ./DySys
 ```
