@@ -14,5 +14,6 @@ Then:
 
 ```shell
 cd  # so that sources go in ~/src
-pip install -e git+git@gitlab.memjet.local:msm/dysys.git#egg=dysys
+git clone git@gitlab.memjet.local:msm/dysys
+pip install -e ./dysys
 ```
