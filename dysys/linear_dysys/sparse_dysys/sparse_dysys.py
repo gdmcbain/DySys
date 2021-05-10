@@ -12,7 +12,6 @@ from scipy.sparse import linalg as sla
 
 from toolz import dissoc, keymap, merge
 
-from ...cholesky import cholesky
 from ...fixed_point import solve
 from ..linear_dysys import LinearDySys
 
@@ -50,8 +49,7 @@ class SparseDySys(LinearDySys):
         [default: None]
 
         Attempt fast time-stepping, reusing factors if the time-step
-        is the same as on the previous call.  Use Cholesky if
-        self.definite; otherwise incomplete-LU and LGMRES.
+        is the same as on the previous call, using sparse-LU.
 
         """
 
@@ -64,26 +62,7 @@ class SparseDySys(LinearDySys):
             self._memo = {'h': h, 'M': M}
 
             M1 = M + self.D
-            if self.definite:
-                self._memo['solve'] = cholesky(M1)
-            else:
-
-                # def solver(rhs):
-                #     x1, info = sla.lgmres(
-                #         M1, rhs, x0=x, tol=1e-12,
-                #         M=sla.LinearOperator(M.shape, sla.spilu(M1).solve))
-                #     if info == 0:
-                #         return x1
-                #     else:
-                #         if info > 0:
-                #             warn('convergence to tolerance not achieved '
-                #                  'in %s iterations' % info, RuntimeWarning)
-                #             return solve(M1, rhs)
-                #         else:
-                #             raise ValueError('info %d' % info)
-
-                # self._memo['solve'] = solver
-                self._memo['solve'] = partial(solve, M1)
+            self._memo["solve"] = sla.splu(M1).solve
 
         return self._memo['solve'](
             self._memo['M'] @ x +

@@ -10,4 +10,3 @@ from .newmark import Newmark, HilberHughesTaylor
 
 from .store_last import StoreLast
 from .fixed_point import fixed_point, newton
-from .cholesky import cholesky

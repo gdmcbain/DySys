@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-
-"""Unittests for SignalFlowPathSys.
-
-:author: gmcbain
-
-:created: 2016-11-14
-
-"""
-
 import unittest
 
 import numpy as np

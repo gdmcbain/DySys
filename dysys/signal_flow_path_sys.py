@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """A path of dependent dynamical systems.
 
 This is a first step towards more general networks of interdependent
@@ -13,10 +11,6 @@ really what's addressed here.
 Really it's a list of systems, with the output of each becoming the
 input of the next; the list is the basic Pythonic data structure that
 most of the methods of this class work with.
-
-:author: gmcbain
-
-:created: 2016-11-14
 
 """
 

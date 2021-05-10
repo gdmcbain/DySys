@@ -1,13 +1,3 @@
-#!/usr/bin/env python
-
-'''
-:author: G. D. McBain <gmcbain>
-:created: 2013-08-26
-
-'''
-
-from __future__ import absolute_import, division, print_function
-
 import itertools as it
 
 import numpy as np
@@ -15,7 +5,7 @@ from scipy.sparse import issparse, spmatrix
 from scipy.sparse.linalg import spsolve
 
 
-def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(np.int).max):
+def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(int).max):
     '''
 
     :param: iteration, iterable generating pairs of values and

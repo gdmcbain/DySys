@@ -1,21 +1,11 @@
-#!/usr/bin/env python
-
-"""
-
-:author: G. D. McBain <gmcbain>
-
-:created: 2013-02-08
-
-"""
-
 from functools import partial
 from typing import Callable, Optional
 from warnings import warn
 
 import numpy as np
 from scipy.sparse import block_diag, bmat, linalg as sla, spmatrix
+from scipy.sparse.linalg import splu
 
-from dysys.cholesky import cholesky
 from dysys.dysys import DySys
 from dysys.fixed_point import solve
 from dysys.linear_dysys import SparseDySys
@@ -146,7 +136,7 @@ class Newmark(DySys):
         A = self.M + (1 + alpha) * h**2 * self.beta * self.K
         if self.C is not None:
             A += (1 + alpha) * h * self.gamma * self.C
-        self.solve = cholesky(A) if self.definite else partial(solve, A)
+        self.solve = splu(A).solve
 
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
         """return a new DySys with constrained degrees of freedom
