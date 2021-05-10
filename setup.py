@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='DySys',
-    version='0.6.0',
+    version='0.7.0',
     author='G. D. McBain',
     author_email='gmcbain@memjet.com',
     packages=find_packages(),
