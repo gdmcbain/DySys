@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""
-
-:author: gmcbain
-
-:created: 2015-02-09
-
-"""
-
-from __future__ import absolute_import, division, print_function
-
 from functools import partial
 
 import numpy as np

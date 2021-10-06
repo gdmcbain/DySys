@@ -1,19 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-'''This implements the Hilber-Hughes-Taylor (a.k.a. alpha-) method
+"""This implements the Hilber-Hughes-Taylor (a.k.a. alpha-) method
 
 (Hilber 1976; Hilber, Hughes, & Taylor 1977; Cook, Malkus, & Plesha
 1989, p. 409; Hughes 2000, p. 532; Craveur 2008, §18.4.5), as a
 generalization of the Newmark method
 
-:author: G. D. McBain <gmcbain>
-
-:created: 2016-04-06
-
-'''
-
-from __future__ import absolute_import, division, print_function
+"""
 
 from functools import partial
 
@@ -24,15 +15,15 @@ from .newmark import Newmark
 
 
 class HilberHughesTaylor(Newmark):
-    '''a dynamical system advancing with a Hilber-Hughes-Taylor method
+    "'''"a dynamical system advancing with a Hilber-Hughes-Taylor method
 
     (a.k.a. alpha-method), like the Newmark method
 
-    '''
+    "'''"
 
     def __init__(self, M, K, C=None, f=None, alpha=0., definite=False,
                  **kwargs):
-        ''':param M: mass scipy.sparse matrix
+        "'''":param M: mass scipy.sparse matrix
 
         :param K: stiffness scipy.sparse
 
@@ -51,7 +42,7 @@ class HilberHughesTaylor(Newmark):
         Further keyword parameters are passed on to DySys.__init__; in
         particular: 'parameters' and 'master'.
 
-        '''
+        "'''"
 
         self.alpha = alpha
         super(HilberHughesTaylor, self).__init__(
@@ -85,7 +76,7 @@ class HilberHughesTaylor(Newmark):
         super(HilberHughesTaylor, self).setA(h, self.alpha)
 
     def constrain(self, known, xknown=None, vknown=None, aknown=None):
-        '''return a new DySys with constrained degrees of freedom
+        "'''"return a new DySys with constrained degrees of freedom
 
         having the same class as self.
 
@@ -99,7 +90,7 @@ class HilberHughesTaylor(Newmark):
         :param aknown: corresponding sequence of their second
         derivatives
 
-        '''
+        "'''"
 
         # TODO gmcbain 2016-07-27: Refactor!
 

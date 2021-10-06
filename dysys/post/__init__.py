@@ -1,16 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-'''dysys.post: postprocessing utilities for DySys
-
-:author: G. D. McBain <gmcbain>
-
-:created: 2013-09-04
-
-'''
-
-from __future__ import absolute_import, division, print_function
-
 from toolz import partitionby
 
 

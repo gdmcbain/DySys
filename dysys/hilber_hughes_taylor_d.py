@@ -1,34 +1,25 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-'''This implements the Hilber-Hughes-Taylor (a.k.a. alpha-) method
+"""This implements the Hilber-Hughes-Taylor (a.k.a. alpha-) method
 
 (Hilber 1976; Hilber, Hughes, & Taylor 1977; Cook, Malkus, & Plesha
 1989, p. 409; Hughes 2000, p. 532; Craveur 2008, §18.4.5), as a
 generalization of the Newmark method
 
-:author: G. D. McBain <gmcbain>
-
-:created: 2016-04-21
-
-'''
-
-from __future__ import absolute_import, division, print_function
+"""
 
 from .dysys import DySys
 from .fixed_point import solve
 
 
 class HilberHughesTaylor_d(DySys):
-    '''a dynamical system advancing with the alpha-method in d-form
+    """a dynamical system advancing with the alpha-method in d-form
 
     See also: HilberHughesTaylor
 
-    '''
+    """
 
     def __init__(self, M, C, K, f, alpha=0.):
 
-        ''':param M: mass scipy.sparse matrix
+        """:param M: mass scipy.sparse matrix
 
         :param C: damping scipy.sparse matrix
 
@@ -40,7 +31,7 @@ class HilberHughesTaylor_d(DySys):
         :param alpha: float, Hilber-Hughes-Taylor method parameter,
         should be in [-1/3, 0]
 
-        '''
+        """
 
         self.M, self.C, self.K = M, C, K
         self.f = f

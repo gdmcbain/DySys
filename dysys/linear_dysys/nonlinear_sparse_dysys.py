@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-
-'''
-
-:author: G. D. McBain <gmcbain>
-:created: 2013-04-09
-
-'''
-
-from __future__ import absolute_import, division, print_function
-
 import numpy as np
 
 from .linear_dysys import LinearDySys
