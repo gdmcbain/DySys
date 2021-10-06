@@ -1,17 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""Tests on a single lump.
-
-:author: gmcbain
-
-:created: 2016-11-03
-
-"""
-
-from __future__ import absolute_import, division, print_function
-
-import unittest
+from functools import lru_cache
 
 import numpy as np
 from pandas import Series
@@ -19,7 +6,10 @@ from pandas import Series
 from dysys import ScalarLinearDySys
 
 
-class TestScalar(unittest.TestCase):
+from pytest import fixture
+
+
+class Scalar:
 
     """Consider a single lumped hydraulic conduit (two-port network)
 
@@ -43,40 +33,51 @@ class TestScalar(unittest.TestCase):
 
     """
 
-    @classmethod
-    def setUpClass(cls):
-        cls.R, cls.C = 2., 3.
-        cls.p_in = 5.
-        cls.sys = ScalarLinearDySys(cls.R * cls.C, 1.,
-                                    lambda *_: cls.p_in,
-                                    theta=0.5)
+    R, C = 2.0, 3.0
+    p_in = 5.0
+    
+    @property
+    def system(self):
+        return ScalarLinearDySys(self.R * self.C, 1.0, lambda *_: self.p_in, theta=0.5)
 
-    def test_equilibrium(self):
-        """The exact solution is p[1] = p[0]."""
-        np.testing.assert_almost_equal(self.sys.equilibrium(), self.p_in)
 
-    def test_harmonic(self):
-        """See Roadstrum & Wolaver (1987)
+@fixture
+def scalar():
+    s = Scalar()
+    s.sys = s.system
+    return s
 
-        (§5.5 'Frequency response of first-order circuits').
 
-        """
+def test_equilibrium(scalar):
+    """The exact solution is p[1] = p[0]."""
+    np.testing.assert_almost_equal(scalar.sys.equilibrium(), scalar.p_in)
 
-        omega = np.linspace(0, 5 / self.R / self.C)
-        np.testing.assert_almost_equal(
-            self.sys.harmonic(omega),
-            self.p_in / (1 + 1j * omega * self.R * self.C))
+def test_harmonic(scalar):
+    """See Roadstrum & Wolaver (1987)
 
-    def test_march(self):
-        """See Roadstrum & Wolaver (1987)
+    (§5.5 'Frequency response of first-order circuits').
 
-        (§6.2 'Differential equations').
+    """
 
-        """
+    omega = np.linspace(0, 5 / scalar.R / scalar.C)
+    np.testing.assert_almost_equal(
+        scalar.sys.harmonic(omega), scalar.p_in / (1 + 1j * omega * scalar.R * scalar.C)
+    )
 
-        p = Series({t / self.R / self.C: x
-                    for t, x, _ in self.sys.march_till(5 * self.R * self.C,
-                                                       self.R * self.C / 1e3)})
+def test_march(scalar):
+    """See Roadstrum & Wolaver (1987)
 
-        np.testing.assert_array_almost_equal(
-            p, self.p_in * (1 - np.exp(-p.index)))
+    (§6.2 'Differential equations').
+
+    """
+
+    p = Series(
+        {
+            t / scalar.R / scalar.C: x
+            for t, x, _ in scalar.sys.march_till(
+                5 * scalar.R * scalar.C, scalar.R * scalar.C / 1e3
+            )
+        }
+    )
+
+    np.testing.assert_array_almost_equal(p, scalar.p_in * (1 - np.exp(-p.index)))

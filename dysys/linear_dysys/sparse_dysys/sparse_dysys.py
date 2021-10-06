@@ -143,7 +143,6 @@ class SparseDySys(LinearDySys):
 
 
 def demo():
-    # see msmdir.003774 for an archived run
 
     import pandas as pd
     from scipy.sparse import identity

@@ -37,12 +37,11 @@ def exact(L, R, C, Q, t):
 
 
 def main(name: str) -> None:
-    '''Reproduce the lumped RLC branch with step duty example
+    '''a lumped RLC branch with step duty example
 
-    from memjet Swiki "Simulating transient flow with
-    Millihydraulics", derived there as a first-order system with two
+    This could be derived as a first-order system with two
     degrees of freedom (outlet pressure p and serial branch flowrate
-    q) but here recast in second-order form using just q as the
+    q) but here has been recast in second-order form using just q as the
     dependent variable.
 
     '''

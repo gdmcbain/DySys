@@ -22,6 +22,6 @@ cd $env:userprofile\src
 ```
 Then
 ```shell
-git clone git@gitlab.memjet.local:msm/dysys
+git clone git@github.com:gdmcbain/dysys
 pip install -e ./DySys
 ```
