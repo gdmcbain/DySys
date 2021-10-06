@@ -11,7 +11,7 @@ main :: IO ()
 main = shakeArgs shakeOptions $ do
   want ["driver.png"]
 
-  cleanRules ["msm*", "*~", "*.png"]
+  cleanRules ["*~", "*.png"]
 
   "*.png" %> \png -> do
     let script = png -<.> "py"

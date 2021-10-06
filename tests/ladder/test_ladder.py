@@ -1,19 +1,3 @@
-#!/usr/bin/env python
-
-"""Test the equilibrium method of SparseDySys.
-
-Derived from msmdir.005291.
-
-:author: G. D. McBain <gmcbain>
-
-:created: 2014-05-08
-
-:keywords: hydraulics, analytic circuit theory
-
-"""
-
-from __future__ import absolute_import, division, print_function
-
 from unittest import TestCase, main
 
 import numpy as np

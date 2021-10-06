@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='DySys',
-    version='0.7.0',
+    version='0.7.1',
     author='G. D. McBain',
-    author_email='gmcbain@memjet.com',
+    author_email='gdmcbain@pm.me',
     packages=find_packages(),
     scripts=[],
-    url='https://gitlab.memjet.local/msm/DySys',
+    url='https://github.com/gdmcbain/DySys',
     license='LICENSE.txt',
     description='''some code for dynamical systems,
 particularly those of the descriptor type''',
