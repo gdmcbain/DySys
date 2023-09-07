@@ -5,7 +5,7 @@ from scipy.sparse import issparse, spmatrix
 from scipy.sparse.linalg import spsolve
 
 
-def fixed_point(iteration, tol=np.MachAr().eps, maxiter=np.iinfo(int).max):
+def fixed_point(iteration, tol=np.finfo(float).eps, maxiter=np.iinfo(int).max):
     '''
 
     :param: iteration, iterable generating pairs of values and
